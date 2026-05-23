@@ -1,11 +1,11 @@
-[gd_scene format=4 uid="uid://bdpupovao3d78"]
+[gd_scene format=4 uid="uid://cx0gvw8oiae2"]
 
-[ext_resource type="Texture2D" uid="uid://brl33v7udn8hk" path="res://tilesets/Sprite-0003.png" id="1_sui6w"]
-[ext_resource type="Texture2D" uid="uid://dstby7k6s1os5" path="res://tilesets/Sprite-0001.png" id="2_y46m8"]
-[ext_resource type="PackedScene" uid="uid://c3lu3pg63y4ue" path="res://scenes/player.tscn" id="3_y46m8"]
+[ext_resource type="Texture2D" uid="uid://brl33v7udn8hk" path="res://tilesets/Sprite-0003.png" id="1_rptcy"]
+[ext_resource type="Texture2D" uid="uid://dstby7k6s1os5" path="res://tilesets/Sprite-0001.png" id="2_5sgqe"]
+[ext_resource type="PackedScene" uid="uid://c3lu3pg63y4ue" path="res://scenes/player.tscn" id="3_3fwiw"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ih3vc"]
-texture = ExtResource("1_sui6w")
+texture = ExtResource("1_rptcy")
 1:3/0 = 0
 2:3/0 = 0
 3:3/0 = 0
@@ -92,7 +92,7 @@ texture = ExtResource("1_sui6w")
 12:12/0 = 0
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_s2oou"]
-texture = ExtResource("2_y46m8")
+texture = ExtResource("2_5sgqe")
 4:0/0 = 0
 5:0/0 = 0
 6:0/0 = 0
@@ -219,7 +219,7 @@ sources/0 = SubResource("TileSetAtlasSource_ih3vc")
 sources/1 = SubResource("TileSetAtlasSource_s2oou")
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_8dkb2"]
-texture = ExtResource("1_sui6w")
+texture = ExtResource("1_rptcy")
 1:3/0 = 0
 2:3/0 = 0
 3:3/0 = 0
@@ -294,6 +294,6 @@ tile_set = SubResource("TileSet_pbhc3")
 tile_map_data = PackedByteArray("AAADAPv/AAAEAAMAAAADAPz/AAAEAAQAAAADAP3/AAAEAAUAAAAEAPv/AAAFAAMAAAAEAPz/AAAFAAQAAAAEAP3/AAAFAAUAAAAHAPv/AAAHAAMAAAAHAPz/AAAHAAQAAAAHAP3/AAAHAAUAAAAHAP7/AAAHAAYAAAAHAP//AAAHAAcAAAAHAAAAAAAHAAgAAAAGAPv/AAAGAAMAAAAGAPz/AAAGAAQAAAAGAP3/AAAGAAUAAAAGAP7/AAAGAAYAAAAGAP//AAAGAAcAAAAGAAAAAAAGAAgAAAAAAAEAAAABAAcAAAABAAEAAAACAAcAAAACAAEAAAADAAcAAAAAAAIAAAABAAgAAAABAAIAAAACAAgAAAACAAIAAAADAAgAAAAAAP3/AAABAAMAAAAAAP7/AAABAAQAAAAAAP//AAABAAUAAAABAP3/AAACAAMAAAABAP7/AAACAAQAAAABAP//AAACAAUAAAACAP3/AAADAAMAAAACAP7/AAADAAQAAAACAP//AAADAAUAAAAAAAAAAAABAAYAAAABAAAAAAACAAYAAAACAAAAAAADAAYAAAAEAP//AAAEAAcAAAAEAAAAAAAEAAgAAAAFAP//AAAFAAcAAAAFAAAAAAAFAAgAAAADAP7/AAAAAAYAAAADAP//AAAAAAcAAAA=")
 tile_set = SubResource("TileSet_dgmsn")
 
-[node name="CharacterBody2D" parent="." unique_id=2137992065 instance=ExtResource("3_y46m8")]
+[node name="CharacterBody2D" parent="." unique_id=2137992065 instance=ExtResource("3_3fwiw")]
 position = Vector2(126, 34)
 scale = Vector2(0.8, 0.8)
