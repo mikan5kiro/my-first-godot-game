@@ -3,6 +3,8 @@
 [ext_resource type="Texture2D" uid="uid://cg05jx33exwd0" path="res://tilesets/Sprite-0002.png" id="1_hxcsg"]
 [ext_resource type="Texture2D" uid="uid://dstby7k6s1os5" path="res://tilesets/Sprite-0001.png" id="2_8hu0i"]
 [ext_resource type="PackedScene" uid="uid://c3lu3pg63y4ue" path="res://scenes/player.tscn" id="3_8hu0i"]
+[ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="4_camera"]
+[ext_resource type="PackedScene" uid="uid://bitsfjifg4oy3" path="res://scenes/门.tscn" id="5_b7esm"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_aklan"]
 texture = ExtResource("1_hxcsg")
@@ -343,6 +345,7 @@ sources/0 = SubResource("TileSetAtlasSource_kggxr")
 sources/1 = SubResource("TileSetAtlasSource_8hu0i")
 
 [node name="Node2D" type="Node2D" unique_id=963527363]
+script = ExtResource("4_camera")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1162079337]
 tile_map_data = PackedByteArray("AAAKAP//AQACAAoAAAAJAP//AQABAAoAAAAIAP//AQABAAoAAAAHAP//AQABAAoAAAAGAP//AQABAAoAAAAFAP//AQABAAoAAAAEAP//AQABAAoAAAADAP//AQABAAoAAAACAP//AQABAAoAAAABAP//AQABAAoAAAAAAP//AQABAAoAAAD/////AQAAAAoAAAD//wAAAQAAAAsAAAD//wEAAQAAAAsAAAD//wIAAQAAAAsAAAD//wMAAQAAAAsAAAD//wQAAQAAAAsAAAD//wUAAQAAAAsAAAD//wYAAQAAAAsAAAD//wcAAQAAAAsAAAD//wgAAQAAAAsAAAD//wkAAQAAAAwAAAAAAAkAAQABAAwAAAABAAkAAQABAAwAAAACAAkAAQABAAwAAAADAAkAAQABAAwAAAAEAAkAAQABAAwAAAAFAAkAAQABAAwAAAAGAAkAAQABAAwAAAAHAAkAAQABAAwAAAAIAAkAAQABAAwAAAAJAAkAAQABAAwAAAAKAAkAAQACAAwAAAAKAAgAAQACAA4AAAAKAAcAAQACAA4AAAAKAAYAAQACAA4AAAAKAAUAAQACAA4AAAAKAAQAAQACAA4AAAAKAAMAAQACAA4AAAAKAAIAAQACAA4AAAAKAAEAAQACAA4AAAAKAAAAAQACAA4AAAA=")
@@ -359,3 +362,11 @@ tile_set = SubResource("TileSet_jq7jo")
 [node name="CharacterBody2D" parent="." unique_id=2137992065 instance=ExtResource("3_8hu0i")]
 position = Vector2(144, 83)
 scale = Vector2(0.8, 0.8)
+
+[node name="Door" parent="." unique_id=266272542 instance=ExtResource("5_b7esm")]
+visible = false
+position = Vector2(144, 57)
+spawn_marker_name = "Spawn_FromBedRoom"
+
+[node name="Spawn_Living2Bed" type="Marker2D" parent="." unique_id=1410308589]
+position = Vector2(144, 96)

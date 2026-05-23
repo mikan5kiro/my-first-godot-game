@@ -188,12 +188,15 @@ animations = [{
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4ni07"]
 
-[node name="CharacterBody2D" type="CharacterBody2D" unique_id=2137992065]
+[node name="CharacterBody2D" type="CharacterBody2D" unique_id=2137992065 groups=["player"]]
 script = ExtResource("1_g2els")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=855831895]
 sprite_frames = SubResource("SpriteFrames_a38lo")
 animation = &"down"
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(3, 3)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=352446136]
 visible = false

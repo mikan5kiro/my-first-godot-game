@@ -5,6 +5,11 @@ extends CharacterBody2D
 
 var last_direction: String = "down"
 
+func set_facing_direction(direction: String) -> void:
+	last_direction = direction
+	if animated_sprite != null:
+		animated_sprite.play(direction)
+
 func _physics_process(delta: float) -> void:
 	var input_dir = Input.get_vector("left", "right", "up", "down")
 	velocity = input_dir * move_speed
