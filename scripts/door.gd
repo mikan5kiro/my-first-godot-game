@@ -3,6 +3,7 @@ extends Node2D
 @export var target_scene: String = "res://scenes/客厅.tscn"
 @export var spawn_marker_name: String = "Spawn_FromWorkshop"
 @export_enum("up", "down", "left", "right") var required_direction: String = "up"
+@export var transition_delay_after_sfx: float = 0.12
 
 @onready var area: Area2D = $Area2D
 
@@ -19,6 +20,9 @@ func _process(_delta: float) -> void:
 		return
 	if _player.last_direction != required_direction:
 		return
+	SceneTransition.play_door_sfx()
+	if transition_delay_after_sfx > 0.0:
+		await get_tree().create_timer(transition_delay_after_sfx).timeout
 	SceneTransition.transition_to(target_scene, spawn_marker_name, _player.last_direction)
 
 

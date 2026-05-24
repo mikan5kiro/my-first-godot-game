@@ -1,11 +1,13 @@
 extends CanvasLayer
 
 @export var fade_duration: float = 0.35
+@export var door_sfx_scene: PackedScene = preload("res://scenes/开关门声音.tscn")
 
 var _overlay: ColorRect
 var _transitioning := false
 var _pending_spawn_marker := ""
 var _pending_facing_direction := ""
+var _door_sfx_player: Node = null
 
 
 func _ready() -> void:
@@ -25,6 +27,15 @@ func _ready() -> void:
 	_overlay.set_offsets_preset(Control.PRESET_FULL_RECT)
 	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	container.add_child(_overlay)
+
+	_setup_door_sfx_player()
+
+
+func play_door_sfx() -> void:
+	if _door_sfx_player == null:
+		return
+	if _door_sfx_player.has_method("play"):
+		_door_sfx_player.call("play")
 
 
 func transition_to(scene_path: String, spawn_marker_name: String = "", facing_direction: String = "") -> void:
@@ -113,3 +124,16 @@ func _fade_from_black() -> void:
 	var tween := create_tween()
 	tween.tween_property(_overlay, "color:a", 0.0, fade_duration)
 	await tween.finished
+
+
+func _setup_door_sfx_player() -> void:
+	if door_sfx_scene == null:
+		push_warning("SceneTransition: 开关门音效场景未设置")
+		return
+
+	_door_sfx_player = door_sfx_scene.instantiate()
+	if _door_sfx_player == null:
+		push_warning("SceneTransition: 开关门音效场景实例化失败")
+		return
+
+	add_child(_door_sfx_player)
