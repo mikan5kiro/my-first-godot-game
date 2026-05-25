@@ -9,7 +9,7 @@ enum Tab {
 @export var panel_toggle_action: StringName = &"ui_cancel"
 @export var player_display_name: String = "玩家"
 @export_range(0.4, 4.0, 0.05) var menu_breath_cycle_duration := 1.2
-@export var main_menu_width := 640.0
+@export var main_menu_width := RpgUiStyle.BOTTOM_PANEL_WIDTH
 @export var item_menu_columns := 2
 @export var item_slot_min_width := 148.0
 
@@ -107,13 +107,12 @@ func _apply_panel_styles() -> void:
 func _apply_main_menu_layout() -> void:
 	if main_menu_root == null:
 		return
+	main_menu_root.set_anchors_preset(Control.PRESET_CENTER_BOTTOM)
 	var half_width: float = main_menu_width * 0.5
-	main_menu_root.set_anchor(SIDE_LEFT, 0.5)
-	main_menu_root.set_anchor(SIDE_RIGHT, 0.5)
-	main_menu_root.set_anchor(SIDE_TOP, 1.0)
-	main_menu_root.set_anchor(SIDE_BOTTOM, 1.0)
 	main_menu_root.offset_left = -half_width
+	main_menu_root.offset_top = -RpgUiStyle.BOTTOM_PANEL_HEIGHT
 	main_menu_root.offset_right = half_width
+	main_menu_root.offset_bottom = -RpgUiStyle.BOTTOM_PANEL_BOTTOM_OFFSET
 
 
 func _apply_avatar_size() -> void:
@@ -386,25 +385,27 @@ func _refresh_item_menu() -> void:
 		child.free()
 	_item_rows.clear()
 
-	var previous_selection: String = ""
+	var previous_selection_id: String = ""
 	if _selected_item_index >= 0 and _selected_item_index < GameState.inventory_items.size():
-		previous_selection = GameState.inventory_items[_selected_item_index]
+		var previous_item: ItemData = GameState.inventory_items[_selected_item_index]
+		if previous_item != null:
+			previous_selection_id = previous_item.id
 
-	for item_name in GameState.inventory_items:
-		var row: PanelContainer = _create_item_row(String(item_name))
+	for item in GameState.inventory_items:
+		var row: PanelContainer = _create_item_row(item)
 		item_list.add_child(row)
 		_item_rows.append(row)
 
 	_selected_item_index = -1
-	if not previous_selection.is_empty():
-		_selected_item_index = GameState.inventory_items.find(previous_selection)
+	if not previous_selection_id.is_empty():
+		_selected_item_index = GameState.find_inventory_index_by_id(previous_selection_id)
 	if _selected_item_index < 0 and not GameState.inventory_items.is_empty():
 		_selected_item_index = 0
 
 	_refresh_item_selection_visuals()
 
 
-func _create_item_row(item_name: String) -> PanelContainer:
+func _create_item_row(item: ItemData) -> PanelContainer:
 	var row := PanelContainer.new()
 	row.custom_minimum_size = Vector2(item_slot_min_width, 28.0)
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -412,6 +413,7 @@ func _create_item_row(item_name: String) -> PanelContainer:
 	row.gui_input.connect(_on_item_row_gui_input.bind(row))
 	row.set_meta("_normal_style", RpgUiStyle.make_item_row_normal_style())
 	row.set_meta("_selected_style", RpgUiStyle.make_item_row_selected_style())
+	row.set_meta("_item_data", item)
 	_apply_item_row_style(row, row.get_meta("_normal_style") as StyleBoxFlat)
 
 	var margin := MarginContainer.new()
@@ -425,7 +427,7 @@ func _create_item_row(item_name: String) -> PanelContainer:
 	margin.add_child(body)
 
 	var name_label := Label.new()
-	name_label.text = item_name
+	name_label.text = item.get_display_name() if item != null else "未知物品"
 	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)
 	body.add_child(name_label)
@@ -510,8 +512,8 @@ func _update_selected_item_description() -> void:
 	if _selected_item_index >= GameState.inventory_items.size():
 		inspect_label.text = ""
 		return
-	var item_name: String = GameState.inventory_items[_selected_item_index]
-	inspect_label.text = GameState.get_item_inspect_message(item_name)
+	var item: ItemData = GameState.inventory_items[_selected_item_index]
+	inspect_label.text = item.get_inspect_text() if item != null else ""
 
 
 func _inspect_selected_item() -> void:

@@ -1,9 +1,10 @@
-extends Area2D
+extends Interactable
 class_name InvestigateItem
 
 @export_multiline var message: String = "这里有一些值得调查的内容。"
 @export_file("*.txt") var message_file_path: String = ""
-@export_enum("any", "up", "down", "left", "right") var required_facing: String = "any"
+@export var effects: Array[StatEffect] = []
+
 
 func _ready() -> void:
 	if not message_file_path.is_empty():
@@ -13,13 +14,11 @@ func _ready() -> void:
 func interact(interactor: Node) -> String:
 	if not can_interact(interactor):
 		return ""
+	_apply_effects()
 	return message
 
-func can_interact(interactor: Node) -> bool:
-	if required_facing != "any":
-		if interactor == null or not interactor.has_method("get_facing_name"):
-			return false
-		var facing_name := String(interactor.call("get_facing_name"))
-		if facing_name != required_facing:
-			return false
-	return true
+
+func _apply_effects() -> void:
+	if GameState == null or effects.is_empty():
+		return
+	GameState.apply_effects(effects)

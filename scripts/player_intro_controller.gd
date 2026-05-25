@@ -14,21 +14,27 @@ var _fade_layer: CanvasLayer
 var _fade_rect: ColorRect
 var _hold_position_marker: String = ""
 var _stand_up_sfx_player: AudioStreamPlayer
-static var _intro_played_once: bool = false
 
 @onready var _player: CharacterBody2D = get_parent() as CharacterBody2D
 @onready var _animated_sprite: AnimatedSprite2D = get_node_or_null("../AnimatedSprite2D")
-@onready var _interact_area: Area2D = get_node_or_null("../Area2D")
+@onready var _interact_area: PlayerInteractor = get_node_or_null("../Area2D") as PlayerInteractor
+
+func is_intro_pending() -> bool:
+	return GameState != null and not GameState.has_flag(GameState.FLAG_BEDROOM_INTRO)
+
 
 func start_intro() -> void:
-	if _intro_played_once:
+	if not is_intro_pending():
+		_set_player_locked(false)
 		return
 	call_deferred("_run_intro")
 
 func _run_intro() -> void:
 	if _animated_sprite == null:
+		_set_player_locked(false)
 		return
-	_intro_played_once = true
+	if GameState != null:
+		GameState.set_flag(GameState.FLAG_BEDROOM_INTRO)
 	_set_player_locked(true)
 	await get_tree().process_frame
 	_hold_position_at_marker(on_bed_spawn_marker)
@@ -57,8 +63,7 @@ func _run_intro() -> void:
 func _play_bed_monologue(lines: PackedStringArray) -> void:
 	if lines.is_empty() or _interact_area == null:
 		return
-	if _interact_area.has_method("play_monologue_lines"):
-		await _interact_area.call("play_monologue_lines", lines)
+	await _interact_area.play_monologue_lines(lines)
 
 func _play_black_phase_with_sfx() -> void:
 	# 黑屏开始即播放音频，音频播完后立即继续淡出。
@@ -118,21 +123,11 @@ func _release_position_hold() -> void:
 func _snap_player_to_marker(marker_name: String) -> void:
 	if _player == null or marker_name.is_empty():
 		return
-	var marker := _find_marker(marker_name)
-	if marker == null:
-		push_warning("PlayerIntroController: 找不到 Marker '%s'" % marker_name)
-		return
-	_player.global_position = marker.global_position
-	_player.velocity = Vector2.ZERO
-
-func _find_marker(marker_name: String) -> Marker2D:
-	var scene_root := _player.get_parent() if _player != null else null
+	var scene_root := _player.get_parent()
 	if scene_root == null:
-		return null
-	var marker := scene_root.get_node_or_null(marker_name) as Marker2D
-	if marker == null:
-		marker = scene_root.find_child(marker_name, true, false) as Marker2D
-	return marker
+		return
+	if not SpawnUtils.snap_node_to_marker(_player, scene_root, marker_name):
+		push_warning("PlayerIntroController: 找不到 Marker '%s'" % marker_name)
 
 func _apply_bedside_facing() -> void:
 	if _player != null and _player.has_method("set_facing_direction"):

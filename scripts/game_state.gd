@@ -38,9 +38,8 @@ const PERIOD_DISPLAY_NAMES := {
 	TimePeriod.NIGHT: "夜晚",
 }
 
-const ITEM_INSPECT_MESSAGES := {
-	"手机": "手机。",
-}
+const FLAG_BEDROOM_INTRO := "bedroom_intro_played"
+const DEFAULT_PHONE_ITEM: ItemData = preload("res://resources/items/phone.tres")
 
 @export_group("Initial Values")
 @export_range(0, 100, 1) var initial_hunger: int = 80
@@ -48,7 +47,7 @@ const ITEM_INSPECT_MESSAGES := {
 @export var initial_money: int = 0
 @export var initial_day: int = 1
 @export var initial_period: TimePeriod = TimePeriod.MORNING
-@export var initial_inventory_items: PackedStringArray = PackedStringArray(["手机"])
+@export var initial_inventory: Array[ItemData] = [DEFAULT_PHONE_ITEM]
 
 @export_group("Limits")
 @export_range(0, 100, 1) var min_hunger: int = 0
@@ -66,7 +65,7 @@ var money: int = 0
 var day: int = 1
 var period: TimePeriod = TimePeriod.MORNING
 var flags: Dictionary = {}
-var inventory_items: PackedStringArray = PackedStringArray()
+var inventory_items: Array[ItemData] = []
 var active_tasks: PackedStringArray = PackedStringArray()
 var is_locked: bool = false
 
@@ -83,10 +82,6 @@ static func period_to_display_name(value: TimePeriod) -> String:
 	return PERIOD_DISPLAY_NAMES.get(value, "早晨")
 
 
-static func get_item_inspect_message(item_name: String) -> String:
-	return ITEM_INSPECT_MESSAGES.get(item_name, item_name)
-
-
 func reset_to_defaults() -> void:
 	hunger = initial_hunger
 	sanity = initial_sanity
@@ -94,7 +89,7 @@ func reset_to_defaults() -> void:
 	day = initial_day
 	period = initial_period
 	flags = {}
-	inventory_items = initial_inventory_items.duplicate()
+	inventory_items = _duplicate_inventory(initial_inventory)
 	active_tasks = PackedStringArray()
 	is_locked = false
 	stats_changed.emit()
@@ -190,20 +185,20 @@ func has_flag(flag_name: String) -> bool:
 	return flags.get(flag_name, false)
 
 
-func set_inventory_items(items: PackedStringArray) -> void:
-	inventory_items = items.duplicate()
+func set_inventory_items(items: Array[ItemData]) -> void:
+	inventory_items = _duplicate_inventory(items)
 	inventory_changed.emit()
 
 
-func add_inventory_item(item_name: String) -> void:
-	if item_name.is_empty():
+func add_inventory_item(item: ItemData) -> void:
+	if item == null:
 		return
-	inventory_items.append(item_name)
+	inventory_items.append(item)
 	inventory_changed.emit()
 
 
-func remove_inventory_item(item_name: String) -> bool:
-	var index: int = inventory_items.find(item_name)
+func remove_inventory_item(item: ItemData) -> bool:
+	var index := find_inventory_index(item)
 	if index < 0:
 		return false
 	inventory_items.remove_at(index)
@@ -211,11 +206,51 @@ func remove_inventory_item(item_name: String) -> bool:
 	return true
 
 
+func remove_inventory_item_by_id(item_id: String) -> bool:
+	var index := find_inventory_index_by_id(item_id)
+	if index < 0:
+		return false
+	inventory_items.remove_at(index)
+	inventory_changed.emit()
+	return true
+
+
+func find_inventory_index(item: ItemData) -> int:
+	if item == null:
+		return -1
+	for index in inventory_items.size():
+		if _items_match(inventory_items[index], item):
+			return index
+	return -1
+
+
+func find_inventory_index_by_id(item_id: String) -> int:
+	if item_id.is_empty():
+		return -1
+	for index in inventory_items.size():
+		var current := inventory_items[index]
+		if current != null and current.id == item_id:
+			return index
+	return -1
+
+
 func clear_inventory() -> void:
 	if inventory_items.is_empty():
 		return
-	inventory_items = PackedStringArray()
+	inventory_items = []
 	inventory_changed.emit()
+
+
+func _duplicate_inventory(items: Array[ItemData]) -> Array[ItemData]:
+	return items.duplicate()
+
+
+func _items_match(a: ItemData, b: ItemData) -> bool:
+	if a == null or b == null:
+		return false
+	if not a.id.is_empty() and not b.id.is_empty():
+		return a.id == b.id
+	return a == b
 
 
 func set_tasks(tasks: PackedStringArray) -> void:

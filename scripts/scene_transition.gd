@@ -69,25 +69,19 @@ func _apply_spawn(spawn_marker_name: String, facing_direction: String = "") -> v
 		push_warning("SceneTransition: 当前场景为空")
 		return
 
-	var marker := scene_root.get_node_or_null(spawn_marker_name) as Marker2D
-	if marker == null:
-		marker = scene_root.find_child(spawn_marker_name, true, false) as Marker2D
-	if marker == null:
-		push_warning("SceneTransition: 找不到 Marker '%s'" % spawn_marker_name)
-		return
-
 	var player := _find_player(scene_root)
 	if player == null:
 		push_warning("SceneTransition: 找不到玩家")
 		return
 
-	player.global_position = marker.global_position
-	player.velocity = Vector2.ZERO
+	if not SpawnUtils.snap_node_to_marker(player, scene_root, spawn_marker_name):
+		push_warning("SceneTransition: 找不到 Marker '%s'" % spawn_marker_name)
+		return
 	if not facing_direction.is_empty() and player.has_method("set_facing_direction"):
 		player.set_facing_direction(facing_direction)
 
-	if scene_root.has_method("apply_limits"):
-		scene_root.apply_limits()
+	if scene_root.has_method("apply_camera_limits"):
+		scene_root.apply_camera_limits()
 
 
 func _get_scene_root() -> Node:

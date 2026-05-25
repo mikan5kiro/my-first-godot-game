@@ -164,7 +164,7 @@ size = Vector2(20, 68)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_c55kc"]
 size = Vector2(51, 36.5)
 
-[node name="Node2D2" type="Node2D" unique_id=1179704806]
+[node name="LivingRoom" type="Node2D" unique_id=1179704806]
 script = ExtResource("5_camera")
 
 [node name="TileMapLayer3" type="TileMapLayer" parent="." unique_id=349579482]
@@ -228,7 +228,7 @@ visible = false
 position = Vector2(80, 133)
 target_scene = "res://scenes/卧室.tscn"
 spawn_marker_name = "Spawn_Living2Bed"
-required_facing = 1
+required_facing = "down"
 
 [node name="DoorBath" parent="." unique_id=221428767 instance=ExtResource("4_pvw6c")]
 visible = false
@@ -261,7 +261,7 @@ shape = SubResource("RectangleShape2D_8c7us")
 
 [node name="GateArea" type="Area2D" parent="." unique_id=477305465]
 script = ExtResource("6_iy33j")
-message = "现在的我暂时没有可去的地方。"
+message = "现在暂时没有要去的地方。"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GateArea" unique_id=101758406]
 position = Vector2(311.5, -109)

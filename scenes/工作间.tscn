@@ -54,7 +54,7 @@ scale = Vector2(0.8, 0.8)
 [node name="Door" parent="." unique_id=266272542 instance=ExtResource("4_78ydu")]
 visible = false
 position = Vector2(176, 87)
-required_facing = 1
+required_facing = "down"
 
 [node name="Spawn_Living2Work" type="Marker2D" parent="." unique_id=1737723807]
 position = Vector2(175, 64)

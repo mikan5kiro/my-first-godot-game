@@ -3,7 +3,7 @@ extends CharacterBody2D
 @export var move_speed: float = 100.0
 @export var play_intro_cutscene: bool = false
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D  # 使用 AnimatedSprite2D
-@onready var interact_area: Area2D = $Area2D
+@onready var interact_area: PlayerInteractor = $Area2D
 @onready var intro_controller: Node = get_node_or_null("IntroController")
 
 var facing: Facing.Dir = Facing.Dir.DOWN
@@ -12,6 +12,9 @@ var _external_controls_locked: bool = false
 func _ready() -> void:
 	if not play_intro_cutscene:
 		return
+	if intro_controller != null and intro_controller.has_method("is_intro_pending"):
+		if not intro_controller.is_intro_pending():
+			return
 	# 开场协程是 deferred 的；在此之前 physics 会把 awake 切成 idle。
 	set_controls_locked(true)
 	_prepare_awake_pose()
@@ -58,14 +61,12 @@ func _physics_process(delta: float) -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not event.is_action_pressed("interact"):
 		return
-	if not interact_area.has_method("try_interact"):
-		return
 	if _external_controls_locked:
-		if interact_area.call("is_text_visible"):
-			interact_area.call("try_interact", self)
+		if interact_area.is_text_visible():
+			interact_area.try_interact(self)
 		get_viewport().set_input_as_handled()
 		return
-	interact_area.call("try_interact", self)
+	interact_area.try_interact(self)
 
 func update_animation(input_dir: Vector2) -> void:
 	if animated_sprite == null:
@@ -91,9 +92,7 @@ func update_animation(input_dir: Vector2) -> void:
 func _is_controls_locked() -> bool:
 	if _external_controls_locked:
 		return true
-	if interact_area != null and interact_area.has_method("is_text_visible"):
-		return interact_area.call("is_text_visible")
-	return false
+	return interact_area.is_text_visible()
 
 func set_controls_locked(locked: bool) -> void:
 	_external_controls_locked = locked

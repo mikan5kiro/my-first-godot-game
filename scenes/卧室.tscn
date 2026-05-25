@@ -31,7 +31,7 @@ tile_map_data = PackedByteArray("AAAIAAIAAAABAAEAAAAIAAMAAAABAAIAAAAIAAQAAAABAAM
 tile_set = ExtResource("2_aklan")
 
 [node name="CharacterBody2D" parent="." unique_id=2137992065 instance=ExtResource("3_8hu0i")]
-position = Vector2(33, 95)
+position = Vector2(108.99999, 115)
 scale = Vector2(0.8, 0.8)
 play_intro_cutscene = true
 
@@ -52,6 +52,7 @@ position = Vector2(57, 95)
 [node name="Area2D" type="Area2D" parent="." unique_id=240888828]
 script = ExtResource("5_kggxr")
 message = "柜子里放着一些床上用品。"
+required_facing = "up"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=559944024]
 position = Vector2(88, 85.5)
@@ -60,9 +61,10 @@ shape = SubResource("RectangleShape2D_jq7jo")
 [node name="Area2D2" type="Area2D" parent="." unique_id=1066381967]
 script = ExtResource("5_kggxr")
 message = "一张床。"
+required_facing = "left"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D2" unique_id=559776502]
-position = Vector2(24, 98.5)
+position = Vector2(24, 96)
 shape = SubResource("RectangleShape2D_b7esm")
 
 [node name="Area2D3" type="Area2D" parent="." unique_id=1355152532]
