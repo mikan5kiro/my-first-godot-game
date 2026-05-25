@@ -1,0 +1,332 @@
+[gd_scene format=3 uid="uid://divaiurb45k2a"]
+
+[ext_resource type="Script" uid="uid://bq7k2playerpanel" path="res://scripts/player_panel.gd" id="1_panel"]
+
+[node name="PlayerPanel" type="CanvasLayer"]
+layer = 150
+script = ExtResource("1_panel")
+
+[node name="Blocker" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.28)
+
+[node name="MainMenuRoot" type="HBoxContainer" parent="."]
+z_index = 0
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -148.0
+offset_right = 320.0
+offset_bottom = -12.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_constants/separation = 0
+
+[node name="MenuPanel" type="PanelContainer" parent="MainMenuRoot"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.0
+
+[node name="Margin" type="MarginContainer" parent="MainMenuRoot/MenuPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="MenuList" type="VBoxContainer" parent="MainMenuRoot/MenuPanel/Margin"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+theme_override_constants/separation = 2
+
+[node name="ItemsRow" type="PanelContainer" parent="MainMenuRoot/MenuPanel/Margin/MenuList"]
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MainMenuRoot/MenuPanel/Margin/MenuList/ItemsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 18
+text = "物品"
+horizontal_alignment = 1
+
+[node name="ReadRow" type="PanelContainer" parent="MainMenuRoot/MenuPanel/Margin/MenuList"]
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MainMenuRoot/MenuPanel/Margin/MenuList/ReadRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 18
+text = "读取"
+horizontal_alignment = 1
+
+[node name="SplitLine" type="ColorRect" parent="MainMenuRoot"]
+custom_minimum_size = Vector2(1, 0)
+layout_mode = 2
+color = Color(0.92, 0.92, 0.94, 0.55)
+
+[node name="StatusPanel" type="PanelContainer" parent="MainMenuRoot"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 4.0
+
+[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="StatusContent" type="Control" parent="MainMenuRoot/StatusPanel/Margin"]
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="StatusBody" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 10
+
+[node name="AvatarSlot" type="AspectRatioContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody"]
+layout_mode = 2
+size_flags_vertical = 4
+ratio = 1.0
+stretch_mode = 2
+
+[node name="AvatarFrame" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="AvatarContent" type="Control" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="AvatarImage" type="TextureRect" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame/AvatarContent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="AvatarPlaceholder" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame/AvatarContent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.72, 0.76, 0.84, 0.7)
+theme_override_font_sizes/font_size = 14
+text = "头像"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="InfoColumn" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 4
+
+[node name="PlayerName" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_font_sizes/font_size = 18
+text = "玩家"
+
+[node name="StatGrid" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 2
+
+[node name="TimeRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow"]
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
+theme_override_font_sizes/font_size = 16
+text = "时间"
+
+[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 16
+text = "第 1 天 / 早晨"
+
+[node name="HungerRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/HungerRow"]
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
+theme_override_font_sizes/font_size = 16
+text = "饱食度"
+
+[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/HungerRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 16
+text = "80"
+
+[node name="SanityRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/SanityRow"]
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
+theme_override_font_sizes/font_size = 16
+text = "理智"
+
+[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/SanityRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 16
+text = "100"
+
+[node name="MoneyRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/MoneyRow"]
+custom_minimum_size = Vector2(56, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
+theme_override_font_sizes/font_size = 16
+text = "金钱"
+
+[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/MoneyRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 16
+text = "0"
+
+[node name="ReadMenuRoot" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 3
+
+[node name="DescriptionPanel" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/DescriptionPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="ReadDetailLabel" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/DescriptionPanel/Margin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 15
+text = "读取功能预留"
+autowrap_mode = 3
+
+[node name="ListPanel" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot"]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/ListPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="ReadList" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/ListPanel/Margin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="ItemMenuRoot" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 3
+
+[node name="DescriptionPanel" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+
+[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/DescriptionPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="InspectLabel" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/DescriptionPanel/Margin"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 15
+text = " "
+autowrap_mode = 3
+
+[node name="ListPanel" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot"]
+custom_minimum_size = Vector2(0, 56)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/ListPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="ItemList" type="GridContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/ListPanel/Margin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 4
+columns = 2

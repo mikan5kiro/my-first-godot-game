@@ -9,8 +9,6 @@ extends Control
 @export_range(0.0, 3.0, 0.05) var fade_in_duration := 0.4
 @export_range(0.4, 4.0, 0.05) var breath_cycle_duration := 1.2
 
-const BREATH_BORDER_MIN := Color(0.58, 0.62, 0.74, 0.45)
-const BREATH_BORDER_MAX := Color(1, 1, 1, 1)
 const PRESSED_BORDER := Color(0.38, 0.4, 0.48, 1)
 
 var _menu_buttons: Array[Button] = []
@@ -101,13 +99,13 @@ func _start_button_breath(button: Button, half_cycle: float) -> void:
 	var template := button.get_meta("_selected_style") as StyleBoxFlat
 	_breath_style = template.duplicate()
 	_breath_button = button
-	_breath_style.border_color = BREATH_BORDER_MIN
+	_breath_style.border_color = RpgUiStyle.BREATH_BORDER_MIN
 	_apply_button_style(button, _breath_style)
 
 	_breath_tween = create_tween().set_loops()
 	_breath_tween.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
-	_breath_tween.tween_property(_breath_style, "border_color", BREATH_BORDER_MAX, half_cycle)
-	_breath_tween.tween_property(_breath_style, "border_color", BREATH_BORDER_MIN, half_cycle)
+	_breath_tween.tween_property(_breath_style, "border_color", RpgUiStyle.BREATH_BORDER_MAX, half_cycle)
+	_breath_tween.tween_property(_breath_style, "border_color", RpgUiStyle.BREATH_BORDER_MIN, half_cycle)
 
 
 func _stop_button_breath() -> void:
@@ -138,7 +136,7 @@ func _confirm_selection() -> void:
 
 	_tween_border_color(style, PRESSED_BORDER, 0.06)
 	await get_tree().create_timer(0.06).timeout
-	_tween_border_color(style, BREATH_BORDER_MIN, 0.08)
+	_tween_border_color(style, RpgUiStyle.BREATH_BORDER_MIN, 0.08)
 	await get_tree().create_timer(0.05).timeout
 	button.emit_signal("pressed")
 	if is_inside_tree() and not _is_starting_game:
@@ -186,6 +184,7 @@ func _on_start_pressed() -> void:
 		_is_starting_game = false
 		push_warning("TitleScreen: first_scene_path is empty")
 		return
+	GameState.reset_to_defaults()
 	SceneTransition.transition_to(first_scene_path)
 
 
