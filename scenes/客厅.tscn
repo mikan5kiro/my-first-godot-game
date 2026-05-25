@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://c3lu3pg63y4ue" path="res://scenes/player.tscn" id="3_0uxcb"]
 [ext_resource type="PackedScene" uid="uid://bitsfjifg4oy3" path="res://scenes/门.tscn" id="4_pvw6c"]
 [ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="5_camera"]
+[ext_resource type="Script" uid="uid://bvuy1puvytkd4" path="res://scripts/investigate_item.gd" id="6_iy33j"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iy33j"]
 texture = ExtResource("1_5bmjw")
@@ -152,6 +153,17 @@ sources/0 = SubResource("TileSetAtlasSource_iy33j")
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_6byh1"]
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8c7us"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_iy33j"]
+size = Vector2(35, 58)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_srddp"]
+size = Vector2(20, 68)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_c55kc"]
+size = Vector2(51, 36.5)
+
 [node name="Node2D2" type="Node2D" unique_id=1179704806]
 script = ExtResource("5_camera")
 
@@ -216,7 +228,7 @@ visible = false
 position = Vector2(80, 133)
 target_scene = "res://scenes/卧室.tscn"
 spawn_marker_name = "Spawn_Living2Bed"
-required_direction = "down"
+required_facing = 1
 
 [node name="DoorBath" parent="." unique_id=221428767 instance=ExtResource("4_pvw6c")]
 visible = false
@@ -238,3 +250,35 @@ position = Vector2(144, 86)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1258505895]
 position = Vector2(248, 225)
 shape = SubResource("WorldBoundaryShape2D_6byh1")
+
+[node name="RoomArea" type="Area2D" parent="." unique_id=632346656]
+script = ExtResource("6_iy33j")
+message = "暂时没必要进入这个房间。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="RoomArea" unique_id=1168766563]
+position = Vector2(145, 133)
+shape = SubResource("RectangleShape2D_8c7us")
+
+[node name="GateArea" type="Area2D" parent="." unique_id=477305465]
+script = ExtResource("6_iy33j")
+message = "现在的我暂时没有可去的地方。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="GateArea" unique_id=101758406]
+position = Vector2(311.5, -109)
+shape = SubResource("RectangleShape2D_iy33j")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=1845037733]
+script = ExtResource("6_iy33j")
+message = "电视。现在不太想看。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1606397395]
+position = Vector2(348, 144)
+shape = SubResource("RectangleShape2D_srddp")
+
+[node name="Area2D2" type="Area2D" parent="." unique_id=1630587038]
+script = ExtResource("6_iy33j")
+message = "餐桌。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D2" unique_id=53590138]
+position = Vector2(231, 47.25)
+shape = SubResource("RectangleShape2D_c55kc")

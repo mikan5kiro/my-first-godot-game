@@ -27,7 +27,7 @@ scale = Vector2(0.8, 0.8)
 visible = false
 position = Vector2(128, 58)
 spawn_marker_name = "Spawn_FromBathRoom"
-required_direction = "down"
+required_facing = 1
 
 [node name="Spawn_Living2Bath" type="Marker2D" parent="." unique_id=1879492916]
 position = Vector2(128, 45)

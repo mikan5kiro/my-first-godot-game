@@ -1,6 +1,8 @@
-[gd_scene load_steps=2 format=3 uid="uid://bqx8scene_transition"]
+[gd_scene format=3 uid="uid://dtq71l86uaijl"]
 
-[ext_resource type="Script" path="res://scripts/scene_transition.gd" id="1_transition"]
+[ext_resource type="Script" uid="uid://b355pxdaw0mn0" path="res://scripts/scene_transition.gd" id="1_transition"]
+[ext_resource type="AudioStream" uid="uid://b2ic3bxxsqr3h" path="res://audios/カーソル移動12.mp3" id="2_rujfs"]
 
-[node name="SceneTransition" type="CanvasLayer"]
+[node name="SceneTransition" type="CanvasLayer" unique_id=1044484811]
 script = ExtResource("1_transition")
+intro_page_turn_sfx = ExtResource("2_rujfs")

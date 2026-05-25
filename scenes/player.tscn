@@ -2,6 +2,24 @@
 
 [ext_resource type="Texture2D" uid="uid://c7xgeahwubd4m" path="res://sprites/mysprite1.png" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://bmhcxnflwvq4v" path="res://scenes/player.gd" id="1_g2els"]
+[ext_resource type="Script" uid="uid://b4yvimqjqogk5" path="res://scripts/player_interactor.gd" id="2_interactor"]
+[ext_resource type="Script" uid="uid://cunuv15q87lwn" path="res://scripts/player_intro_controller.gd" id="3_intro"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a38lo"]
+atlas = ExtResource("1_3vyb7")
+region = Rect2(0, 192, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l71n6"]
+atlas = ExtResource("1_3vyb7")
+region = Rect2(48, 192, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ke2ow"]
+atlas = ExtResource("1_3vyb7")
+region = Rect2(0, 192, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ni07"]
+atlas = ExtResource("1_3vyb7")
+region = Rect2(48, 192, 48, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g2els"]
 atlas = ExtResource("1_3vyb7")
@@ -85,6 +103,23 @@ region = Rect2(48, 144, 48, 48)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_a38lo"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a38lo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l71n6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ke2ow")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ni07")
+}],
+"loop": true,
+"name": &"awake",
+"speed": 3.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_g2els")
@@ -190,16 +225,32 @@ animations = [{
 radius = 8.0
 height = 18.0
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qhqgy"]
+size = Vector2(35, 46)
+
 [node name="CharacterBody2D" type="CharacterBody2D" unique_id=2137992065 groups=["player"]]
 script = ExtResource("1_g2els")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=855831895]
 sprite_frames = SubResource("SpriteFrames_a38lo")
-animation = &"down"
+animation = &"awake"
+frame_progress = 0.29089528
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1712781325]
 zoom = Vector2(3, 3)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=352446136]
+visible = false
 position = Vector2(0, 15)
 shape = SubResource("CapsuleShape2D_4ni07")
+
+[node name="Area2D" type="Area2D" parent="." unique_id=922043287]
+script = ExtResource("2_interactor")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1164886451]
+visible = false
+position = Vector2(-0.5, 1)
+shape = SubResource("RectangleShape2D_qhqgy")
+
+[node name="IntroController" type="Node" parent="." unique_id=1375334450]
+script = ExtResource("3_intro")

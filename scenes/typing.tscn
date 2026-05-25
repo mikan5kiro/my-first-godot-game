@@ -1,0 +1,6 @@
+[gd_scene format=3 uid="uid://csexy61a0b52o"]
+
+[ext_resource type="AudioStream" uid="uid://cin77w5f5t58r" path="res://audios/キーボードの早打ち1.mp3" id="1_ls7f4"]
+
+[node name="Typing" type="AudioStreamPlayer2D" unique_id=1093928072]
+stream = ExtResource("1_ls7f4")

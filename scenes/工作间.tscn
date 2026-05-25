@@ -4,8 +4,21 @@
 [ext_resource type="PackedScene" uid="uid://c3lu3pg63y4ue" path="res://scenes/player.tscn" id="3_3lhy0"]
 [ext_resource type="PackedScene" uid="uid://bitsfjifg4oy3" path="res://scenes/门.tscn" id="4_78ydu"]
 [ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="5_camera"]
+[ext_resource type="Script" uid="uid://bvuy1puvytkd4" path="res://scripts/investigate_item.gd" id="6_item"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_78ydu"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_78ydu"]
+size = Vector2(60, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w653m"]
+size = Vector2(32, 24)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_4kvkx"]
+size = Vector2(22, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dvlsi"]
+size = Vector2(46, 20)
 
 [node name="Node2D" type="Node2D" unique_id=390936799]
 script = ExtResource("5_camera")
@@ -35,13 +48,13 @@ tile_map_data = PackedByteArray("AAAFAAMAAAAHAA4AAAAGAAMAAAAIAA4AAAAHAAMAAAAJAA4
 tile_set = ExtResource("2_78ydu")
 
 [node name="CharacterBody2D" parent="." unique_id=2137992065 instance=ExtResource("3_3lhy0")]
-position = Vector2(64, 7.999999)
+position = Vector2(64, 8.000001)
 scale = Vector2(0.8, 0.8)
 
 [node name="Door" parent="." unique_id=266272542 instance=ExtResource("4_78ydu")]
 visible = false
 position = Vector2(176, 87)
-required_direction = "down"
+required_facing = 1
 
 [node name="Spawn_Living2Work" type="Marker2D" parent="." unique_id=1737723807]
 position = Vector2(175, 64)
@@ -51,3 +64,36 @@ position = Vector2(175, 64)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=1239792362]
 position = Vector2(165, 81)
 shape = SubResource("WorldBoundaryShape2D_78ydu")
+
+[node name="DeskArea" type="Area2D" parent="." unique_id=605630984]
+script = ExtResource("6_item")
+message = "我的办公桌。我每天工作的地方。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DeskArea" unique_id=1258320522]
+position = Vector2(112, -1)
+shape = SubResource("RectangleShape2D_78ydu")
+
+[node name="WindowArea" type="Area2D" parent="." unique_id=2143757426]
+script = ExtResource("6_item")
+message = "窗户。外面什么都看不见。"
+required_facing = "up"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="WindowArea" unique_id=476279681]
+position = Vector2(64, -26)
+shape = SubResource("RectangleShape2D_w653m")
+
+[node name="BookshelfArea" type="Area2D" parent="." unique_id=1157638977]
+script = ExtResource("6_item")
+message = "书架。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="BookshelfArea" unique_id=982472033]
+position = Vector2(160, 1)
+shape = SubResource("RectangleShape2D_4kvkx")
+
+[node name="ShelfArea" type="Area2D" parent="." unique_id=270691263]
+script = ExtResource("6_item")
+message = "衣柜里面放满了精致的裙子和套装。已经很久没穿过了。"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ShelfArea" unique_id=546017104]
+position = Vector2(104, 53)
+shape = SubResource("RectangleShape2D_dvlsi")
