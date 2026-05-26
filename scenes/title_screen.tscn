@@ -1,9 +1,10 @@
 [gd_scene format=3 uid="uid://be0i7ku2t8a0x"]
 
 [ext_resource type="Texture2D" uid="uid://dswhyjhfxaug4" path="res://images/Sprite-startmenu.png" id="1_bg"]
-[ext_resource type="AudioStream" uid="uid://bh03s0ryqm78l" path="res://audios/決定ボタンを押す34.mp3" id="2_mgrm8"]
+[ext_resource type="AudioStream" uid="uid://b2ic3bxxsqr3h" path="res://audios/カーソル移動12.mp3" id="2_mgrm8"]
 [ext_resource type="Script" uid="uid://cu2in1qka13yl" path="res://scripts/title_screen.gd" id="2_script"]
-[ext_resource type="AudioStream" uid="uid://8mpw3g7w33o0" path="res://audios/決定ボタンを押す35.mp3" id="3_dc4i4"]
+[ext_resource type="AudioStream" uid="uid://dprlmotl5mhxf" path="res://audios/決定ボタンを押す38.mp3" id="3_dc4i4"]
+[ext_resource type="AudioStream" path="res://audios/maou_bgm_piano40.mp3" id="4_bgm"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
 bg_color = Color(0.05, 0.05, 0.08, 0.72)
@@ -49,6 +50,8 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_script")
+title_bgm = ExtResource("4_bgm")
+title_bgm_volume_db = -6.0
 hover_sfx = ExtResource("2_mgrm8")
 confirm_sfx = ExtResource("3_dc4i4")
 fade_in_duration = 0.8

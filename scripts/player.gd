@@ -1,25 +1,37 @@
 extends CharacterBody2D
 
 @export var move_speed: float = 100.0
-@export var play_intro_cutscene: bool = false
+@export var play_entry_cutscene: bool = false
+@export var entry_cutscene: CutsceneData
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D  # 使用 AnimatedSprite2D
 @onready var interact_area: PlayerInteractor = $Area2D
-@onready var intro_controller: Node = get_node_or_null("IntroController")
+@onready var cutscene_controller: CutsceneController = $CutsceneController
 
 var facing: Facing.Dir = Facing.Dir.DOWN
 var _external_controls_locked: bool = false
 
 func _ready() -> void:
-	if not play_intro_cutscene:
+	if not play_entry_cutscene:
 		return
-	if intro_controller != null and intro_controller.has_method("is_intro_pending"):
-		if not intro_controller.is_intro_pending():
-			return
-	# 开场协程是 deferred 的；在此之前 physics 会把 awake 切成 idle。
+	if cutscene_controller == null:
+		push_warning("Player: 找不到 CutsceneController，无法播放入场过场")
+		return
+
+	var cutscene := _resolve_entry_cutscene()
+	if not cutscene_controller.is_pending(cutscene):
+		return
+
 	set_controls_locked(true)
 	_prepare_awake_pose()
-	if intro_controller != null and intro_controller.has_method("start_intro"):
-		intro_controller.call_deferred("start_intro")
+	cutscene_controller.prepare(cutscene)
+	cutscene_controller.play(cutscene)
+
+
+func _resolve_entry_cutscene() -> CutsceneData:
+	if entry_cutscene != null:
+		return entry_cutscene
+	return CutscenePresets.bedroom_intro()
+
 
 func _prepare_awake_pose() -> void:
 	if animated_sprite == null or animated_sprite.sprite_frames == null:
@@ -88,6 +100,10 @@ func update_animation(input_dir: Vector2) -> void:
 		facing = Facing.Dir.DOWN
 	
 	animated_sprite.play(Facing.to_walk_anim(facing))
+
+func is_controls_locked() -> bool:
+	return _is_controls_locked()
+
 
 func _is_controls_locked() -> bool:
 	if _external_controls_locked:

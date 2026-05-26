@@ -12,12 +12,16 @@ enum Tab {
 @export var main_menu_width := RpgUiStyle.BOTTOM_PANEL_WIDTH
 @export var item_menu_columns := 2
 @export var item_slot_min_width := 148.0
+@export var hover_sfx: AudioStream
+@export var confirm_sfx: AudioStream
+@export var open_panel_sfx: AudioStream
+@export var close_panel_sfx: AudioStream
+@export var close_detail_sfx: AudioStream
 
 const MENU_ROW_HEIGHT := 34.0
 
 @onready var main_menu_root: Control = $MainMenuRoot
-@onready var menu_panel: PanelContainer = $MainMenuRoot/MenuPanel
-@onready var item_menu_root: Control = $MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot
+@onready var detail_menu_root: Control = $MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot
 @onready var items_row: PanelContainer = $MainMenuRoot/MenuPanel/Margin/MenuList/ItemsRow
 @onready var read_row: PanelContainer = $MainMenuRoot/MenuPanel/Margin/MenuList/ReadRow
 @onready var player_name_label: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/PlayerName
@@ -28,32 +32,25 @@ const MENU_ROW_HEIGHT := 34.0
 @onready var status_content: Control = $MainMenuRoot/StatusPanel/Margin/StatusContent
 @onready var status_body: Control = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody
 @onready var avatar_slot: AspectRatioContainer = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot
-@onready var inspect_label: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/DescriptionPanel/Margin/InspectLabel
-@onready var item_list: GridContainer = $MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/ListPanel/Margin/ItemList
-@onready var read_menu_root: Control = $MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot
-@onready var read_detail_label: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/DescriptionPanel/Margin/ReadDetailLabel
-@onready var read_list: VBoxContainer = $MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/ListPanel/Margin/ReadList
+@onready var _detail_list_panel: SelectableListPanel = $MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot
 
 var _active_tab: Tab = Tab.ITEMS
-var _item_menu_open: bool = false
-var _read_menu_open: bool = false
-var _selected_item_index: int = -1
-var _selected_read_index: int = -1
-var _item_rows: Array[PanelContainer] = []
-var _read_rows: Array[PanelContainer] = []
+var _detail_menu_open: bool = false
 var _menu_rows: Array[PanelContainer] = []
-var _menu_breath_tween: Tween
-var _menu_breath_style: StyleBoxFlat
-var _menu_breath_row: PanelContainer
-var _item_breath_tween: Tween
-var _item_breath_style: StyleBoxFlat
-var _item_breath_row: PanelContainer
+var _menu_breath := BorderBreathAnimator.new()
+var _hover_sfx_player: AudioStreamPlayer
+var _confirm_sfx_player: AudioStreamPlayer
+var _panel_sfx_player: AudioStreamPlayer
 
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
 	hide()
+	_setup_audio_players()
 	_apply_panel_styles()
+	_detail_list_panel.breath_cycle_duration = menu_breath_cycle_duration
+	_detail_list_panel.navigation_moved.connect(_on_detail_navigation_moved)
+	_detail_list_panel.confirmed.connect(_on_detail_confirmed)
 	_menu_rows = [items_row, read_row]
 	_configure_menu_rows()
 	items_row.gui_input.connect(_on_items_row_gui_input)
@@ -72,10 +69,86 @@ func _ready() -> void:
 	status_content.resized.connect(_apply_avatar_size)
 	_refresh_all()
 	_set_active_tab(Tab.ITEMS)
-	_close_item_menu()
-	_close_read_menu()
+	_close_detail_menu()
 	call_deferred("_apply_main_menu_layout")
 	call_deferred("_apply_avatar_size")
+
+
+func _apply_detail_binding(tab: Tab) -> void:
+	match tab:
+		Tab.ITEMS:
+			_detail_list_panel.columns = item_menu_columns
+			_detail_list_panel.slot_min_width = item_slot_min_width
+			_detail_list_panel.show_count_suffix = true
+			_detail_list_panel.empty_detail_text = ""
+			_detail_list_panel.bind(
+				_get_inventory_entries,
+				_get_item_title,
+				_get_item_detail,
+				_get_item_stable_id,
+			)
+		Tab.READ:
+			_detail_list_panel.columns = 1
+			_detail_list_panel.slot_min_width = 0.0
+			_detail_list_panel.show_count_suffix = false
+			_detail_list_panel.empty_detail_text = "读取功能预留"
+			_detail_list_panel.bind(
+				_get_task_entries,
+				_get_task_title,
+				_get_task_detail,
+				_get_task_stable_id,
+			)
+
+
+func _get_inventory_entries() -> Array:
+	if GameState == null:
+		return []
+	return GameState.inventory_items
+
+
+func _get_item_title(index: int) -> String:
+	if GameState == null or index < 0 or index >= GameState.inventory_items.size():
+		return ""
+	var item: ItemData = GameState.inventory_items[index]
+	return item.get_display_name() if item != null else "未知物品"
+
+
+func _get_item_detail(index: int) -> String:
+	if GameState == null or index < 0 or index >= GameState.inventory_items.size():
+		return ""
+	var item: ItemData = GameState.inventory_items[index]
+	return item.get_inspect_text() if item != null else ""
+
+
+func _get_item_stable_id(index: int) -> String:
+	if GameState == null or index < 0 or index >= GameState.inventory_items.size():
+		return ""
+	var item: ItemData = GameState.inventory_items[index]
+	return item.id if item != null else ""
+
+
+func _get_task_entries() -> Array:
+	if GameState == null:
+		return []
+	return Array(GameState.active_tasks)
+
+
+func _get_task_title(index: int) -> String:
+	if GameState == null or index < 0 or index >= GameState.active_tasks.size():
+		return ""
+	return String(GameState.active_tasks[index])
+
+
+func _get_task_detail(index: int) -> String:
+	if GameState == null or index < 0 or index >= GameState.active_tasks.size():
+		return ""
+	return String(GameState.active_tasks[index])
+
+
+func _get_task_stable_id(index: int) -> String:
+	if GameState == null or index < 0 or index >= GameState.active_tasks.size():
+		return ""
+	return String(GameState.active_tasks[index])
 
 
 func _configure_menu_rows() -> void:
@@ -95,10 +168,8 @@ func _apply_panel_styles() -> void:
 	var list_style: StyleBoxFlat = RpgUiStyle.make_box_style(8.0)
 	$MainMenuRoot/MenuPanel.add_theme_stylebox_override("panel", box_style)
 	$MainMenuRoot/StatusPanel.add_theme_stylebox_override("panel", box_style)
-	$MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/DescriptionPanel.add_theme_stylebox_override("panel", list_style)
-	$MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/ListPanel.add_theme_stylebox_override("panel", list_style)
-	$MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/DescriptionPanel.add_theme_stylebox_override("panel", list_style)
-	$MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/ListPanel.add_theme_stylebox_override("panel", list_style)
+	$MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot/DescriptionPanel.add_theme_stylebox_override("panel", list_style)
+	$MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot/ListPanel.add_theme_stylebox_override("panel", list_style)
 	$MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame.add_theme_stylebox_override(
 		"panel", RpgUiStyle.make_avatar_style(4.0)
 	)
@@ -126,36 +197,28 @@ func _apply_avatar_size() -> void:
 
 
 func _refresh_status_panel_content() -> void:
-	var show_item_menu: bool = _item_menu_open and _active_tab == Tab.ITEMS
-	var show_read_menu: bool = _read_menu_open and _active_tab == Tab.READ
-	item_menu_root.visible = show_item_menu
-	read_menu_root.visible = show_read_menu
-	status_body.visible = not show_item_menu and not show_read_menu
+	detail_menu_root.visible = _detail_menu_open
+	status_body.visible = not _detail_menu_open
 
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not visible:
-		if _is_toggle_input(event) and not _is_title_scene():
+		if _is_toggle_input(event) and _can_open_menu():
 			_open_panel()
 			get_viewport().set_input_as_handled()
 		return
 
 	if _is_toggle_input(event):
-		if _item_menu_open:
-			_close_item_menu()
-		elif _read_menu_open:
-			_close_read_menu()
+		if _detail_menu_open:
+			_close_detail_menu(true)
 		else:
 			_close_panel()
 		get_viewport().set_input_as_handled()
 		return
 
-	if _item_menu_open:
-		_handle_item_menu_input(event)
-		return
-
-	if _read_menu_open:
-		_handle_read_menu_input(event)
+	if _detail_menu_open:
+		if _detail_list_panel.try_handle_input(event):
+			get_viewport().set_input_as_handled()
 		return
 
 	_handle_main_menu_input(event)
@@ -169,40 +232,7 @@ func _handle_main_menu_input(event: InputEvent) -> void:
 		_move_tab_selection(1)
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("interact"):
-		if _active_tab == Tab.ITEMS:
-			_open_item_menu()
-		elif _active_tab == Tab.READ:
-			_open_read_menu()
-		get_viewport().set_input_as_handled()
-
-
-func _handle_read_menu_input(event: InputEvent) -> void:
-	if event.is_action_pressed("up"):
-		_move_read_selection(-1)
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("down"):
-		_move_read_selection(1)
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("interact"):
-		_update_selected_read_description()
-		get_viewport().set_input_as_handled()
-
-
-func _handle_item_menu_input(event: InputEvent) -> void:
-	if event.is_action_pressed("up"):
-		_move_item_selection_grid(0, -1)
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("down"):
-		_move_item_selection_grid(0, 1)
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("left"):
-		_move_item_selection_grid(-1, 0)
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("right"):
-		_move_item_selection_grid(1, 0)
-		get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("interact"):
-		_inspect_selected_item()
+		_open_detail_menu()
 		get_viewport().set_input_as_handled()
 
 
@@ -222,11 +252,22 @@ func _is_title_scene() -> bool:
 	return current_scene.scene_file_path == title_scene_path
 
 
+func _can_open_menu() -> bool:
+	if _is_title_scene():
+		return false
+	if SceneTransition.is_transitioning():
+		return false
+	var player := get_tree().get_first_node_in_group("player") as CharacterBody2D
+	if player != null and player.has_method("is_controls_locked") and player.is_controls_locked():
+		return false
+	return true
+
+
 func _open_panel() -> void:
+	_play_open_panel_sfx()
 	_refresh_all()
 	_set_active_tab(Tab.ITEMS)
-	_close_item_menu()
-	_close_read_menu()
+	_close_detail_menu()
 	main_menu_root.show()
 	show()
 	get_tree().paused = true
@@ -235,42 +276,28 @@ func _open_panel() -> void:
 
 
 func _close_panel() -> void:
-	_close_item_menu()
-	_close_read_menu()
-	_stop_menu_row_breath()
-	_stop_item_row_breath()
+	_play_close_panel_sfx()
+	_close_detail_menu()
+	_menu_breath.stop()
 	hide()
 	get_tree().paused = false
 
 
-func _open_item_menu() -> void:
-	if _active_tab != Tab.ITEMS:
+func _open_detail_menu() -> void:
+	_play_confirm_sfx()
+	_detail_menu_open = true
+	_apply_detail_binding(_active_tab)
+	_detail_list_panel.refresh()
+	_refresh_status_panel_content()
+
+
+func _close_detail_menu(play_sfx: bool = false) -> void:
+	if not _detail_menu_open:
 		return
-	_item_menu_open = true
-	item_list.columns = item_menu_columns
-	_refresh_item_menu()
-	_refresh_status_panel_content()
-
-
-func _close_item_menu() -> void:
-	_item_menu_open = false
-	_stop_item_row_breath()
-	inspect_label.text = ""
-	_refresh_status_panel_content()
-
-
-func _open_read_menu() -> void:
-	if _active_tab != Tab.READ:
-		return
-	_read_menu_open = true
-	_refresh_read_menu()
-	_refresh_status_panel_content()
-
-
-func _close_read_menu() -> void:
-	_read_menu_open = false
-	_stop_item_row_breath()
-	read_detail_label.text = ""
+	_detail_menu_open = false
+	if play_sfx:
+		_play_close_detail_sfx()
+	_detail_list_panel.clear_detail()
 	_refresh_status_panel_content()
 
 
@@ -283,8 +310,11 @@ func _on_items_row_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
 		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
+			var previous_tab: Tab = _active_tab
 			_set_active_tab(Tab.ITEMS)
-			_open_item_menu()
+			if previous_tab != Tab.ITEMS:
+				_play_hover_sfx()
+			_open_detail_menu()
 			get_viewport().set_input_as_handled()
 
 
@@ -292,70 +322,104 @@ func _on_read_row_gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
 		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
+			var previous_tab: Tab = _active_tab
 			_set_active_tab(Tab.READ)
-			_open_read_menu()
+			if previous_tab != Tab.READ:
+				_play_hover_sfx()
+			_open_detail_menu()
 			get_viewport().set_input_as_handled()
 
 
 func _set_active_tab(tab: Tab) -> void:
+	if tab != _active_tab:
+		_close_detail_menu()
 	_active_tab = tab
 	_refresh_tab_visuals()
-	if tab == Tab.READ:
-		_close_item_menu()
-	elif tab == Tab.ITEMS:
-		_close_read_menu()
 	_refresh_status_panel_content()
 	call_deferred("_apply_avatar_size")
 
 
 func _move_tab_selection(step: int) -> void:
-	var tab_index: int = int(_active_tab)
-	tab_index = posmod(tab_index + step, _menu_rows.size())
-	_set_active_tab(tab_index as Tab)
+	var previous_tab: Tab = _active_tab
+	var tab_index: int = posmod(int(_active_tab) + step, _menu_rows.size())
+	var next_tab := tab_index as Tab
+	if next_tab != previous_tab:
+		_play_hover_sfx()
+	_set_active_tab(next_tab)
+
+
+func _setup_audio_players() -> void:
+	_hover_sfx_player = AudioStreamPlayer.new()
+	_hover_sfx_player.bus = &"Master"
+	add_child(_hover_sfx_player)
+
+	_confirm_sfx_player = AudioStreamPlayer.new()
+	_confirm_sfx_player.bus = &"Master"
+	add_child(_confirm_sfx_player)
+
+	_panel_sfx_player = AudioStreamPlayer.new()
+	_panel_sfx_player.bus = &"Master"
+	add_child(_panel_sfx_player)
+
+
+func _play_open_panel_sfx() -> void:
+	_play_ui_sfx(_panel_sfx_player, open_panel_sfx)
+
+
+func _play_close_panel_sfx() -> void:
+	_play_ui_sfx(_panel_sfx_player, close_panel_sfx)
+
+
+func _play_close_detail_sfx() -> void:
+	_play_ui_sfx(_panel_sfx_player, close_detail_sfx)
+
+
+func _play_hover_sfx() -> void:
+	_play_ui_sfx(_hover_sfx_player, hover_sfx)
+
+
+func _play_confirm_sfx() -> void:
+	_play_ui_sfx(_confirm_sfx_player, confirm_sfx)
+
+
+func _play_ui_sfx(player: AudioStreamPlayer, stream: AudioStream) -> void:
+	if player == null or stream == null:
+		return
+	player.stream = stream
+	player.play()
+
+
+func _on_detail_navigation_moved(_index: int) -> void:
+	_play_hover_sfx()
+
+
+func _on_detail_confirmed() -> void:
+	_play_confirm_sfx()
 
 
 func _refresh_tab_visuals() -> void:
-	_stop_menu_row_breath()
+	_menu_breath.stop()
 	var half_cycle: float = menu_breath_cycle_duration * 0.5
 	for index in _menu_rows.size():
 		var row: PanelContainer = _menu_rows[index]
 		if index == int(_active_tab):
-			_start_menu_row_breath(row, half_cycle)
+			var template: StyleBoxFlat = row.get_meta("_selected_style") as StyleBoxFlat
+			var style: StyleBoxFlat = _menu_breath.start(self, template, half_cycle)
+			_apply_menu_row_style(row, style)
 		else:
 			_apply_menu_row_style(row, row.get_meta("_normal_style") as StyleBoxFlat)
 
 
-func _start_menu_row_breath(row: PanelContainer, half_cycle: float) -> void:
-	_stop_menu_row_breath()
-	var template: StyleBoxFlat = row.get_meta("_selected_style") as StyleBoxFlat
-	_menu_breath_style = template.duplicate()
-	_menu_breath_row = row
-	_menu_breath_style.border_color = RpgUiStyle.BREATH_BORDER_MIN
-	_apply_menu_row_style(row, _menu_breath_style)
-
-	_menu_breath_tween = create_tween().set_loops()
-	_menu_breath_tween.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
-	_menu_breath_tween.tween_property(_menu_breath_style, "border_color", RpgUiStyle.BREATH_BORDER_MAX, half_cycle)
-	_menu_breath_tween.tween_property(_menu_breath_style, "border_color", RpgUiStyle.BREATH_BORDER_MIN, half_cycle)
-
-
-func _stop_menu_row_breath() -> void:
-	if _menu_breath_tween != null and _menu_breath_tween.is_valid():
-		_menu_breath_tween.kill()
-	_menu_breath_tween = null
-	_menu_breath_style = null
-	_menu_breath_row = null
-
-
 func _refresh_all() -> void:
 	_refresh_status()
-	_refresh_item_menu()
-	_refresh_read_menu()
+	if _detail_menu_open:
+		_apply_detail_binding(_active_tab)
+		_detail_list_panel.refresh()
 
 
 func _on_tasks_changed() -> void:
-	if visible and _read_menu_open:
-		_refresh_read_menu()
+	if visible and _detail_menu_open and _active_tab == Tab.READ:
+		_detail_list_panel.refresh()
 
 
 func _refresh_status() -> void:
@@ -372,247 +436,11 @@ func _on_time_changed(_day: int, _period: int) -> void:
 
 
 func _on_inventory_changed() -> void:
-	if visible and _item_menu_open:
-		_refresh_item_menu()
-
-
-func _refresh_item_menu() -> void:
-	if GameState == null:
-		return
-
-	_stop_item_row_breath()
-	for child in item_list.get_children():
-		child.free()
-	_item_rows.clear()
-
-	var previous_selection_id: String = ""
-	if _selected_item_index >= 0 and _selected_item_index < GameState.inventory_items.size():
-		var previous_item: ItemData = GameState.inventory_items[_selected_item_index]
-		if previous_item != null:
-			previous_selection_id = previous_item.id
-
-	for item in GameState.inventory_items:
-		var row: PanelContainer = _create_item_row(item)
-		item_list.add_child(row)
-		_item_rows.append(row)
-
-	_selected_item_index = -1
-	if not previous_selection_id.is_empty():
-		_selected_item_index = GameState.find_inventory_index_by_id(previous_selection_id)
-	if _selected_item_index < 0 and not GameState.inventory_items.is_empty():
-		_selected_item_index = 0
-
-	_refresh_item_selection_visuals()
-
-
-func _create_item_row(item: ItemData) -> PanelContainer:
-	var row := PanelContainer.new()
-	row.custom_minimum_size = Vector2(item_slot_min_width, 28.0)
-	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.mouse_filter = Control.MOUSE_FILTER_STOP
-	row.gui_input.connect(_on_item_row_gui_input.bind(row))
-	row.set_meta("_normal_style", RpgUiStyle.make_item_row_normal_style())
-	row.set_meta("_selected_style", RpgUiStyle.make_item_row_selected_style())
-	row.set_meta("_item_data", item)
-	_apply_item_row_style(row, row.get_meta("_normal_style") as StyleBoxFlat)
-
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 4)
-	margin.add_theme_constant_override("margin_top", 2)
-	margin.add_theme_constant_override("margin_right", 4)
-	margin.add_theme_constant_override("margin_bottom", 2)
-	row.add_child(margin)
-
-	var body := HBoxContainer.new()
-	margin.add_child(body)
-
-	var name_label := Label.new()
-	name_label.text = item.get_display_name() if item != null else "未知物品"
-	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)
-	body.add_child(name_label)
-
-	var count_label := Label.new()
-	count_label.text = ": 1"
-	count_label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)
-	body.add_child(count_label)
-
-	return row
-
-
-func _move_item_selection_grid(column_step: int, row_step: int) -> void:
-	if _item_rows.is_empty():
-		return
-	var columns: int = maxi(item_menu_columns, 1)
-	var row_index: int = _selected_item_index / columns
-	var column_index: int = _selected_item_index % columns
-	column_index += column_step
-	row_index += row_step
-	var max_row: int = (_item_rows.size() - 1) / columns
-	column_index = clampi(column_index, 0, columns - 1)
-	row_index = clampi(row_index, 0, max_row)
-	var new_index: int = row_index * columns + column_index
-	if new_index >= _item_rows.size():
-		new_index = _item_rows.size() - 1
-	_selected_item_index = new_index
-	_refresh_item_selection_visuals()
-
-
-func _apply_item_row_style(row: PanelContainer, style: StyleBoxFlat) -> void:
-	row.add_theme_stylebox_override("panel", style)
-
-
-func _refresh_item_selection_visuals() -> void:
-	_stop_item_row_breath()
-	var half_cycle: float = menu_breath_cycle_duration * 0.5
-	for index in _item_rows.size():
-		var row: PanelContainer = _item_rows[index]
-		if index == _selected_item_index:
-			_start_item_row_breath(row, half_cycle)
-		else:
-			_apply_item_row_style(row, row.get_meta("_normal_style") as StyleBoxFlat)
-	_update_selected_item_description()
-
-
-func _start_item_row_breath(row: PanelContainer, half_cycle: float) -> void:
-	_stop_item_row_breath()
-	var template: StyleBoxFlat = row.get_meta("_selected_style") as StyleBoxFlat
-	_item_breath_style = template.duplicate()
-	_item_breath_row = row
-	_item_breath_style.border_color = RpgUiStyle.BREATH_BORDER_MIN
-	_apply_item_row_style(row, _item_breath_style)
-
-	_item_breath_tween = create_tween().set_loops()
-	_item_breath_tween.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
-	_item_breath_tween.tween_property(_item_breath_style, "border_color", RpgUiStyle.BREATH_BORDER_MAX, half_cycle)
-	_item_breath_tween.tween_property(_item_breath_style, "border_color", RpgUiStyle.BREATH_BORDER_MIN, half_cycle)
-
-
-func _stop_item_row_breath() -> void:
-	if _item_breath_tween != null and _item_breath_tween.is_valid():
-		_item_breath_tween.kill()
-	_item_breath_tween = null
-	_item_breath_style = null
-	_item_breath_row = null
-
-
-func _on_item_row_gui_input(event: InputEvent, row: PanelContainer) -> void:
-	if event is InputEventMouseButton:
-		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
-		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
-			_selected_item_index = _item_rows.find(row)
-			_refresh_item_selection_visuals()
-			get_viewport().set_input_as_handled()
-
-
-func _update_selected_item_description() -> void:
-	if GameState == null or _selected_item_index < 0:
-		inspect_label.text = ""
-		return
-	if _selected_item_index >= GameState.inventory_items.size():
-		inspect_label.text = ""
-		return
-	var item: ItemData = GameState.inventory_items[_selected_item_index]
-	inspect_label.text = item.get_inspect_text() if item != null else ""
-
-
-func _inspect_selected_item() -> void:
-	_update_selected_item_description()
-
-
-func _refresh_read_menu() -> void:
-	if GameState == null:
-		return
-
-	_stop_item_row_breath()
-	for child in read_list.get_children():
-		child.free()
-	_read_rows.clear()
-
-	var previous_selection: String = ""
-	if _selected_read_index >= 0 and _selected_read_index < GameState.active_tasks.size():
-		previous_selection = GameState.active_tasks[_selected_read_index]
-
-	for task_text in GameState.active_tasks:
-		var row: PanelContainer = _create_read_row(String(task_text))
-		read_list.add_child(row)
-		_read_rows.append(row)
-
-	_selected_read_index = -1
-	if not previous_selection.is_empty():
-		_selected_read_index = GameState.active_tasks.find(previous_selection)
-	if _selected_read_index < 0 and not GameState.active_tasks.is_empty():
-		_selected_read_index = 0
-
-	_refresh_read_selection_visuals()
-
-
-func _create_read_row(task_text: String) -> PanelContainer:
-	var row := PanelContainer.new()
-	row.custom_minimum_size = Vector2(0.0, 28.0)
-	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	row.mouse_filter = Control.MOUSE_FILTER_STOP
-	row.gui_input.connect(_on_read_row_item_gui_input.bind(row))
-	row.set_meta("_normal_style", RpgUiStyle.make_item_row_normal_style())
-	row.set_meta("_selected_style", RpgUiStyle.make_item_row_selected_style())
-	_apply_item_row_style(row, row.get_meta("_normal_style") as StyleBoxFlat)
-
-	var margin := MarginContainer.new()
-	margin.add_theme_constant_override("margin_left", 4)
-	margin.add_theme_constant_override("margin_top", 2)
-	margin.add_theme_constant_override("margin_right", 4)
-	margin.add_theme_constant_override("margin_bottom", 2)
-	row.add_child(margin)
-
-	var name_label := Label.new()
-	name_label.text = task_text
-	name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)
-	margin.add_child(name_label)
-
-	return row
-
-
-func _move_read_selection(step: int) -> void:
-	if _read_rows.is_empty():
-		return
-	_selected_read_index = posmod(_selected_read_index + step, _read_rows.size())
-	_refresh_read_selection_visuals()
-
-
-func _refresh_read_selection_visuals() -> void:
-	_stop_item_row_breath()
-	var half_cycle: float = menu_breath_cycle_duration * 0.5
-	for index in _read_rows.size():
-		var row: PanelContainer = _read_rows[index]
-		if index == _selected_read_index:
-			_start_item_row_breath(row, half_cycle)
-		else:
-			_apply_item_row_style(row, row.get_meta("_normal_style") as StyleBoxFlat)
-	_update_selected_read_description()
-
-
-func _update_selected_read_description() -> void:
-	if GameState == null or _selected_read_index < 0:
-		read_detail_label.text = "读取功能预留"
-		return
-	if _selected_read_index >= GameState.active_tasks.size():
-		read_detail_label.text = "读取功能预留"
-		return
-	read_detail_label.text = GameState.active_tasks[_selected_read_index]
-
-
-func _on_read_row_item_gui_input(event: InputEvent, row: PanelContainer) -> void:
-	if event is InputEventMouseButton:
-		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
-		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
-			_selected_read_index = _read_rows.find(row)
-			_refresh_read_selection_visuals()
-			get_viewport().set_input_as_handled()
+	if visible and _detail_menu_open and _active_tab == Tab.ITEMS:
+		_detail_list_panel.refresh()
 
 
 func _exit_tree() -> void:
-	_stop_menu_row_breath()
-	_stop_item_row_breath()
+	_menu_breath.stop()
 	if visible:
 		get_tree().paused = false

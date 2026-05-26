@@ -1,12 +1,22 @@
 [gd_scene format=3 uid="uid://divaiurb45k2a"]
 
-[ext_resource type="Script" uid="uid://bq7k2playerpanel" path="res://scripts/player_panel.gd" id="1_panel"]
+[ext_resource type="Script" uid="uid://8x7ur3y5q1h8" path="res://scripts/player_panel.gd" id="1_panel"]
+[ext_resource type="Script" uid="uid://n8u1je6jcrid" path="res://scripts/selectable_list_panel.gd" id="2_list_panel"]
+[ext_resource type="AudioStream" uid="uid://b2ic3bxxsqr3h" path="res://audios/カーソル移動12.mp3" id="3_hover"]
+[ext_resource type="AudioStream" uid="uid://dprlmotl5mhxf" path="res://audios/決定ボタンを押す38.mp3" id="4_confirm"]
+[ext_resource type="AudioStream" uid="uid://bh03s0ryqm78l" path="res://audios/決定ボタンを押す34.mp3" id="4_nc8jw"]
+[ext_resource type="AudioStream" uid="uid://8mpw3g7w33o0" path="res://audios/決定ボタンを押す35.mp3" id="5_nc8jw"]
 
-[node name="PlayerPanel" type="CanvasLayer"]
+[node name="PlayerPanel" type="CanvasLayer" unique_id=1220176096]
 layer = 150
 script = ExtResource("1_panel")
+hover_sfx = ExtResource("3_hover")
+confirm_sfx = ExtResource("4_confirm")
+open_panel_sfx = ExtResource("4_nc8jw")
+close_panel_sfx = ExtResource("5_nc8jw")
+close_detail_sfx = ExtResource("5_nc8jw")
 
-[node name="Blocker" type="ColorRect" parent="."]
+[node name="Blocker" type="ColorRect" parent="." unique_id=119459925]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
@@ -15,8 +25,7 @@ grow_vertical = 2
 mouse_filter = 2
 color = Color(0, 0, 0, 0.28)
 
-[node name="MainMenuRoot" type="HBoxContainer" parent="."]
-z_index = 0
+[node name="MainMenuRoot" type="HBoxContainer" parent="." unique_id=747281132]
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -30,31 +39,30 @@ grow_horizontal = 2
 grow_vertical = 0
 theme_override_constants/separation = 0
 
-[node name="MenuPanel" type="PanelContainer" parent="MainMenuRoot"]
+[node name="MenuPanel" type="PanelContainer" parent="MainMenuRoot" unique_id=1784373504]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-size_flags_stretch_ratio = 1.0
 
-[node name="Margin" type="MarginContainer" parent="MainMenuRoot/MenuPanel"]
+[node name="Margin" type="MarginContainer" parent="MainMenuRoot/MenuPanel" unique_id=1615925770]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="MenuList" type="VBoxContainer" parent="MainMenuRoot/MenuPanel/Margin"]
+[node name="MenuList" type="VBoxContainer" parent="MainMenuRoot/MenuPanel/Margin" unique_id=1613280720]
 layout_mode = 2
 size_flags_vertical = 3
-alignment = 1
 theme_override_constants/separation = 2
+alignment = 1
 
-[node name="ItemsRow" type="PanelContainer" parent="MainMenuRoot/MenuPanel/Margin/MenuList"]
+[node name="ItemsRow" type="PanelContainer" parent="MainMenuRoot/MenuPanel/Margin/MenuList" unique_id=1651102858]
 custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="MainMenuRoot/MenuPanel/Margin/MenuList/ItemsRow"]
+[node name="Label" type="Label" parent="MainMenuRoot/MenuPanel/Margin/MenuList/ItemsRow" unique_id=2014630017]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
@@ -62,12 +70,12 @@ theme_override_font_sizes/font_size = 18
 text = "物品"
 horizontal_alignment = 1
 
-[node name="ReadRow" type="PanelContainer" parent="MainMenuRoot/MenuPanel/Margin/MenuList"]
+[node name="ReadRow" type="PanelContainer" parent="MainMenuRoot/MenuPanel/Margin/MenuList" unique_id=996598934]
 custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="Label" type="Label" parent="MainMenuRoot/MenuPanel/Margin/MenuList/ReadRow"]
+[node name="Label" type="Label" parent="MainMenuRoot/MenuPanel/Margin/MenuList/ReadRow" unique_id=295974811]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
@@ -75,30 +83,30 @@ theme_override_font_sizes/font_size = 18
 text = "读取"
 horizontal_alignment = 1
 
-[node name="SplitLine" type="ColorRect" parent="MainMenuRoot"]
+[node name="SplitLine" type="ColorRect" parent="MainMenuRoot" unique_id=332845533]
 custom_minimum_size = Vector2(1, 0)
 layout_mode = 2
 color = Color(0.92, 0.92, 0.94, 0.55)
 
-[node name="StatusPanel" type="PanelContainer" parent="MainMenuRoot"]
+[node name="StatusPanel" type="PanelContainer" parent="MainMenuRoot" unique_id=1996035498]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 4.0
 
-[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel"]
+[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel" unique_id=965699025]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="StatusContent" type="Control" parent="MainMenuRoot/StatusPanel/Margin"]
+[node name="StatusContent" type="Control" parent="MainMenuRoot/StatusPanel/Margin" unique_id=1190068727]
 custom_minimum_size = Vector2(0, 112)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="StatusBody" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent"]
+[node name="StatusBody" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent" unique_id=721310633]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -107,23 +115,21 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 10
 
-[node name="AvatarSlot" type="AspectRatioContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody"]
+[node name="AvatarSlot" type="AspectRatioContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody" unique_id=1809545625]
 layout_mode = 2
 size_flags_vertical = 4
-ratio = 1.0
-stretch_mode = 2
 
-[node name="AvatarFrame" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot"]
+[node name="AvatarFrame" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot" unique_id=1309983634]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="AvatarContent" type="Control" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame"]
+[node name="AvatarContent" type="Control" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame" unique_id=977036304]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="AvatarImage" type="TextureRect" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame/AvatarContent"]
+[node name="AvatarImage" type="TextureRect" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame/AvatarContent" unique_id=147993550]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -137,7 +143,7 @@ grow_vertical = 2
 expand_mode = 1
 stretch_mode = 5
 
-[node name="AvatarPlaceholder" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame/AvatarContent"]
+[node name="AvatarPlaceholder" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame/AvatarContent" unique_id=1425587448]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -150,96 +156,96 @@ text = "头像"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="InfoColumn" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody"]
+[node name="InfoColumn" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody" unique_id=629903728]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_constants/separation = 4
 
-[node name="PlayerName" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn"]
+[node name="PlayerName" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn" unique_id=2139859681]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
 theme_override_font_sizes/font_size = 18
 text = "玩家"
 
-[node name="StatGrid" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn"]
+[node name="StatGrid" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn" unique_id=982283271]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 2
 
-[node name="TimeRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid"]
+[node name="TimeRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid" unique_id=187326006]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow"]
+[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow" unique_id=1136486477]
 custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
 theme_override_font_sizes/font_size = 16
 text = "时间"
 
-[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow"]
+[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow" unique_id=810747489]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
 theme_override_font_sizes/font_size = 16
 text = "第 1 天 / 早晨"
 
-[node name="HungerRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid"]
+[node name="HungerRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid" unique_id=1201535805]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/HungerRow"]
+[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/HungerRow" unique_id=808846734]
 custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
 theme_override_font_sizes/font_size = 16
 text = "饱食度"
 
-[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/HungerRow"]
+[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/HungerRow" unique_id=144637385]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
 theme_override_font_sizes/font_size = 16
 text = "80"
 
-[node name="SanityRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid"]
+[node name="SanityRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid" unique_id=1540598320]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/SanityRow"]
+[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/SanityRow" unique_id=1825031912]
 custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
 theme_override_font_sizes/font_size = 16
 text = "理智"
 
-[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/SanityRow"]
+[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/SanityRow" unique_id=597706324]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
 theme_override_font_sizes/font_size = 16
 text = "100"
 
-[node name="MoneyRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid"]
+[node name="MoneyRow" type="HBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid" unique_id=1576538762]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/MoneyRow"]
+[node name="Label" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/MoneyRow" unique_id=1899833517]
 custom_minimum_size = Vector2(56, 0)
 layout_mode = 2
 theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
 theme_override_font_sizes/font_size = 16
 text = "金钱"
 
-[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/MoneyRow"]
+[node name="Value" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/MoneyRow" unique_id=1743434835]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
 theme_override_font_sizes/font_size = 16
 text = "0"
 
-[node name="ReadMenuRoot" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent"]
+[node name="DetailMenuRoot" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent" unique_id=548766713]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -248,83 +254,40 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme_override_constants/separation = 3
+script = ExtResource("2_list_panel")
+list_container_path = NodePath("ListPanel/Margin/EntryList")
+detail_label_path = NodePath("DescriptionPanel/Margin/DetailLabel")
 
-[node name="DescriptionPanel" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot"]
+[node name="DescriptionPanel" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot" unique_id=1625959492]
 custom_minimum_size = Vector2(0, 44)
 layout_mode = 2
 
-[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/DescriptionPanel"]
+[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot/DescriptionPanel" unique_id=1032887796]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="ReadDetailLabel" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/DescriptionPanel/Margin"]
+[node name="DetailLabel" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot/DescriptionPanel/Margin" unique_id=1262617213]
 layout_mode = 2
 theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
 theme_override_font_sizes/font_size = 15
-text = "读取功能预留"
 autowrap_mode = 3
 
-[node name="ListPanel" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot"]
+[node name="ListPanel" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot" unique_id=1768376765]
 custom_minimum_size = Vector2(0, 56)
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/ListPanel"]
+[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot/ListPanel" unique_id=2031662682]
 layout_mode = 2
 theme_override_constants/margin_left = 2
 theme_override_constants/margin_top = 2
 theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
-[node name="ReadList" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ReadMenuRoot/ListPanel/Margin"]
-layout_mode = 2
-size_flags_horizontal = 3
-theme_override_constants/separation = 4
-
-[node name="ItemMenuRoot" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent"]
-visible = false
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-theme_override_constants/separation = 3
-
-[node name="DescriptionPanel" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot"]
-custom_minimum_size = Vector2(0, 44)
-layout_mode = 2
-
-[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/DescriptionPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 2
-theme_override_constants/margin_top = 2
-theme_override_constants/margin_right = 2
-theme_override_constants/margin_bottom = 2
-
-[node name="InspectLabel" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/DescriptionPanel/Margin"]
-layout_mode = 2
-theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
-theme_override_font_sizes/font_size = 15
-text = " "
-autowrap_mode = 3
-
-[node name="ListPanel" type="PanelContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot"]
-custom_minimum_size = Vector2(0, 56)
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="Margin" type="MarginContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/ListPanel"]
-layout_mode = 2
-theme_override_constants/margin_left = 2
-theme_override_constants/margin_top = 2
-theme_override_constants/margin_right = 2
-theme_override_constants/margin_bottom = 2
-
-[node name="ItemList" type="GridContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/ItemMenuRoot/ListPanel/Margin"]
+[node name="EntryList" type="GridContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot/ListPanel/Margin" unique_id=1605629070]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/h_separation = 8

@@ -38,6 +38,10 @@ func play_door_sfx() -> void:
 		_door_sfx_player.call("play")
 
 
+func is_transitioning() -> bool:
+	return _transitioning
+
+
 func transition_to(scene_path: String, spawn_marker_name: String = "", facing_direction: String = "") -> void:
 	if _transitioning:
 		return

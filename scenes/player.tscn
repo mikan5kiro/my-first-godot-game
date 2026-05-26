@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://c3lu3pg63y4ue"]
 
 [ext_resource type="Texture2D" uid="uid://c7xgeahwubd4m" path="res://sprites/mysprite1.png" id="1_3vyb7"]
-[ext_resource type="Script" uid="uid://bmhcxnflwvq4v" path="res://scenes/player.gd" id="1_g2els"]
+[ext_resource type="Script" uid="uid://bmhcxnflwvq4v" path="res://scripts/player.gd" id="1_g2els"]
 [ext_resource type="Script" uid="uid://b4yvimqjqogk5" path="res://scripts/player_interactor.gd" id="2_interactor"]
-[ext_resource type="Script" uid="uid://cunuv15q87lwn" path="res://scripts/player_intro_controller.gd" id="3_intro"]
+[ext_resource type="Script" path="res://scripts/cutscene_controller.gd" id="3_cutscene"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a38lo"]
 atlas = ExtResource("1_3vyb7")
@@ -252,5 +252,5 @@ visible = false
 position = Vector2(-0.5, 1)
 shape = SubResource("RectangleShape2D_qhqgy")
 
-[node name="IntroController" type="Node" parent="." unique_id=1375334450]
-script = ExtResource("3_intro")
+[node name="CutsceneController" type="Node" parent="." unique_id=1375334450]
+script = ExtResource("3_cutscene")

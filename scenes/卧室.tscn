@@ -33,7 +33,7 @@ tile_set = ExtResource("2_aklan")
 [node name="CharacterBody2D" parent="." unique_id=2137992065 instance=ExtResource("3_8hu0i")]
 position = Vector2(108.99999, 115)
 scale = Vector2(0.8, 0.8)
-play_intro_cutscene = true
+play_entry_cutscene = true
 
 [node name="Door" parent="." unique_id=266272542 instance=ExtResource("5_b7esm")]
 visible = false

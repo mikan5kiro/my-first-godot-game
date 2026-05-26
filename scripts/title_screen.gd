@@ -4,6 +4,9 @@ extends Control
 @onready var quit_button: Button = $Menu/QuitButton
 @onready var fade_overlay: ColorRect = $FadeOverlay
 @export_file("*.tscn") var first_scene_path := "res://scenes/卧室.tscn"
+@export var title_bgm: AudioStream
+@export_range(-80.0, 24.0, 0.5) var title_bgm_volume_db := -6.0
+@export var title_bgm_bus := &"Master"
 @export var hover_sfx: AudioStream
 @export var confirm_sfx: AudioStream
 @export_range(0.0, 3.0, 0.05) var fade_in_duration := 0.4
@@ -15,16 +18,17 @@ var _menu_buttons: Array[Button] = []
 var _selected_index := 0
 var _is_confirming := false
 var _is_starting_game := false
+var _bgm_player: AudioStreamPlayer
 var _hover_sfx_player: AudioStreamPlayer
 var _confirm_sfx_player: AudioStreamPlayer
-var _breath_tween: Tween
-var _breath_style: StyleBoxFlat
+var _button_breath := BorderBreathAnimator.new()
 var _breath_button: Button
 
 
 func _ready() -> void:
 	fade_overlay.color = Color(0, 0, 0, 1)
 	_setup_audio_players()
+	_play_title_bgm()
 	_menu_buttons = [start_button, quit_button]
 	_bind_button_actions()
 	_configure_keyboard_only_ui()
@@ -74,7 +78,8 @@ func _move_selection(step: int) -> void:
 
 
 func _refresh_selection_visuals(_immediate: bool) -> void:
-	_stop_button_breath()
+	_button_breath.stop()
+	_breath_button = null
 	var half_cycle := breath_cycle_duration * 0.5
 
 	for index in _menu_buttons.size():
@@ -84,7 +89,10 @@ func _refresh_selection_visuals(_immediate: bool) -> void:
 		button.modulate = Color.WHITE
 
 		if selected:
-			_start_button_breath(button, half_cycle)
+			var template := button.get_meta("_selected_style") as StyleBoxFlat
+			var style: StyleBoxFlat = _button_breath.start(self, template, half_cycle)
+			_breath_button = button
+			_apply_button_style(button, style)
 		else:
 			_apply_button_style(button, button.get_meta("_normal_style") as StyleBox)
 
@@ -92,28 +100,6 @@ func _refresh_selection_visuals(_immediate: bool) -> void:
 func _apply_button_style(button: Button, style: StyleBox) -> void:
 	button.add_theme_stylebox_override("normal", style)
 	button.add_theme_stylebox_override("focus", style)
-
-
-func _start_button_breath(button: Button, half_cycle: float) -> void:
-	_stop_button_breath()
-	var template := button.get_meta("_selected_style") as StyleBoxFlat
-	_breath_style = template.duplicate()
-	_breath_button = button
-	_breath_style.border_color = RpgUiStyle.BREATH_BORDER_MIN
-	_apply_button_style(button, _breath_style)
-
-	_breath_tween = create_tween().set_loops()
-	_breath_tween.set_ease(Tween.EASE_IN_OUT).set_trans(Tween.TRANS_SINE)
-	_breath_tween.tween_property(_breath_style, "border_color", RpgUiStyle.BREATH_BORDER_MAX, half_cycle)
-	_breath_tween.tween_property(_breath_style, "border_color", RpgUiStyle.BREATH_BORDER_MIN, half_cycle)
-
-
-func _stop_button_breath() -> void:
-	if _breath_tween != null and _breath_tween.is_valid():
-		_breath_tween.kill()
-	_breath_tween = null
-	_breath_style = null
-	_breath_button = null
 
 
 func _confirm_selection() -> void:
@@ -125,13 +111,12 @@ func _confirm_selection() -> void:
 	_play_ui_sfx(_confirm_sfx_player, confirm_sfx)
 
 	var style: StyleBoxFlat
-	if _breath_button == button and _breath_style != null:
-		style = _breath_style
+	if _breath_button == button and _button_breath.get_style() != null:
+		style = _button_breath.get_style()
 	else:
 		style = (button.get_meta("_selected_style") as StyleBoxFlat).duplicate()
 		_apply_button_style(button, style)
-	_stop_button_breath()
-	_breath_style = style
+	_button_breath.stop()
 	_breath_button = button
 
 	_tween_border_color(style, PRESSED_BORDER, 0.06)
@@ -148,6 +133,24 @@ func _tween_border_color(style: StyleBoxFlat, target: Color, duration: float) ->
 	var tween := create_tween()
 	tween.set_ease(Tween.EASE_OUT).set_trans(Tween.TRANS_QUAD)
 	tween.tween_property(style, "border_color", target, duration)
+
+
+func _play_title_bgm() -> void:
+	if title_bgm == null:
+		return
+
+	var stream := title_bgm.duplicate(true)
+	if stream is AudioStreamMP3:
+		(stream as AudioStreamMP3).loop = true
+	elif stream is AudioStreamOggVorbis:
+		(stream as AudioStreamOggVorbis).loop = true
+
+	_bgm_player = AudioStreamPlayer.new()
+	_bgm_player.bus = title_bgm_bus
+	_bgm_player.volume_db = title_bgm_volume_db
+	_bgm_player.stream = stream
+	add_child(_bgm_player)
+	_bgm_player.play()
 
 
 func _setup_audio_players() -> void:
@@ -179,7 +182,7 @@ func _play_fade_in() -> void:
 
 func _on_start_pressed() -> void:
 	_is_starting_game = true
-	_stop_button_breath()
+	_button_breath.stop()
 	if first_scene_path.is_empty():
 		_is_starting_game = false
 		push_warning("TitleScreen: first_scene_path is empty")
@@ -193,5 +196,5 @@ func _on_quit_pressed() -> void:
 
 
 func _exit_tree() -> void:
-	_stop_button_breath()
+	_button_breath.stop()
 	Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
