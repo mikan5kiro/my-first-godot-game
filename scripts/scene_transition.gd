@@ -42,6 +42,10 @@ func is_transitioning() -> bool:
 	return _transitioning
 
 
+func has_pending_spawn() -> bool:
+	return not _pending_spawn_marker.is_empty()
+
+
 func transition_to(scene_path: String, spawn_marker_name: String = "", facing_direction: String = "") -> void:
 	if _transitioning:
 		return

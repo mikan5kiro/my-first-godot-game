@@ -3,7 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://c7xgeahwubd4m" path="res://sprites/mysprite1.png" id="1_3vyb7"]
 [ext_resource type="Script" uid="uid://bmhcxnflwvq4v" path="res://scripts/player.gd" id="1_g2els"]
 [ext_resource type="Script" uid="uid://b4yvimqjqogk5" path="res://scripts/player_interactor.gd" id="2_interactor"]
-[ext_resource type="Script" path="res://scripts/cutscene_controller.gd" id="3_cutscene"]
+[ext_resource type="Script" uid="uid://cq5mks5v84p0a" path="res://scripts/cutscene_controller.gd" id="3_cutscene"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_a38lo"]
 atlas = ExtResource("1_3vyb7")
@@ -223,7 +223,7 @@ animations = [{
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4ni07"]
 radius = 8.0
-height = 18.0
+height = 16.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_qhqgy"]
 size = Vector2(35, 46)
@@ -233,15 +233,14 @@ script = ExtResource("1_g2els")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=855831895]
 sprite_frames = SubResource("SpriteFrames_a38lo")
-animation = &"awake"
-frame_progress = 0.29089528
+animation = &"down"
+metadata/_edit_lock_ = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1712781325]
 zoom = Vector2(3, 3)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=352446136]
-visible = false
-position = Vector2(0, 15)
+position = Vector2(0, 16)
 shape = SubResource("CapsuleShape2D_4ni07")
 
 [node name="Area2D" type="Area2D" parent="." unique_id=922043287]

@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bitsfjifg4oy3" path="res://scenes/门.tscn" id="4_pvw6c"]
 [ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="5_camera"]
 [ext_resource type="Script" uid="uid://bvuy1puvytkd4" path="res://scripts/investigate_item.gd" id="6_iy33j"]
+[ext_resource type="Script" uid="uid://cj22ggupilu5w" path="res://scripts/door.gd" id="7_8c7us"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iy33j"]
 texture = ExtResource("1_5bmjw")
@@ -164,6 +165,9 @@ size = Vector2(20, 68)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_c55kc"]
 size = Vector2(51, 36.5)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gxh2u"]
+size = Vector2(26, 32)
+
 [node name="LivingRoom" type="Node2D" unique_id=1179704806]
 script = ExtResource("5_camera")
 
@@ -282,3 +286,17 @@ message = "餐桌。"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D2" unique_id=53590138]
 position = Vector2(231, 47.25)
 shape = SubResource("RectangleShape2D_c55kc")
+
+[node name="KitchenDoor" type="Area2D" parent="." unique_id=394233654]
+script = ExtResource("7_8c7us")
+target_scene = "uid://cvnwwo4rq4g2k"
+spawn_marker_name = "Spawn_Living2Kitchen"
+required_facing = "left"
+metadata/_custom_type_script = "uid://cj22ggupilu5w"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="KitchenDoor" unique_id=636988721]
+position = Vector2(271, -64)
+shape = SubResource("RectangleShape2D_gxh2u")
+
+[node name="Spawn_FromKitchen" type="Marker2D" parent="." unique_id=391182879]
+position = Vector2(285, -61)

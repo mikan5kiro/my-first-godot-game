@@ -13,6 +13,9 @@ var _external_controls_locked: bool = false
 func _ready() -> void:
 	if not play_entry_cutscene:
 		return
+	# 从其他场景进门时会带重生点，不应再播起床开场。
+	if SceneTransition != null and SceneTransition.has_pending_spawn():
+		return
 	if cutscene_controller == null:
 		push_warning("Player: 找不到 CutsceneController，无法播放入场过场")
 		return

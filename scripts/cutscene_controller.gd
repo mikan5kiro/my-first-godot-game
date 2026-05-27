@@ -32,6 +32,7 @@ func play(data: CutsceneData) -> void:
 	if not is_pending(data):
 		_set_player_locked(false)
 		return
+	_mark_cutscene_completed(data)
 	_run_cutscene(data)
 
 
@@ -50,11 +51,15 @@ func _run_cutscene(data: CutsceneData) -> void:
 	for step in data.steps:
 		await _run_step(step)
 
-	if not data.completion_flag.is_empty() and GameState != null:
-		GameState.set_flag(data.completion_flag)
-
+	_mark_cutscene_completed(data)
 	_set_player_locked(false)
 	_is_playing = false
+
+
+func _mark_cutscene_completed(data: CutsceneData) -> void:
+	if data == null or data.completion_flag.is_empty() or GameState == null:
+		return
+	GameState.set_flag(data.completion_flag)
 
 
 func _run_step(step: CutsceneStep) -> void:
