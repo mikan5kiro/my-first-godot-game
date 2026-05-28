@@ -4,7 +4,9 @@
 [ext_resource type="PackedScene" uid="uid://c3lu3pg63y4ue" path="res://scenes/player.tscn" id="2_mrp8g"]
 [ext_resource type="Script" uid="uid://cj22ggupilu5w" path="res://scripts/door.gd" id="3_2b6py"]
 [ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="4_camera"]
-[ext_resource type="Script" uid="uid://bvuy1puvytkd4" path="res://scripts/investigate_item.gd" id="5_v3ycp"]
+[ext_resource type="Script" uid="uid://csnyi53rymael" path="res://scripts/fridge.gd" id="5_v3ycp"]
+[ext_resource type="Script" uid="uid://vci6ipbh4l0d" path="res://scripts/stove.gd" id="6_stove"]
+[ext_resource type="Script" uid="uid://cdaljtugppoqe" path="res://scripts/cabinet.gd" id="7_cabinet"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bems3"]
 size = Vector2(27, 35)
@@ -55,16 +57,22 @@ shape = SubResource("WorldBoundaryShape2D_2b6py")
 
 [node name="Fridge" type="Area2D" parent="." unique_id=991456350]
 script = ExtResource("5_v3ycp")
-message = "冰箱。要打开吗？"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Fridge" unique_id=150541740]
 position = Vector2(-7.5, 113)
 shape = SubResource("RectangleShape2D_g3o0j")
 
+[node name="Cabinet" type="Area2D" parent="." unique_id=1884563501]
+script = ExtResource("7_cabinet")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Cabinet" unique_id=1884563502]
+position = Vector2(34, 114)
+scale = Vector2(2.367206, 0.6750951)
+shape = SubResource("RectangleShape2D_g3o0j")
+
 [node name="Cook" type="Area2D" parent="." unique_id=1992735789]
-script = ExtResource("5_v3ycp")
-message = "灶台。要做饭吗？"
+script = ExtResource("6_stove")
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Cook" unique_id=1324050073]

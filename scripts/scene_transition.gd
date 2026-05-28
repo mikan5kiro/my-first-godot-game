@@ -58,6 +58,24 @@ func transition_to(scene_path: String, spawn_marker_name: String = "", facing_di
 	_transitioning = false
 
 
+func play_action_with_fade(
+	action: Callable,
+	duration: float = -1.0,
+	on_fade_out_start: Callable = Callable(),
+) -> void:
+	if _transitioning:
+		return
+	_transitioning = true
+	var use_duration := fade_duration if duration <= 0.0 else duration
+	await _fade_to_alpha(1.0, use_duration)
+	if action.is_valid():
+		await action.call()
+	if on_fade_out_start.is_valid():
+		on_fade_out_start.call()
+	await _fade_to_alpha(0.0, use_duration)
+	_transitioning = false
+
+
 func _on_scene_changed() -> void:
 	if _pending_spawn_marker.is_empty():
 		return
@@ -117,14 +135,16 @@ func _find_player(scene_root: Node) -> CharacterBody2D:
 
 
 func _fade_to_black() -> void:
-	var tween := create_tween()
-	tween.tween_property(_overlay, "color:a", 1.0, fade_duration)
-	await tween.finished
+	await _fade_to_alpha(1.0, fade_duration)
 
 
 func _fade_from_black() -> void:
+	await _fade_to_alpha(0.0, fade_duration)
+
+
+func _fade_to_alpha(target_alpha: float, duration: float) -> void:
 	var tween := create_tween()
-	tween.tween_property(_overlay, "color:a", 0.0, fade_duration)
+	tween.tween_property(_overlay, "color:a", clampf(target_alpha, 0.0, 1.0), maxf(duration, 0.01))
 	await tween.finished
 
 

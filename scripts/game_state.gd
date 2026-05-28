@@ -40,6 +40,7 @@ const PERIOD_DISPLAY_NAMES := {
 
 const FLAG_BEDROOM_INTRO := "bedroom_intro_played"
 const DEFAULT_PHONE_ITEM: ItemData = preload("res://resources/items/phone.tres")
+const ITEM_OBTAINED_SFX: AudioStream = preload("res://audios/決定ボタンを押す26.mp3")
 
 @export_group("Initial Values")
 @export_range(0, 100, 1) var initial_hunger: int = 80
@@ -48,6 +49,8 @@ const DEFAULT_PHONE_ITEM: ItemData = preload("res://resources/items/phone.tres")
 @export var initial_day: int = 1
 @export var initial_period: TimePeriod = TimePeriod.MORNING
 @export var initial_inventory: Array[ItemData] = [DEFAULT_PHONE_ITEM]
+@export var initial_fridge_contents: PackedStringArray = PackedStringArray(["鸡蛋", "番茄"])
+@export var initial_cabinet_contents: PackedStringArray = PackedStringArray(["大米", "意大利面", "罐头"])
 
 @export_group("Limits")
 @export_range(0, 100, 1) var min_hunger: int = 0
@@ -66,11 +69,15 @@ var day: int = 1
 var period: TimePeriod = TimePeriod.MORNING
 var flags: Dictionary = {}
 var inventory_items: Array[ItemData] = []
+var fridge_contents: PackedStringArray = PackedStringArray()
+var cabinet_contents: PackedStringArray = PackedStringArray()
 var active_tasks: PackedStringArray = PackedStringArray()
 var is_locked: bool = false
+var _item_obtained_sfx_player: AudioStreamPlayer
 
 
 func _ready() -> void:
+	_setup_item_obtained_sfx()
 	reset_to_defaults()
 
 
@@ -90,6 +97,8 @@ func reset_to_defaults() -> void:
 	period = initial_period
 	flags = {}
 	inventory_items = _duplicate_inventory(initial_inventory)
+	fridge_contents = initial_fridge_contents.duplicate()
+	cabinet_contents = initial_cabinet_contents.duplicate()
 	active_tasks = PackedStringArray()
 	is_locked = false
 	stats_changed.emit()
@@ -190,11 +199,13 @@ func set_inventory_items(items: Array[ItemData]) -> void:
 	inventory_changed.emit()
 
 
-func add_inventory_item(item: ItemData) -> void:
+func add_inventory_item(item: ItemData, play_sfx: bool = true) -> void:
 	if item == null:
 		return
 	inventory_items.append(item)
 	inventory_changed.emit()
+	if play_sfx:
+		_play_item_obtained_sfx()
 
 
 func remove_inventory_item(item: ItemData) -> bool:
@@ -212,6 +223,17 @@ func remove_inventory_item_by_id(item_id: String) -> bool:
 		return false
 	inventory_items.remove_at(index)
 	inventory_changed.emit()
+	return true
+
+
+func consume_food_item(item: ItemData) -> bool:
+	if item == null or not item.is_food:
+		return false
+	if find_inventory_index(item) < 0:
+		return false
+	remove_inventory_item(item)
+	if item.hunger_restore != 0:
+		add_stat(&"hunger", item.hunger_restore)
 	return true
 
 
@@ -239,6 +261,90 @@ func clear_inventory() -> void:
 		return
 	inventory_items = []
 	inventory_changed.emit()
+
+
+func has_fridge_ingredients() -> bool:
+	return not fridge_contents.is_empty()
+
+
+func has_cabinet_ingredients() -> bool:
+	return not cabinet_contents.is_empty()
+
+
+func get_all_cooking_ingredients() -> PackedStringArray:
+	var items := fridge_contents.duplicate()
+	items.append_array(cabinet_contents)
+	return items
+
+
+func has_cooking_ingredients() -> bool:
+	# 任一处有食材即可开饭；若需冷藏 + 常温都必须有货，改成 and。
+	return has_fridge_ingredients() or has_cabinet_ingredients()
+
+
+func get_fridge_contents_text() -> String:
+	if fridge_contents.is_empty():
+		return "冰箱里什么都没有。"
+	return "冰箱里放着：" + "、".join(fridge_contents) + "。"
+
+
+func consume_fridge_ingredients(items: PackedStringArray) -> void:
+	for item in items:
+		var index := fridge_contents.find(item)
+		if index >= 0:
+			fridge_contents.remove_at(index)
+
+
+func get_cabinet_contents_text() -> String:
+	if cabinet_contents.is_empty():
+		return "柜子里什么都没有。"
+	return "柜子里放着：" + "、".join(cabinet_contents) + "。"
+
+
+func consume_cabinet_items(items: PackedStringArray) -> void:
+	for item in items:
+		var index := cabinet_contents.find(item)
+		if index >= 0:
+			cabinet_contents.remove_at(index)
+
+
+func consume_cooking_ingredient(item: String) -> bool:
+	var index := fridge_contents.find(item)
+	if index >= 0:
+		fridge_contents.remove_at(index)
+		return true
+	index = cabinet_contents.find(item)
+	if index >= 0:
+		cabinet_contents.remove_at(index)
+		return true
+	return false
+
+
+func consume_cooking_ingredients(items: PackedStringArray) -> void:
+	for item in items:
+		consume_cooking_ingredient(item)
+
+
+func has_recipe_ingredients(recipe: RecipeData) -> bool:
+	if recipe == null or recipe.ingredients.is_empty():
+		return false
+	var available := get_all_cooking_ingredients()
+	for required in recipe.ingredients:
+		var index := available.find(required)
+		if index < 0:
+			return false
+		available.remove_at(index)
+	return true
+
+
+func cook_recipe(recipe: RecipeData, play_item_sfx: bool = true) -> bool:
+	if recipe == null or recipe.result_item == null:
+		return false
+	if not has_recipe_ingredients(recipe):
+		return false
+	consume_cooking_ingredients(recipe.ingredients)
+	add_inventory_item(recipe.result_item, play_item_sfx)
+	return true
 
 
 func _duplicate_inventory(items: Array[ItemData]) -> Array[ItemData]:
@@ -321,3 +427,20 @@ func lock() -> void:
 
 func unlock() -> void:
 	is_locked = false
+
+
+func _setup_item_obtained_sfx() -> void:
+	_item_obtained_sfx_player = AudioStreamPlayer.new()
+	_item_obtained_sfx_player.bus = &"Master"
+	add_child(_item_obtained_sfx_player)
+
+
+func _play_item_obtained_sfx() -> void:
+	if _item_obtained_sfx_player == null or ITEM_OBTAINED_SFX == null:
+		return
+	_item_obtained_sfx_player.stream = ITEM_OBTAINED_SFX
+	_item_obtained_sfx_player.play()
+
+
+func play_item_obtained_sfx() -> void:
+	_play_item_obtained_sfx()

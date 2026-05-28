@@ -7,6 +7,18 @@ class_name ItemData
 @export var display_name: String = ""
 @export_multiline var inspect_text: String = ""
 @export var icon: Texture2D
+@export var is_food: bool = false
+@export_range(0, 100, 1) var hunger_restore: int = 0
+
+
+func can_use() -> bool:
+	return is_food
+
+
+func get_use_blocked_message() -> String:
+	if is_food:
+		return "需要到餐桌旁才能使用。"
+	return ""
 
 
 func get_display_name() -> String:

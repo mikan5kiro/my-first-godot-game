@@ -38,17 +38,47 @@ func show_text(text: String) -> void:
 	if _dialog == null:
 		return
 
+	if _type_timer != null:
+		_type_timer.stop()
+	_dialog.clear_choices()
 	_full_text = text
 	_typed_char_count = 0
-	_is_typing = true
+	_is_typing = not _full_text.is_empty()
 
 	_dialog.set_text("")
 	_dialog.show_dialog()
 	_is_visible = true
 
+	if not _is_typing:
+		return
+
 	var cps: float = maxf(typewriter_chars_per_sec, 1.0)
 	_type_timer.wait_time = 1.0 / cps
 	_type_timer.start()
+
+
+func show_text_instant(text: String) -> void:
+	if _dialog == null:
+		return
+
+	if _type_timer != null:
+		_type_timer.stop()
+	_is_typing = false
+	_full_text = text
+	_typed_char_count = _full_text.length()
+	_dialog.set_text(text)
+	_dialog.show_dialog()
+	_is_visible = true
+
+
+func set_choices(labels: PackedStringArray, selected_index: int) -> void:
+	if _dialog != null:
+		_dialog.set_choices(labels, selected_index)
+
+
+func clear_choices() -> void:
+	if _dialog != null:
+		_dialog.clear_choices()
 
 
 func skip_typing() -> void:

@@ -86,6 +86,11 @@ func clear_detail() -> void:
 		_detail_label.text = ""
 
 
+func set_detail_text(text: String) -> void:
+	if _detail_label != null:
+		_detail_label.text = text
+
+
 func move_selection_grid(column_step: int, row_step: int) -> void:
 	if _rows.is_empty():
 		return

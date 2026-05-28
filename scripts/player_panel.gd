@@ -395,6 +395,37 @@ func _on_detail_navigation_moved(_index: int) -> void:
 
 func _on_detail_confirmed() -> void:
 	_play_confirm_sfx()
+	if _active_tab != Tab.ITEMS or GameState == null:
+		return
+
+	var index := _detail_list_panel.get_selected_index()
+	if index < 0 or index >= GameState.inventory_items.size():
+		return
+
+	var item: ItemData = GameState.inventory_items[index]
+	if item == null or not item.can_use():
+		return
+
+	_try_use_selected_item(item)
+
+
+func _try_use_selected_item(item: ItemData) -> void:
+	var player := get_tree().get_first_node_in_group("player") as CharacterBody2D
+	if player == null:
+		return
+
+	var player_interactor := player.get_node_or_null("Area2D") as PlayerInteractor
+	if player_interactor == null:
+		return
+
+	if not FoodUse.is_dining_table_available(player_interactor, player):
+		var blocked_message := item.get_use_blocked_message()
+		if not blocked_message.is_empty():
+			_detail_list_panel.set_detail_text(blocked_message)
+		return
+
+	_close_panel()
+	await FoodUse.run_eat_sequence(self, player_interactor, item)
 
 
 func _refresh_tab_visuals() -> void:
