@@ -73,6 +73,8 @@ shape = SubResource("RectangleShape2D_g3o0j")
 
 [node name="Cook" type="Area2D" parent="." unique_id=1992735789]
 script = ExtResource("6_stove")
+ignition_sfx_duration = 1.0
+required_facing = "right"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Cook" unique_id=1324050073]

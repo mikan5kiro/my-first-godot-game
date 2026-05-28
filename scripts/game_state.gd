@@ -285,7 +285,45 @@ func has_cooking_ingredients() -> bool:
 func get_fridge_contents_text() -> String:
 	if fridge_contents.is_empty():
 		return "冰箱里什么都没有。"
-	return "冰箱里放着：" + "、".join(fridge_contents) + "。"
+	return "冰箱里放着：" + "、".join(_format_stacked_contents(fridge_contents)) + "。"
+
+
+func _format_stacked_contents(contents: PackedStringArray) -> PackedStringArray:
+	var counts: Dictionary = {}
+	for item in contents:
+		var item_name := String(item)
+		counts[item_name] = int(counts.get(item_name, 0)) + 1
+
+	var result: PackedStringArray = []
+	var seen: Array[String] = []
+	for item in contents:
+		var item_name := String(item)
+		if seen.has(item_name):
+			continue
+		seen.append(item_name)
+		var count: int = counts[item_name]
+		if count > 1:
+			result.append("%s*%d" % [item_name, count])
+		else:
+			result.append(item_name)
+	return result
+
+
+func add_fridge_content(item_name: String) -> void:
+	if item_name.is_empty():
+		return
+	fridge_contents.append(item_name)
+
+
+func store_inventory_item_in_fridge(item: ItemData) -> bool:
+	if item == null or not item.is_fridge_storable:
+		return false
+	if find_inventory_index(item) < 0:
+		return false
+	var content_name := item.get_fridge_content_name()
+	remove_inventory_item(item)
+	add_fridge_content(content_name)
+	return true
 
 
 func consume_fridge_ingredients(items: PackedStringArray) -> void:

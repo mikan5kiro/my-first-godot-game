@@ -6,6 +6,6 @@
 script = ExtResource("1_item_data")
 id = "tomato_egg"
 display_name = "番茄炒蛋"
-inspect_text = "一盘番茄炒蛋。"
+inspect_text = "番茄炒蛋。"
 is_food = true
 hunger_restore = 30

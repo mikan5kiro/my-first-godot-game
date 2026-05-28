@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="RecipeData" format=3 uid="uid://b3bvnt685htck"]
+
+[ext_resource type="Script" uid="uid://q67fttx07pxd" path="res://scripts/recipe_data.gd" id="1_recipe"]
+[ext_resource type="Resource" uid="uid://dbeefpasta001" path="res://resources/items/beef_pasta.tres" id="2_item"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = "beef_pasta"
+ingredients = PackedStringArray("牛肉", "意大利面")
+result_item = ExtResource("2_item")

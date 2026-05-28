@@ -79,7 +79,7 @@ func _apply_detail_binding(tab: Tab) -> void:
 		Tab.ITEMS:
 			_detail_list_panel.columns = item_menu_columns
 			_detail_list_panel.slot_min_width = item_slot_min_width
-			_detail_list_panel.show_count_suffix = true
+			_detail_list_panel.show_count_suffix = false
 			_detail_list_panel.empty_detail_text = ""
 			_detail_list_panel.bind(
 				_get_inventory_entries,
@@ -101,29 +101,62 @@ func _apply_detail_binding(tab: Tab) -> void:
 
 
 func _get_inventory_entries() -> Array:
+	return _get_grouped_inventory()
+
+
+func _get_grouped_inventory() -> Array:
 	if GameState == null:
 		return []
-	return GameState.inventory_items
+
+	var groups: Array = []
+	var group_index_by_id: Dictionary = {}
+	for item in GameState.inventory_items:
+		if item == null:
+			continue
+		var item_id := item.id if not item.id.is_empty() else str(item.get_instance_id())
+		if group_index_by_id.has(item_id):
+			var group: Dictionary = groups[group_index_by_id[item_id]]
+			group["count"] = int(group["count"]) + 1
+		else:
+			group_index_by_id[item_id] = groups.size()
+			groups.append({"item": item, "count": 1})
+	return groups
+
+
+func _get_inventory_entry(index: int) -> Dictionary:
+	var groups := _get_grouped_inventory()
+	if index < 0 or index >= groups.size():
+		return {}
+	return groups[index]
 
 
 func _get_item_title(index: int) -> String:
-	if GameState == null or index < 0 or index >= GameState.inventory_items.size():
+	var entry := _get_inventory_entry(index)
+	if entry.is_empty():
 		return ""
-	var item: ItemData = GameState.inventory_items[index]
-	return item.get_display_name() if item != null else "未知物品"
+	var item: ItemData = entry.get("item")
+	var count: int = int(entry.get("count", 1))
+	if item == null:
+		return "未知物品"
+	var name := item.get_display_name()
+	if count > 1:
+		return "%s：%d" % [name, count]
+	return name
 
 
 func _get_item_detail(index: int) -> String:
-	if GameState == null or index < 0 or index >= GameState.inventory_items.size():
+	var entry := _get_inventory_entry(index)
+	if entry.is_empty():
 		return ""
-	var item: ItemData = GameState.inventory_items[index]
+	var item: ItemData = entry.get("item")
 	return item.get_inspect_text() if item != null else ""
 
 
 func _get_item_stable_id(index: int) -> String:
-	if GameState == null or index < 0 or index >= GameState.inventory_items.size():
+	var entry := _get_inventory_entry(index)
+	if entry.is_empty():
 		return ""
-	var item: ItemData = GameState.inventory_items[index]
+	var item: ItemData = entry.get("item")
 	return item.id if item != null else ""
 
 
@@ -399,10 +432,11 @@ func _on_detail_confirmed() -> void:
 		return
 
 	var index := _detail_list_panel.get_selected_index()
-	if index < 0 or index >= GameState.inventory_items.size():
+	var entry := _get_inventory_entry(index)
+	if entry.is_empty():
 		return
 
-	var item: ItemData = GameState.inventory_items[index]
+	var item: ItemData = entry.get("item")
 	if item == null or not item.can_use():
 		return
 
@@ -418,14 +452,31 @@ func _try_use_selected_item(item: ItemData) -> void:
 	if player_interactor == null:
 		return
 
-	if not FoodUse.is_dining_table_available(player_interactor, player):
-		var blocked_message := item.get_use_blocked_message()
-		if not blocked_message.is_empty():
-			_detail_list_panel.set_detail_text(blocked_message)
+	if item.is_phone:
+		_close_panel()
+		PhoneUse.run_use(player_interactor)
 		return
 
-	_close_panel()
-	await FoodUse.run_eat_sequence(self, player_interactor, item)
+	if item.is_fridge_storable:
+		if not FridgeUse.is_fridge_available(player_interactor, player):
+			var blocked_message := item.get_use_blocked_message()
+			if not blocked_message.is_empty():
+				_detail_list_panel.set_detail_text(blocked_message)
+			return
+
+		_close_panel()
+		FridgeUse.run_store(player_interactor, item)
+		return
+
+	if item.is_food:
+		if not FoodUse.is_dining_table_available(player_interactor, player):
+			var blocked_message := item.get_use_blocked_message()
+			if not blocked_message.is_empty():
+				_detail_list_panel.set_detail_text(blocked_message)
+			return
+
+		_close_panel()
+		await FoodUse.run_eat_sequence(self, player_interactor, item)
 
 
 func _refresh_tab_visuals() -> void:

@@ -1,9 +1,10 @@
-[gd_resource type="Resource" script_class="ItemData" load_steps=2 format=3]
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://pd5hbm8dxejb"]
 
-[ext_resource type="Script" path="res://scripts/item_data.gd" id="1_item_data"]
+[ext_resource type="Script" uid="uid://cql1nf57emmxp" path="res://scripts/item_data.gd" id="1_item_data"]
 
 [resource]
 script = ExtResource("1_item_data")
 id = "phone"
 display_name = "手机"
 inspect_text = "手机。"
+is_phone = true
