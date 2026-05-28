@@ -1,7 +1,7 @@
 extends Node
 
 ## 全局游戏状态（Autoload: GameState）。
-## 饱食度、理智、金钱、天数/时段、剧情 flag 的唯一数据源。
+## 饱食度、状态（sanity）、金钱、天数/时段、剧情 flag 的唯一数据源。
 
 signal stats_changed
 signal time_changed(day: int, period: TimePeriod)
@@ -40,17 +40,23 @@ const PERIOD_DISPLAY_NAMES := {
 
 const FLAG_BEDROOM_INTRO := "bedroom_intro_played"
 const DEFAULT_PHONE_ITEM: ItemData = preload("res://resources/items/phone.tres")
+const MEAL_ITEM: ItemData = preload("res://resources/items/meal.tres")
 const ITEM_OBTAINED_SFX: AudioStream = preload("res://audios/決定ボタンを押す26.mp3")
 
 @export_group("Initial Values")
-@export_range(0, 100, 1) var initial_hunger: int = 80
-@export_range(0, 100, 1) var initial_sanity: int = 100
-@export var initial_money: int = 0
+@export_range(0, 100, 1) var initial_hunger: int = 35
+@export_range(0, 100, 1) var initial_sanity: int = 65
+@export var initial_money: int = 200
+@export var initial_food_days: int = 4
 @export var initial_day: int = 1
 @export var initial_period: TimePeriod = TimePeriod.MORNING
 @export var initial_inventory: Array[ItemData] = [DEFAULT_PHONE_ITEM]
-@export var initial_fridge_contents: PackedStringArray = PackedStringArray(["鸡蛋", "番茄"])
-@export var initial_cabinet_contents: PackedStringArray = PackedStringArray(["大米", "意大利面", "罐头"])
+
+@export_group("Food")
+@export var buy_food_cost: int = 25
+@export var buy_food_days_amount: int = 3
+@export var delivery_cost: int = 40
+@export_range(0, 100, 1) var meal_hunger_restore: int = 40
 
 @export_group("Limits")
 @export_range(0, 100, 1) var min_hunger: int = 0
@@ -62,15 +68,14 @@ const ITEM_OBTAINED_SFX: AudioStream = preload("res://audios/決定ボタンを�
 @export var daily_hunger_drain: int = 10
 @export var daily_sanity_drain: int = 0
 
-var hunger: int = 80
-var sanity: int = 100
-var money: int = 0
+var hunger: int = 35
+var sanity: int = 65
+var money: int = 200
+var food_days: int = 4
 var day: int = 1
 var period: TimePeriod = TimePeriod.MORNING
 var flags: Dictionary = {}
 var inventory_items: Array[ItemData] = []
-var fridge_contents: PackedStringArray = PackedStringArray()
-var cabinet_contents: PackedStringArray = PackedStringArray()
 var active_tasks: PackedStringArray = PackedStringArray()
 var is_locked: bool = false
 var _item_obtained_sfx_player: AudioStreamPlayer
@@ -89,16 +94,124 @@ static func period_to_display_name(value: TimePeriod) -> String:
 	return PERIOD_DISPLAY_NAMES.get(value, "早晨")
 
 
+func get_hunger_label() -> String:
+	if hunger >= 70:
+		return "吃饱"
+	if hunger >= 40:
+		return "还行"
+	if hunger >= 20:
+		return "有点饿"
+	return "很饿"
+
+
+func get_sanity_label() -> String:
+	if sanity >= 80:
+		return "乐观"
+	if sanity >= 50:
+		return "普通"
+	if sanity >= 20:
+		return "忧郁"
+	return "？？？"
+
+
+func get_money_label() -> String:
+	if money >= 500:
+		return "宽裕"
+	if money >= 100:
+		return "够用"
+	if money >= 30:
+		return "紧张"
+	return "见底"
+
+
+func get_food_days_label() -> String:
+	if food_days >= 7:
+		return "够用"
+	if food_days >= 3:
+		return "不多了"
+	if food_days >= 1:
+		return "快没了"
+	return "没有了"
+
+
+func get_food_supply_text() -> String:
+	if food_days <= 0:
+		return "没有食材了。"
+	return "自己做饭还能撑 %d 天。" % food_days
+
+
+func can_cook() -> bool:
+	return food_days > 0
+
+
+func can_eat() -> bool:
+	return get_prepared_meal() != null
+
+
+func get_prepared_meal() -> ItemData:
+	for item in inventory_items:
+		if _is_meal_item(item):
+			return item
+	return null
+
+
+func _is_meal_item(item: ItemData) -> bool:
+	return item != null and item.is_meal_item()
+
+
+func cook_meal() -> bool:
+	if is_locked or food_days <= 0:
+		return false
+	food_days -= 1
+	add_inventory_item(MEAL_ITEM, false)
+	stats_changed.emit()
+	return true
+
+
+func eat_meal(item: ItemData) -> bool:
+	if is_locked or not _is_meal_item(item):
+		return false
+	if find_inventory_index(item) < 0:
+		return false
+	remove_inventory_item(item)
+	add_stat(&"hunger", meal_hunger_restore)
+	return true
+
+
+func can_buy_food_supply() -> bool:
+	return money >= buy_food_cost
+
+
+func buy_food_supply() -> bool:
+	if is_locked or not can_buy_food_supply():
+		return false
+	money -= buy_food_cost
+	food_days += buy_food_days_amount
+	stats_changed.emit()
+	return true
+
+
+func can_order_delivery() -> bool:
+	return money >= delivery_cost
+
+
+func order_delivery() -> bool:
+	if is_locked or not can_order_delivery():
+		return false
+	money -= delivery_cost
+	add_stat(&"hunger", meal_hunger_restore)
+	return true
+
+
 func reset_to_defaults() -> void:
 	hunger = initial_hunger
 	sanity = initial_sanity
 	money = initial_money
+	food_days = initial_food_days
 	day = initial_day
 	period = initial_period
 	flags = {}
 	inventory_items = _duplicate_inventory(initial_inventory)
-	fridge_contents = initial_fridge_contents.duplicate()
-	cabinet_contents = initial_cabinet_contents.duplicate()
 	active_tasks = PackedStringArray()
 	is_locked = false
 	stats_changed.emit()
@@ -226,17 +339,6 @@ func remove_inventory_item_by_id(item_id: String) -> bool:
 	return true
 
 
-func consume_food_item(item: ItemData) -> bool:
-	if item == null or not item.is_food:
-		return false
-	if find_inventory_index(item) < 0:
-		return false
-	remove_inventory_item(item)
-	if item.hunger_restore != 0:
-		add_stat(&"hunger", item.hunger_restore)
-	return true
-
-
 func find_inventory_index(item: ItemData) -> int:
 	if item == null:
 		return -1
@@ -261,128 +363,6 @@ func clear_inventory() -> void:
 		return
 	inventory_items = []
 	inventory_changed.emit()
-
-
-func has_fridge_ingredients() -> bool:
-	return not fridge_contents.is_empty()
-
-
-func has_cabinet_ingredients() -> bool:
-	return not cabinet_contents.is_empty()
-
-
-func get_all_cooking_ingredients() -> PackedStringArray:
-	var items := fridge_contents.duplicate()
-	items.append_array(cabinet_contents)
-	return items
-
-
-func has_cooking_ingredients() -> bool:
-	# 任一处有食材即可开饭；若需冷藏 + 常温都必须有货，改成 and。
-	return has_fridge_ingredients() or has_cabinet_ingredients()
-
-
-func get_fridge_contents_text() -> String:
-	if fridge_contents.is_empty():
-		return "冰箱里什么都没有。"
-	return "冰箱里放着：" + "、".join(_format_stacked_contents(fridge_contents)) + "。"
-
-
-func _format_stacked_contents(contents: PackedStringArray) -> PackedStringArray:
-	var counts: Dictionary = {}
-	for item in contents:
-		var item_name := String(item)
-		counts[item_name] = int(counts.get(item_name, 0)) + 1
-
-	var result: PackedStringArray = []
-	var seen: Array[String] = []
-	for item in contents:
-		var item_name := String(item)
-		if seen.has(item_name):
-			continue
-		seen.append(item_name)
-		var count: int = counts[item_name]
-		if count > 1:
-			result.append("%s*%d" % [item_name, count])
-		else:
-			result.append(item_name)
-	return result
-
-
-func add_fridge_content(item_name: String) -> void:
-	if item_name.is_empty():
-		return
-	fridge_contents.append(item_name)
-
-
-func store_inventory_item_in_fridge(item: ItemData) -> bool:
-	if item == null or not item.is_fridge_storable:
-		return false
-	if find_inventory_index(item) < 0:
-		return false
-	var content_name := item.get_fridge_content_name()
-	remove_inventory_item(item)
-	add_fridge_content(content_name)
-	return true
-
-
-func consume_fridge_ingredients(items: PackedStringArray) -> void:
-	for item in items:
-		var index := fridge_contents.find(item)
-		if index >= 0:
-			fridge_contents.remove_at(index)
-
-
-func get_cabinet_contents_text() -> String:
-	if cabinet_contents.is_empty():
-		return "柜子里什么都没有。"
-	return "柜子里放着：" + "、".join(cabinet_contents) + "。"
-
-
-func consume_cabinet_items(items: PackedStringArray) -> void:
-	for item in items:
-		var index := cabinet_contents.find(item)
-		if index >= 0:
-			cabinet_contents.remove_at(index)
-
-
-func consume_cooking_ingredient(item: String) -> bool:
-	var index := fridge_contents.find(item)
-	if index >= 0:
-		fridge_contents.remove_at(index)
-		return true
-	index = cabinet_contents.find(item)
-	if index >= 0:
-		cabinet_contents.remove_at(index)
-		return true
-	return false
-
-
-func consume_cooking_ingredients(items: PackedStringArray) -> void:
-	for item in items:
-		consume_cooking_ingredient(item)
-
-
-func has_recipe_ingredients(recipe: RecipeData) -> bool:
-	if recipe == null or recipe.ingredients.is_empty():
-		return false
-	var available := get_all_cooking_ingredients()
-	for required in recipe.ingredients:
-		var index := available.find(required)
-		if index < 0:
-			return false
-		available.remove_at(index)
-	return true
-
-
-func cook_recipe(recipe: RecipeData, play_item_sfx: bool = true) -> bool:
-	if recipe == null or recipe.result_item == null:
-		return false
-	if not has_recipe_ingredients(recipe):
-		return false
-	consume_cooking_ingredients(recipe.ingredients)
-	add_inventory_item(recipe.result_item, play_item_sfx)
-	return true
 
 
 func _duplicate_inventory(items: Array[ItemData]) -> Array[ItemData]:

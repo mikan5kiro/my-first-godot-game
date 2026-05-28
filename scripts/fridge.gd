@@ -27,7 +27,7 @@ func interact(interactor: Node) -> String:
 func _on_choice(choice_id: String, player_interactor: PlayerInteractor) -> void:
 	match choice_id:
 		CHOICE_YES:
-			player_interactor.show_text(GameState.get_fridge_contents_text())
+			player_interactor.show_text(GameState.get_food_supply_text())
 		CHOICE_NO:
 			player_interactor.hide_text_immediately()
 

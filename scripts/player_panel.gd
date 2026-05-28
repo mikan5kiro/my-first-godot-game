@@ -79,7 +79,7 @@ func _apply_detail_binding(tab: Tab) -> void:
 		Tab.ITEMS:
 			_detail_list_panel.columns = item_menu_columns
 			_detail_list_panel.slot_min_width = item_slot_min_width
-			_detail_list_panel.show_count_suffix = false
+			_detail_list_panel.show_count_suffix = true
 			_detail_list_panel.empty_detail_text = ""
 			_detail_list_panel.bind(
 				_get_inventory_entries,
@@ -135,13 +135,9 @@ func _get_item_title(index: int) -> String:
 	if entry.is_empty():
 		return ""
 	var item: ItemData = entry.get("item")
-	var count: int = int(entry.get("count", 1))
 	if item == null:
 		return "未知物品"
-	var name := item.get_display_name()
-	if count > 1:
-		return "%s：%d" % [name, count]
-	return name
+	return item.get_display_name()
 
 
 func _get_item_detail(index: int) -> String:
@@ -457,27 +453,14 @@ func _try_use_selected_item(item: ItemData) -> void:
 		PhoneUse.run_use(player_interactor)
 		return
 
-	if item.is_fridge_storable:
-		if not FridgeUse.is_fridge_available(player_interactor, player):
-			var blocked_message := item.get_use_blocked_message()
-			if not blocked_message.is_empty():
-				_detail_list_panel.set_detail_text(blocked_message)
-			return
-
+	if item.is_meal_item():
 		_close_panel()
-		FridgeUse.run_store(player_interactor, item)
-		return
-
-	if item.is_food:
 		if not FoodUse.is_dining_table_available(player_interactor, player):
-			var blocked_message := item.get_use_blocked_message()
-			if not blocked_message.is_empty():
-				_detail_list_panel.set_detail_text(blocked_message)
+			player_interactor.show_text(item.get_use_blocked_message())
 			return
 
-		_close_panel()
 		await FoodUse.run_eat_sequence(self, player_interactor, item)
-
+		return
 
 func _refresh_tab_visuals() -> void:
 	_menu_breath.stop()
@@ -508,9 +491,9 @@ func _refresh_status() -> void:
 	if GameState == null:
 		return
 	time_value.text = "第 %d 天 / %s" % [GameState.day, GameState.period_to_display_name(GameState.period)]
-	hunger_value.text = str(GameState.hunger)
-	sanity_value.text = str(GameState.sanity)
-	money_value.text = str(GameState.money)
+	hunger_value.text = GameState.get_hunger_label()
+	sanity_value.text = GameState.get_sanity_label()
+	money_value.text = GameState.get_money_label()
 
 
 func _on_time_changed(_day: int, _period: int) -> void:

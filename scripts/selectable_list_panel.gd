@@ -151,7 +151,7 @@ func _rebuild_rows(previous_id: String) -> void:
 
 	for index in _entries.size():
 		var title: String = String(_get_title.call(index)) if _get_title.is_valid() else ""
-		var row := _create_row(title)
+		var row := _create_row(title, _count_for_index(index))
 		_list_container.add_child(row)
 		_rows.append(row)
 
@@ -167,7 +167,7 @@ func _rebuild_rows(previous_id: String) -> void:
 	_refresh_selection_visuals()
 
 
-func _create_row(title: String) -> PanelContainer:
+func _create_row(title: String, count: int = 1) -> PanelContainer:
 	var row := PanelContainer.new()
 	var min_width: float = slot_min_width if _uses_grid_navigation() else 0.0
 	row.custom_minimum_size = Vector2(min_width, 28.0)
@@ -185,7 +185,7 @@ func _create_row(title: String) -> PanelContainer:
 	margin.add_theme_constant_override("margin_bottom", 2)
 	row.add_child(margin)
 
-	if show_count_suffix:
+	if show_count_suffix and count > 1:
 		var body := HBoxContainer.new()
 		margin.add_child(body)
 
@@ -196,7 +196,7 @@ func _create_row(title: String) -> PanelContainer:
 		body.add_child(name_label)
 
 		var count_label := Label.new()
-		count_label.text = ": 1"
+		count_label.text = ": %d" % count
 		count_label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)
 		body.add_child(count_label)
 	else:
@@ -239,6 +239,15 @@ func _stable_id_for_index(index: int) -> String:
 	if _get_stable_id.is_valid():
 		return String(_get_stable_id.call(index))
 	return str(index)
+
+
+func _count_for_index(index: int) -> int:
+	if index < 0 or index >= _entries.size():
+		return 1
+	var entry = _entries[index]
+	if entry is Dictionary and entry.has("count"):
+		return int(entry.get("count", 1))
+	return 1
 
 
 func _apply_row_style(row: PanelContainer, style: StyleBoxFlat) -> void:

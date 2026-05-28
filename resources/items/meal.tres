@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://cpgiaa8uggu1f"]
+
+[ext_resource type="Script" uid="uid://cql1nf57emmxp" path="res://scripts/item_data.gd" id="1_item_data"]
+
+[resource]
+script = ExtResource("1_item_data")
+id = "meal"
+display_name = "自己做的饭"
+inspect_text = "自己做的饭。去餐桌那边吃吧。"
+is_meal = true
