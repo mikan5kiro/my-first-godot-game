@@ -64,7 +64,11 @@ func try_interact(interactor: Node2D, event: InputEvent = null) -> void:
 	if target == null:
 		return
 
+	var dialog_lines: Array[DialogLine] = target.get_interaction_dialog_lines()
 	var result: String = target.interact(interactor)
+	if not dialog_lines.is_empty():
+		play_monologue_lines(dialog_lines)
+		return
 	if not result.is_empty():
 		show_text(result)
 
@@ -99,8 +103,11 @@ func show_choice(prompt: String, choices: Array, callback: Callable) -> void:
 	_choice_player.start(prompt, choices, callback)
 
 
-func show_text(text: String) -> void:
-	_dialog_presenter.show_text(text)
+func show_text(
+	text: String,
+	mode: InteractionDialog.DialogMode = InteractionDialog.DialogMode.NARRATION,
+) -> void:
+	_dialog_presenter.show_text(text, mode)
 
 
 func is_text_visible() -> bool:
@@ -111,8 +118,8 @@ func is_choice_active() -> bool:
 	return _choice_player.is_active()
 
 
-func play_monologue_lines(lines: PackedStringArray) -> void:
-	await _monologue_player.play_lines(lines)
+func play_monologue_lines(lines: Array[DialogLine]) -> void:
+	await _monologue_player.play_dialog_lines(lines)
 
 
 func hide_text_immediately() -> void:

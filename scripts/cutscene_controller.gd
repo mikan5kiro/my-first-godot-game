@@ -151,9 +151,9 @@ func _play_animation(anim_name: String) -> void:
 
 
 func _play_monologue(step: CutsceneStep) -> void:
-	var lines: PackedStringArray = step.fallback_lines
+	var lines: Array[DialogLine] = DialogTextLoader.lines_from_strings(step.fallback_lines)
 	if not step.text_file.is_empty():
-		lines = DialogTextLoader.load_lines(step.text_file, step.fallback_lines)
+		lines = DialogTextLoader.load_dialog_lines(step.text_file, step.fallback_lines)
 	if lines.is_empty() or _interact_area == null:
 		return
 	await _interact_area.play_monologue_lines(lines)

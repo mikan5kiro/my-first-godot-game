@@ -1,14 +1,23 @@
 extends CanvasLayer
 class_name InteractionDialog
 
+enum DialogMode {
+	NARRATION,
+	CHARACTER,
+}
+
 const PANEL_HEIGHT_TEXT_ONLY := 88.0
 const PANEL_HEIGHT_WITH_CHOICES := 140.0
 
 @onready var panel: PanelContainer = $Panel
-@onready var text_label: Label = $Panel/Margin/Content/TextLabel
+@onready var avatar_slot: AspectRatioContainer = $Panel/Margin/Content/TextRow/AvatarSlot
+@onready var avatar_frame: PanelContainer = $Panel/Margin/Content/TextRow/AvatarSlot/AvatarFrame
+@onready var avatar_image: TextureRect = $Panel/Margin/Content/TextRow/AvatarSlot/AvatarFrame/AvatarContent/AvatarImage
+@onready var text_label: Label = $Panel/Margin/Content/TextRow/TextColumn/TextLabel
 @onready var choices_container: VBoxContainer = $Panel/Margin/Content/ChoicesContainer
 
 var _choice_rows: Array[PanelContainer] = []
+var _dialog_mode: DialogMode = DialogMode.NARRATION
 
 
 func _ready() -> void:
@@ -19,6 +28,7 @@ func _ready() -> void:
 
 func _apply_styles() -> void:
 	panel.add_theme_stylebox_override("panel", RpgUiStyle.make_box_style(8.0))
+	avatar_frame.add_theme_stylebox_override("panel", RpgUiStyle.make_avatar_style(4.0))
 	RpgUiStyle.apply_dialog_label_theme(text_label)
 
 
@@ -29,7 +39,17 @@ func show_dialog() -> void:
 func hide_dialog() -> void:
 	panel.hide()
 	text_label.text = ""
+	set_dialog_mode(DialogMode.NARRATION)
 	clear_choices()
+
+
+func set_dialog_mode(mode: DialogMode) -> void:
+	_dialog_mode = mode
+	var show_avatar := mode == DialogMode.CHARACTER
+	if avatar_slot != null:
+		avatar_slot.visible = show_avatar
+	if avatar_image != null:
+		avatar_image.visible = show_avatar
 
 
 func set_text(value: String) -> void:

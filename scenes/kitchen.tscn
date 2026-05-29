@@ -32,7 +32,7 @@ tile_map_data = PackedByteArray("AAABAAQABAAMAA0AAAABAAUABAAMAA4AAAACAAQABAANAA0
 tile_set = ExtResource("1_7ilqw")
 
 [node name="CharacterBody2D" parent="." unique_id=2137992065 instance=ExtResource("2_mrp8g")]
-position = Vector2(98, 136)
+position = Vector2(53.000004, 136)
 scale = Vector2(0.8, 0.8)
 
 [node name="Spawn_Living2Kitchen" type="Marker2D" parent="." unique_id=555301603]

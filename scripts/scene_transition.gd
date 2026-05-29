@@ -42,6 +42,12 @@ func is_transitioning() -> bool:
 	return _transitioning
 
 
+## 等待当前场景切换的黑屏淡入/淡出结束（无切换时立即返回）。
+func wait_until_idle() -> void:
+	while _transitioning:
+		await get_tree().process_frame
+
+
 func has_pending_spawn() -> bool:
 	return not _pending_spawn_marker.is_empty()
 

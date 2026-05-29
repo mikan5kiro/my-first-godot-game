@@ -17,7 +17,7 @@ static func bedroom_intro() -> CutsceneData:
 			{
 				"text_file": BEDROOM_INTRO_TEXT,
 				"fallback_lines": PackedStringArray(
-					["又是这个梦……", "今天，得去把那件事做个了断。"]
+					["@又是这个梦……", "@今天，得去把那件事做个了断。"]
 				),
 			}
 		),

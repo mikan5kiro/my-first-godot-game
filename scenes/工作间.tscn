@@ -5,6 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://bitsfjifg4oy3" path="res://scenes/门.tscn" id="4_78ydu"]
 [ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="5_camera"]
 [ext_resource type="Script" uid="uid://bvuy1puvytkd4" path="res://scripts/investigate_item.gd" id="6_item"]
+[ext_resource type="Script" uid="uid://dcigmgdmlafpu" path="res://scripts/scene_enter_monologue.gd" id="8_enter"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_78ydu"]
 
@@ -20,8 +21,13 @@ size = Vector2(22, 20)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dvlsi"]
 size = Vector2(46, 20)
 
-[node name="Node2D" type="Node2D" unique_id=390936799]
+[node name="Node2D2" type="Node2D" unique_id=390936799]
 script = ExtResource("5_camera")
+
+[node name="FirstEnterMonologue" type="Node" parent="." unique_id=520422105]
+script = ExtResource("8_enter")
+once_flag = "workshop_first_enter"
+lines = "@还是这间屋子最有安全感。"
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=388978624]
 tile_map_data = PackedByteArray("AAADAAAAAAAFAAQAAAAEAAAAAAAGAAQAAAAFAAAAAAAFAAQAAAAGAAAAAAAGAAQAAAAHAAAAAAAFAAQAAAAIAAAAAAAGAAQAAAAJAAAAAAAFAAQAAAAKAAAAAAAGAAQAAAAFAAEAAAAFAAUAAAAGAAEAAAAGAAUAAAAHAAEAAAAFAAUAAAAIAAEAAAAGAAUAAAAJAAEAAAAFAAUAAAAKAAEAAAAGAAUAAAADAAIAAAAFAAUAAAAEAAIAAAAGAAUAAAADAAMAAAAFAAUAAAAEAAMAAAAGAAUAAAADAAEAAAAFAAUAAAAEAAEAAAAGAAUAAAAFAAIAAAAFAAUAAAAFAAMAAAAFAAUAAAAGAAIAAAAGAAUAAAAGAAMAAAAGAAUAAAAHAAIAAAAFAAUAAAAHAAMAAAAFAAUAAAAIAAIAAAAGAAUAAAAIAAMAAAAGAAUAAAAJAAIAAAAFAAUAAAAJAAMAAAAFAAUAAAAKAAIAAAAGAAUAAAAKAAMAAAAGAAUAAAADAP//AAAFAAMAAAAEAP//AAAGAAMAAAAFAP//AAAFAAMAAAAGAP//AAAGAAMAAAAHAP//AAAFAAMAAAAIAP//AAAGAAMAAAAJAP//AAAFAAMAAAAKAP//AAAGAAMAAAADAPv/AAAFAAAAAAAEAPv/AAAGAAAAAAAFAPv/AAAFAAAAAAAGAPv/AAAGAAAAAAAHAPv/AAAFAAAAAAAIAPv/AAAGAAAAAAAJAPv/AAAFAAAAAAAKAPv/AAAGAAAAAAADAPz/AAAFAAEAAAADAP3/AAAFAAEAAAAEAPz/AAAGAAEAAAAEAP3/AAAGAAIAAAAFAPz/AAAFAAEAAAAFAP3/AAAFAAIAAAAGAPz/AAAGAAEAAAAGAP3/AAAGAAIAAAAHAPz/AAAFAAEAAAAHAP3/AAAFAAIAAAAIAPz/AAAGAAEAAAAIAP3/AAAGAAIAAAAJAPz/AAAFAAEAAAAJAP3/AAAFAAIAAAAKAPz/AAAGAAEAAAAKAP3/AAAGAAIAAAADAP7/AAAFAAIAAAAEAP7/AAAFAAEAAAAFAP7/AAAFAAEAAAAGAP7/AAAFAAEAAAAHAP7/AAAFAAEAAAAIAP7/AAAFAAEAAAAJAP7/AAAFAAEAAAAKAP7/AAAFAAEAAAALAPv/AAAHAAAAAAALAPz/AAAHAAEAAAALAP3/AAAHAAIAAAALAP7/AAAHAAIAAAALAP//AAAHAAMAAAALAAAAAAAHAAQAAAALAAEAAAAHAAUAAAALAAIAAAAHAAUAAAALAAMAAAAHAAUAAAACAAMAAAAEAAUAAAACAAIAAAAEAAUAAAACAAEAAAAEAAUAAAACAAAAAAAEAAQAAAACAP//AAAEAAMAAAACAP7/AAAEAAIAAAACAP3/AAAEAAIAAAACAPz/AAAEAAEAAAACAPv/AAAEAAAAAAAMAAAAAAAIAAQAAAAMAAEAAAAIAAUAAAAMAAIAAAAIAAUAAAAMAAMAAAAIAAUAAAAMAAQAAAAIAAYAAAAKAAQAAAAGAAYAAAALAAQAAAAHAAYAAAA=")
@@ -67,7 +73,13 @@ shape = SubResource("WorldBoundaryShape2D_78ydu")
 
 [node name="DeskArea" type="Area2D" parent="." unique_id=605630984]
 script = ExtResource("6_item")
-message = "我的办公桌。我每天工作的地方。"
+message = "我的办公桌。
+@可以在这里做喜欢的事情，很让人安心的角落呢。
+@要是做自己喜欢的事情可以赚钱就好了。
+@可以的话，真的再也不想上班了。
+@……但是，我真的有能赚到钱的技能吗？"
+once_flag = "desk_investigated"
+repeat_message = "我的办公桌。"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DeskArea" unique_id=1258320522]
 position = Vector2(112, -1)
@@ -75,7 +87,12 @@ shape = SubResource("RectangleShape2D_78ydu")
 
 [node name="WindowArea" type="Area2D" parent="." unique_id=2143757426]
 script = ExtResource("6_item")
-message = "窗户。外面什么都看不见。"
+message = "窗户。外面什么都看不见。
+@因为房子结构的关系，窗外会有不认识的邻居经过，所以用纸挡住了。
+@所以才连阳光都进不来啊……
+@不过，就算不挡住外面也没什么好看的就是了。"
+once_flag = "window_investigated"
+repeat_message = "窗户。外面什么都看不见。"
 required_facing = "up"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WindowArea" unique_id=476279681]
@@ -84,7 +101,13 @@ shape = SubResource("RectangleShape2D_w653m")
 
 [node name="BookshelfArea" type="Area2D" parent="." unique_id=1157638977]
 script = ExtResource("6_item")
-message = "书架。"
+message = "书架。
+……
+仔细一看里面有一张纸，上面写着：离职证明。XX月XX日
+@啊啊，已经过去这么久了吗？
+@不知道剩下的钱还能撑多久。能不能在钱花完之前想想办法呢……"
+once_flag = "bookshelf_investigated"
+repeat_message = "书架。"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BookshelfArea" unique_id=982472033]
 position = Vector2(160, 1)
@@ -92,7 +115,9 @@ shape = SubResource("RectangleShape2D_4kvkx")
 
 [node name="ShelfArea" type="Area2D" parent="." unique_id=270691263]
 script = ExtResource("6_item")
-message = "衣柜里面放满了精致的裙子和套装。已经很久没穿过了。"
+message = "衣柜里面放满了精致的裙子和套装。已经很久没穿过了。
+@以前每次发工资都会买呢。要不要卖掉呢……"
+repeat_message = "衣柜里面放满了精致的裙子和套装。已经很久没穿过了。"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ShelfArea" unique_id=546017104]
 position = Vector2(104, 53)

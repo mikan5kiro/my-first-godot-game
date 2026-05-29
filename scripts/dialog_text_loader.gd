@@ -1,6 +1,33 @@
 extends RefCounted
 class_name DialogTextLoader
 
+const CHARACTER_LINE_PREFIX := "@"
+
+
+static func parse_line(raw: String) -> DialogLine:
+	var line := raw.strip_edges()
+	if line.begins_with(CHARACTER_LINE_PREFIX):
+		return DialogLine.character(line.substr(CHARACTER_LINE_PREFIX.length()).strip_edges())
+	return DialogLine.narration(line)
+
+
+static func lines_from_strings(lines: PackedStringArray) -> Array[DialogLine]:
+	var result: Array[DialogLine] = []
+	for raw in lines:
+		var stripped := raw.strip_edges()
+		if stripped.is_empty():
+			continue
+		result.append(parse_line(stripped))
+	return result
+
+
+static func load_dialog_lines(
+	file_path: String,
+	fallback: PackedStringArray = PackedStringArray(),
+) -> Array[DialogLine]:
+	var raw_lines := load_lines(file_path, fallback)
+	return lines_from_strings(raw_lines)
+
 
 static func load_lines(file_path: String, fallback: PackedStringArray = PackedStringArray()) -> PackedStringArray:
 	if file_path.is_empty():

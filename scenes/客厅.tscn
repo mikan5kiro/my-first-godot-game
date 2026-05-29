@@ -6,8 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://bitsfjifg4oy3" path="res://scenes/门.tscn" id="4_pvw6c"]
 [ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="5_camera"]
 [ext_resource type="Script" uid="uid://bvuy1puvytkd4" path="res://scripts/investigate_item.gd" id="6_iy33j"]
-[ext_resource type="Script" path="res://scripts/dining_table.gd" id="8_dining"]
 [ext_resource type="Script" uid="uid://cj22ggupilu5w" path="res://scripts/door.gd" id="7_8c7us"]
+[ext_resource type="Script" uid="uid://b11ftcb85rd51" path="res://scripts/dining_table.gd" id="8_dining"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iy33j"]
 texture = ExtResource("1_5bmjw")
@@ -256,9 +256,11 @@ position = Vector2(144, 86)
 position = Vector2(248, 225)
 shape = SubResource("WorldBoundaryShape2D_6byh1")
 
-[node name="RoomArea" type="Area2D" parent="." unique_id=632346656]
-script = ExtResource("6_iy33j")
-message = "暂时没必要进入这个房间。"
+[node name="RoomArea" type="Area2D" parent="." unique_id=358346593]
+script = ExtResource("7_8c7us")
+target_scene = ""
+unlock_flag = "room_area_unlocked"
+blocked_message = "暂时没必要进入这个房间。"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RoomArea" unique_id=1168766563]
 position = Vector2(145, 133)
@@ -275,6 +277,7 @@ shape = SubResource("RectangleShape2D_iy33j")
 [node name="Area2D" type="Area2D" parent="." unique_id=1845037733]
 script = ExtResource("6_iy33j")
 message = "电视。现在不太想看。"
+required_facing = "right"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1606397395]
 position = Vector2(348, 144)
@@ -282,7 +285,6 @@ shape = SubResource("RectangleShape2D_srddp")
 
 [node name="Area2D2" type="Area2D" parent="." unique_id=1630587038]
 script = ExtResource("8_dining")
-message = "餐桌。"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D2" unique_id=53590138]
 position = Vector2(231, 47.25)
@@ -292,6 +294,8 @@ shape = SubResource("RectangleShape2D_c55kc")
 script = ExtResource("7_8c7us")
 target_scene = "uid://cvnwwo4rq4g2k"
 spawn_marker_name = "Spawn_Living2Kitchen"
+unlock_flag = "kitchen_unlocked"
+blocked_message = "厨房。现在暂时没必要去。"
 required_facing = "left"
 metadata/_custom_type_script = "uid://cj22ggupilu5w"
 

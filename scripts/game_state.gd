@@ -39,6 +39,10 @@ const PERIOD_DISPLAY_NAMES := {
 }
 
 const FLAG_BEDROOM_INTRO := "bedroom_intro_played"
+const FLAG_KITCHEN_UNLOCKED := "kitchen_unlocked"
+const FLAG_KITCHEN_DOOR_BLOCKED_SEEN := "kitchen_door_blocked_seen"
+const FLAG_ROOM_AREA_UNLOCKED := "room_area_unlocked"
+const FLAG_ROOM_AREA_BLOCKED_SEEN := "room_area_blocked_seen"
 const DEFAULT_PHONE_ITEM: ItemData = preload("res://resources/items/phone.tres")
 const MEAL_ITEM: ItemData = preload("res://resources/items/meal.tres")
 const ITEM_OBTAINED_SFX: AudioStream = preload("res://audios/決定ボタンを押す26.mp3")

@@ -6,6 +6,7 @@
 [ext_resource type="AudioStream" uid="uid://dprlmotl5mhxf" path="res://audios/決定ボタンを押す38.mp3" id="4_confirm"]
 [ext_resource type="AudioStream" uid="uid://bh03s0ryqm78l" path="res://audios/決定ボタンを押す34.mp3" id="4_nc8jw"]
 [ext_resource type="AudioStream" uid="uid://8mpw3g7w33o0" path="res://audios/決定ボタンを押す35.mp3" id="5_nc8jw"]
+[ext_resource type="Texture2D" uid="uid://cnpet3xdh51na" path="res://images/avatar.png" id="6_avatar"]
 
 [node name="PlayerPanel" type="CanvasLayer" unique_id=1220176096]
 layer = 150
@@ -140,10 +141,12 @@ offset_right = -4.0
 offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
+texture = ExtResource("6_avatar")
 expand_mode = 1
 stretch_mode = 5
 
 [node name="AvatarPlaceholder" type="Label" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame/AvatarContent" unique_id=1425587448]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

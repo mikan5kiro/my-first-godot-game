@@ -34,13 +34,14 @@ func is_typing() -> bool:
 	return _is_typing
 
 
-func show_text(text: String) -> void:
+func show_text(text: String, mode: InteractionDialog.DialogMode = InteractionDialog.DialogMode.NARRATION) -> void:
 	if _dialog == null:
 		return
 
 	if _type_timer != null:
 		_type_timer.stop()
 	_dialog.clear_choices()
+	_dialog.set_dialog_mode(mode)
 	_full_text = text
 	_typed_char_count = 0
 	_is_typing = not _full_text.is_empty()
@@ -57,7 +58,10 @@ func show_text(text: String) -> void:
 	_type_timer.start()
 
 
-func show_text_instant(text: String) -> void:
+func show_text_instant(
+	text: String,
+	mode: InteractionDialog.DialogMode = InteractionDialog.DialogMode.NARRATION,
+) -> void:
 	if _dialog == null:
 		return
 
@@ -66,6 +70,7 @@ func show_text_instant(text: String) -> void:
 	_is_typing = false
 	_full_text = text
 	_typed_char_count = _full_text.length()
+	_dialog.set_dialog_mode(mode)
 	_dialog.set_text(text)
 	_dialog.show_dialog()
 	_is_visible = true

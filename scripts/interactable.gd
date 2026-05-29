@@ -19,6 +19,11 @@ func can_interact(interactor: Node) -> bool:
 
 
 ## 返回非空字符串时 PlayerInteractor 会显示对话框；返回空字符串表示静默执行。
+## 多句台词请重写 get_interaction_dialog_lines()，由 PlayerInteractor 逐句播放。
 func interact(_interactor: Node) -> String:
 	push_warning("%s.interact() 未实现" % name)
 	return ""
+
+
+func get_interaction_dialog_lines() -> Array[DialogLine]:
+	return []
