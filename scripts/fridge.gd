@@ -14,7 +14,7 @@ func interact(interactor: Node) -> String:
 		return ""
 
 	player_interactor.show_choice(
-		"冰箱。要打开吗？",
+		"冰箱。要查看剩余食材吗？",
 		[
 			{"id": CHOICE_YES, "label": "要"},
 			{"id": CHOICE_NO, "label": "不要"},
@@ -27,7 +27,10 @@ func interact(interactor: Node) -> String:
 func _on_choice(choice_id: String, player_interactor: PlayerInteractor) -> void:
 	match choice_id:
 		CHOICE_YES:
-			player_interactor.show_text(GameState.get_food_supply_text())
+			if GameState == null or GameState.food_meals <= 0:
+				player_interactor.show_text("没有食材了。")
+			else:
+				player_interactor.show_text(GameState.get_food_supply_text())
 		CHOICE_NO:
 			player_interactor.hide_text_immediately()
 

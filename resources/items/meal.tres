@@ -6,5 +6,5 @@
 script = ExtResource("1_item_data")
 id = "meal"
 display_name = "自己做的饭"
-inspect_text = "自己做的饭。去餐桌那边吃吧。"
+inspect_text = "自己做的饭。营养均衡。（在餐桌使用）"
 is_meal = true

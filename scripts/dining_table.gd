@@ -18,6 +18,9 @@ func interact(interactor: Node) -> String:
 	if GameState == null or GameState.get_prepared_meal() == null:
 		return message
 
+	if not GameState.is_meal_time():
+		return GameState.MSG_NOT_MEAL_TIME
+
 	var player_interactor := _get_player_interactor(interactor)
 	if player_interactor == null:
 		return message

@@ -449,6 +449,8 @@ func _try_use_selected_item(item: ItemData) -> void:
 		return
 
 	if item.is_phone:
+		if not PhoneUse.can_use():
+			return
 		_close_panel()
 		PhoneUse.run_use(player_interactor)
 		return

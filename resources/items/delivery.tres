@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemData" format=3 uid="uid://t6qx2wjklfjo"]
+
+[ext_resource type="Script" uid="uid://cql1nf57emmxp" path="res://scripts/item_data.gd" id="1_item_data"]
+
+[resource]
+script = ExtResource("1_item_data")
+id = "delivery"
+display_name = "外卖"
+inspect_text = "已经吃腻了的外卖。（在餐桌使用）"
+is_meal = true

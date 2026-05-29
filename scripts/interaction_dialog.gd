@@ -6,8 +6,8 @@ enum DialogMode {
 	CHARACTER,
 }
 
-const PANEL_HEIGHT_TEXT_ONLY := 88.0
-const PANEL_HEIGHT_WITH_CHOICES := 140.0
+const PANEL_HEIGHT_TEXT_ONLY := 112.0
+const PANEL_HEIGHT_WITH_CHOICES := 172.0
 
 @onready var panel: PanelContainer = $Panel
 @onready var avatar_slot: AspectRatioContainer = $Panel/Margin/Content/TextRow/AvatarSlot

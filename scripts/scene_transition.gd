@@ -38,6 +38,18 @@ func play_door_sfx() -> void:
 		_door_sfx_player.call("play")
 
 
+func play_door_sfx_and_wait() -> void:
+	if _door_sfx_player == null:
+		return
+	if not (_door_sfx_player is AudioStreamPlayer):
+		play_door_sfx()
+		return
+	var player := _door_sfx_player as AudioStreamPlayer
+	player.stop()
+	player.play()
+	await player.finished
+
+
 func is_transitioning() -> bool:
 	return _transitioning
 

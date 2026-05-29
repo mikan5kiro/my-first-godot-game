@@ -33,17 +33,27 @@ static func run_eat_sequence(context_node: Node, player_interactor: PlayerIntera
 		return
 	if GameState == null or GameState.find_inventory_index(item) < 0:
 		return
+	if not GameState.is_meal_time():
+		player_interactor.show_text(GameState.MSG_NOT_MEAL_TIME)
+		return
 
 	player_interactor.hide_text_immediately()
 	var player := player_interactor.get_parent() as CharacterBody2D
 	if player != null and player.has_method("set_controls_locked"):
 		player.set_controls_locked(true)
 
+	var follow_up_delivery_prompt := GameState != null \
+		and GameState.is_delivery_item(item) \
+		and GameState.should_play_delivery_cooking_prompt()
+
 	await SceneTransition.play_action_with_fade(
 		_perform_eat_on_black.bind(context_node, item),
 		-1.0,
 		_on_eat_fade_out_start.bind(player_interactor),
 	)
+
+	if follow_up_delivery_prompt:
+		await DeliveryCookingPrompt.run_after_delivery_eaten(player_interactor)
 
 	if player != null and player.has_method("set_controls_locked"):
 		player.set_controls_locked(false)

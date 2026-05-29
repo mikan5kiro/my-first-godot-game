@@ -2,11 +2,12 @@
 
 [ext_resource type="TileSet" uid="uid://hhk12cus28nt" path="res://tilesets/new_tile_set.tres" id="1_7ilqw"]
 [ext_resource type="PackedScene" uid="uid://c3lu3pg63y4ue" path="res://scenes/player.tscn" id="2_mrp8g"]
-[ext_resource type="Script" uid="uid://cj22ggupilu5w" path="res://scripts/door.gd" id="3_2b6py"]
 [ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="4_camera"]
 [ext_resource type="Script" uid="uid://csnyi53rymael" path="res://scripts/fridge.gd" id="5_v3ycp"]
 [ext_resource type="Script" uid="uid://vci6ipbh4l0d" path="res://scripts/stove.gd" id="6_stove"]
-[ext_resource type="Script" uid="uid://cdaljtugppoqe" path="res://scripts/cabinet.gd" id="7_cabinet"]
+[ext_resource type="Script" uid="uid://bvuy1puvytkd4" path="res://scripts/investigate_item.gd" id="7_investigate"]
+[ext_resource type="Script" uid="uid://dcigmgdmlafpu" path="res://scripts/scene_enter_monologue.gd" id="8_enter"]
+[ext_resource type="Script" uid="uid://cnepprailm6tu" path="res://scripts/kitchen_exit_door.gd" id="9_kitchen_exit_door"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bems3"]
 size = Vector2(27, 35)
@@ -18,6 +19,11 @@ size = Vector2(16.25, 28)
 
 [node name="Node2D" type="Node2D" unique_id=1534642664]
 script = ExtResource("4_camera")
+
+[node name="FirstEnterMonologue" type="Node" parent="." unique_id=1121509474]
+script = ExtResource("8_enter")
+once_flag = "kitchen_first_enter"
+lines = "@说起来这个厨房还挺不错的呢。如果哪一天搬走了，也会想念这里的吧。"
 
 [node name="TileMapLayer2" type="TileMapLayer" parent="." unique_id=183531384]
 tile_map_data = PackedByteArray("AAD9////AAAAAAoAAAD9/wAAAAAAAAsAAAD+////AAABAAoAAAD+/wAAAAAEAAAAAAD/////AAABAAoAAAD//wAAAAAFAAAAAAAAAP//AAABAAoAAAAAAAAAAAAFAAAAAAABAP//AAABAAoAAAABAAAAAAAFAAAAAAACAP//AAABAAoAAAACAAAAAAAFAAAAAAADAP//AAABAAoAAAADAAAAAAAFAAAAAAAEAP//AAABAAoAAAAEAAAAAAAFAAAAAAAFAP//AAABAAoAAAAFAAAAAAAFAAAAAAAGAP//AAABAAoAAAAGAAAAAAAFAAAAAAAHAP//AAABAAoAAAAHAAAAAAAHAAAAAAAIAP//AAACAAoAAAAIAAAAAAACAA4AAAD9/wEAAAAAAAsAAAD9/wIAAAAAAAsAAAD9/wMAAAAAAAsAAAD9/wQAAAAAAAsAAAD9/wUAAAAAAAsAAAD9/wYAAAAAAAsAAAD9/wcAAAAAAAsAAAD9/wgAAAAAAAsAAAD9/wkAAAAAAAsAAAAIAAEAAAACAA4AAAAIAAMAAAACAA4AAAAIAAQAAAACAA4AAAAIAAUAAAACAA4AAAAIAAYAAAACAA4AAAAIAAcAAAACAA4AAAAIAAgAAAACAA8AAAD+/wEAAAAEAAEAAAD+/wIAAAAEAAEAAAD+/wMAAAAEAAEAAAD+/wQAAAAEAAEAAAD+/wUAAAAEAAMAAAD//wUAAAAFAAMAAAAAAAUAAAAFAAMAAAABAAUAAAAFAAMAAAACAAUAAAAFAAMAAAADAAUAAAAFAAMAAAAEAAUAAAAFAAMAAAAFAAUAAAAFAAMAAAAGAAUAAAAFAAMAAAAHAAUAAAAHAAMAAAAHAAQAAAAHAAIAAAAHAAMAAAAHAAIAAAAHAAIAAAAHAAIAAAAHAAEAAAAHAAIAAAD//wEAAAAGAAEAAAD//wIAAAAGAAEAAAD//wMAAAAGAAEAAAD//wQAAAAGAAEAAAAAAAEAAAAGAAEAAAAAAAIAAAAGAAEAAAAAAAMAAAAGAAEAAAAAAAQAAAAGAAEAAAABAAEAAAAGAAEAAAABAAIAAAAGAAEAAAABAAMAAAAGAAEAAAABAAQAAAAGAAEAAAACAAEAAAAGAAEAAAACAAIAAAAGAAEAAAACAAMAAAAGAAEAAAACAAQAAAAGAAEAAAADAAEAAAAGAAEAAAADAAIAAAAGAAEAAAADAAMAAAAGAAEAAAADAAQAAAAGAAEAAAAEAAEAAAAGAAEAAAAEAAIAAAAGAAEAAAAEAAMAAAAGAAEAAAAEAAQAAAAGAAEAAAAFAAEAAAAGAAEAAAAFAAIAAAAGAAEAAAAFAAMAAAAGAAEAAAAFAAQAAAAGAAEAAAAGAAEAAAAGAAEAAAAGAAIAAAAGAAEAAAAGAAMAAAAGAAEAAAAGAAQAAAAGAAEAAAD+/wYAAgACAAYAAAD+/wcAAgACAAcAAAD+/wgAAgACAAcAAAD//wYAAgADAAYAAAAAAAYAAgADAAYAAAABAAYAAgADAAYAAAACAAYAAgADAAYAAAADAAYAAgADAAYAAAAEAAYAAgADAAYAAAAFAAYAAgADAAYAAAAGAAYAAgADAAYAAAAHAAYAAgAFAAYAAAAHAAcAAgAFAAcAAAAHAAgAAgAFAAcAAAD//wcAAgADAAcAAAD//wgAAgADAAcAAAAAAAcAAgADAAcAAAAAAAgAAgADAAcAAAABAAcAAgADAAcAAAABAAgAAgADAAcAAAACAAcAAgADAAcAAAACAAgAAgADAAcAAAADAAcAAgADAAcAAAADAAgAAgADAAcAAAAEAAcAAgADAAcAAAAEAAgAAgADAAcAAAAFAAcAAgADAAcAAAAFAAgAAgADAAcAAAAGAAcAAgADAAcAAAAGAAgAAgADAAcAAAAIAAIAAAACAA4AAAAIAAkAAgAFAAgAAAD+/wkAAgACAAgAAAD//wkAAgADAAgAAAAAAAkAAgADAAgAAAABAAkAAgADAAgAAAACAAkAAgADAAgAAAADAAkAAgADAAgAAAAEAAkAAgADAAgAAAAFAAkAAgADAAgAAAAGAAkAAgADAAgAAAAHAAkAAgAEAAgAAAD9/woAAAAAAAwAAAD+/woAAAABAA8AAAD//woAAAABAA8AAAAAAAoAAAABAA8AAAABAAoAAAABAA8AAAACAAoAAAABAA8AAAADAAoAAAABAA8AAAAEAAoAAAABAA8AAAAFAAoAAAABAA8AAAAGAAoAAAABAA8AAAAHAAoAAAABAA8AAAAIAAoAAAACAA8AAAA=")
@@ -39,7 +45,7 @@ scale = Vector2(0.8, 0.8)
 position = Vector2(131, 151)
 
 [node name="InteractableDoor" type="Area2D" parent="." unique_id=1591922307]
-script = ExtResource("3_2b6py")
+script = ExtResource("9_kitchen_exit_door")
 spawn_marker_name = "Spawn_FromKitchen"
 required_facing = "right"
 metadata/_custom_type_script = "uid://cj22ggupilu5w"
@@ -64,7 +70,8 @@ position = Vector2(-7.5, 113)
 shape = SubResource("RectangleShape2D_g3o0j")
 
 [node name="Cabinet" type="Area2D" parent="." unique_id=1884563501]
-script = ExtResource("7_cabinet")
+script = ExtResource("7_investigate")
+message = "柜子。"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Cabinet" unique_id=1884563502]
 position = Vector2(34, 114)
