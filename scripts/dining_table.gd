@@ -19,17 +19,17 @@ func interact(interactor: Node) -> String:
 		return message
 
 	if not GameState.is_meal_time():
-		return GameState.MSG_NOT_MEAL_TIME
+		return GameText.NOT_MEAL_TIME
 
 	var player_interactor := _get_player_interactor(interactor)
 	if player_interactor == null:
 		return message
 
 	player_interactor.show_choice(
-		"餐桌。要吃饭吗？",
+		GameText.DINING_TABLE_PROMPT,
 		[
-			{"id": CHOICE_YES, "label": "要"},
-			{"id": CHOICE_NO, "label": "不要"},
+			{"id": CHOICE_YES, "label": GameText.CHOICE_YES},
+			{"id": CHOICE_NO, "label": GameText.CHOICE_NO},
 		],
 		_on_choice.bind(player_interactor),
 	)

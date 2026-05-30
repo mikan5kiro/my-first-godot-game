@@ -1,8 +1,6 @@
 class_name DeliveryCookingPrompt
 extends RefCounted
 
-const PROMPT_FILE := "res://dialogues/delivery_cooking_prompt.txt"
-
 
 static func run_after_delivery_eaten(player_interactor: PlayerInteractor) -> void:
 	if player_interactor == null or GameState == null:
@@ -12,15 +10,7 @@ static func run_after_delivery_eaten(player_interactor: PlayerInteractor) -> voi
 
 	await _wait_until_interactor_idle(player_interactor)
 
-	var dialog_lines := DialogTextLoader.load_dialog_lines(
-		PROMPT_FILE,
-		PackedStringArray([
-			"@附近的外卖都吃腻了啊……而且也不健康，还是试试自己做饭吧。",
-			"@我倒是会做饭，但是总是提不起劲呢。",
-			"@下次自己买食材做饭试试吧。",
-			"可以通过手机买食材。厨房已开放。",
-		]),
-	)
+	var dialog_lines := GameText.load_dialog(GameText.FILE_DELIVERY_COOKING_PROMPT)
 	if dialog_lines.is_empty():
 		return
 

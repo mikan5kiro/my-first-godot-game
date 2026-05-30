@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://c3lu3pg63y4ue" path="res://scenes/player.tscn" id="3_3fwiw"]
 [ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="4_camera"]
 [ext_resource type="PackedScene" uid="uid://bitsfjifg4oy3" path="res://scenes/门.tscn" id="5_3fwiw"]
+[ext_resource type="Script" uid="uid://dcigmgdmlafpu" path="res://scripts/scene_enter_monologue.gd" id="5_mk2ma"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_5sgqe"]
 distance = 2.0
@@ -37,3 +38,8 @@ position = Vector2(128, 45)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D" unique_id=924660701]
 position = Vector2(130, 67)
 shape = SubResource("WorldBoundaryShape2D_5sgqe")
+
+[node name="FirstEnterMonologue" type="Node" parent="." unique_id=672410330]
+script = ExtResource("5_mk2ma")
+once_flag = "bathroom_first_enter"
+lines = "@厕所。没什么特别的。"

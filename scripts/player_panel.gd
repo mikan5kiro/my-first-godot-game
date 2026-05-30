@@ -26,9 +26,9 @@ const MENU_ROW_HEIGHT := 34.0
 @onready var read_row: PanelContainer = $MainMenuRoot/MenuPanel/Margin/MenuList/ReadRow
 @onready var player_name_label: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/PlayerName
 @onready var time_value: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow/Value
-@onready var hunger_value: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/HungerRow/Value
-@onready var sanity_value: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/SanityRow/Value
-@onready var money_value: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/MoneyRow/Value
+@onready var hunger_value: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/HungerRow/Value
+@onready var sanity_value: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/SanityRow/Value
+@onready var money_value: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/MoneyRow/Value
 @onready var status_content: Control = $MainMenuRoot/StatusPanel/Margin/StatusContent
 @onready var status_body: Control = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody
 @onready var avatar_slot: AspectRatioContainer = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/AvatarSlot
@@ -290,6 +290,10 @@ func _can_open_menu() -> bool:
 	if player != null and player.has_method("is_controls_locked") and player.is_controls_locked():
 		return false
 	return true
+
+
+func is_open() -> bool:
+	return visible
 
 
 func _open_panel() -> void:

@@ -170,7 +170,7 @@ func _rebuild_rows(previous_id: String) -> void:
 func _create_row(title: String, count: int = 1) -> PanelContainer:
 	var row := PanelContainer.new()
 	var min_width: float = slot_min_width if _uses_grid_navigation() else 0.0
-	row.custom_minimum_size = Vector2(min_width, 28.0)
+	row.custom_minimum_size = Vector2(min_width, 24.0)
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.mouse_filter = Control.MOUSE_FILTER_STOP
 	row.gui_input.connect(_on_row_gui_input.bind(row))
@@ -180,9 +180,9 @@ func _create_row(title: String, count: int = 1) -> PanelContainer:
 
 	var margin := MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 4)
-	margin.add_theme_constant_override("margin_top", 2)
+	margin.add_theme_constant_override("margin_top", 1)
 	margin.add_theme_constant_override("margin_right", 4)
-	margin.add_theme_constant_override("margin_bottom", 2)
+	margin.add_theme_constant_override("margin_bottom", 1)
 	row.add_child(margin)
 
 	if show_count_suffix and count > 1:
@@ -192,17 +192,24 @@ func _create_row(title: String, count: int = 1) -> PanelContainer:
 		var name_label := Label.new()
 		name_label.text = title
 		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		name_label.add_theme_font_size_override("font_size", 14)
+		name_label.clip_text = true
+		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		name_label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)
 		body.add_child(name_label)
 
 		var count_label := Label.new()
 		count_label.text = ": %d" % count
+		count_label.add_theme_font_size_override("font_size", 14)
 		count_label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)
 		body.add_child(count_label)
 	else:
 		var name_label := Label.new()
 		name_label.text = title
 		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		name_label.add_theme_font_size_override("font_size", 14)
+		name_label.clip_text = true
+		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		name_label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)
 		margin.add_child(name_label)
 

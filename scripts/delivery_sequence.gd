@@ -1,7 +1,7 @@
 class_name DeliverySequence
 extends RefCounted
 
-const DOORBELL_PLACEHOLDER_DURATION := 0.8
+const DOORBELL_SFX: AudioStream = preload("res://audios/ドアチャイム1.mp3")
 const PICKUP_BLACK_HOLD_AFTER_DOOR := 0.5
 
 
@@ -10,7 +10,15 @@ static func run_arrival(player_interactor: PlayerInteractor) -> void:
 		return
 	player_interactor.hide_text_immediately()
 	await SceneTransition.play_action_with_fade(_doorbell_on_black, -1.0)
-	await _play_arrived_dialog(player_interactor)
+	await _play_arrived_dialog(player_interactor, GameText.FILE_DELIVERY_ARRIVAL)
+
+
+static func run_food_arrival(player_interactor: PlayerInteractor) -> void:
+	if player_interactor == null:
+		return
+	player_interactor.hide_text_immediately()
+	await SceneTransition.play_action_with_fade(_doorbell_on_black, -1.0)
+	await _play_arrived_dialog(player_interactor, GameText.FILE_FOOD_ARRIVAL)
 
 
 static func run_pickup(context_node: Node, player_interactor: PlayerInteractor) -> void:
@@ -18,15 +26,31 @@ static func run_pickup(context_node: Node, player_interactor: PlayerInteractor) 
 		return
 	player_interactor.hide_text_immediately()
 	await SceneTransition.play_action_with_fade(_pickup_on_black, -1.0)
-	_on_pickup_obtained(player_interactor)
+	_on_pickup_obtained(player_interactor, GameText.DELIVERY_PICKUP_OBTAINED)
+
+
+static func run_food_pickup(context_node: Node, player_interactor: PlayerInteractor) -> void:
+	if context_node == null or player_interactor == null or GameState == null:
+		return
+	player_interactor.hide_text_immediately()
+	await SceneTransition.play_action_with_fade(_food_pickup_on_black, -1.0)
+	_on_pickup_obtained(
+		player_interactor,
+		GameText.food_pickup_obtained(GameState.food_meals),
+	)
 
 
 static func _doorbell_on_black() -> void:
-	# 门铃音效预留：接入 AudioStream 后在此播放并 await finished。
-	var tree := Engine.get_main_loop() as SceneTree
-	if tree == null:
+	if not is_instance_valid(SceneTransition) or DOORBELL_SFX == null:
 		return
-	await tree.create_timer(DOORBELL_PLACEHOLDER_DURATION).timeout
+	var player := AudioStreamPlayer.new()
+	player.bus = &"Master"
+	player.stream = DOORBELL_SFX
+	player.process_mode = Node.PROCESS_MODE_ALWAYS
+	SceneTransition.add_child(player)
+	player.play()
+	await player.finished
+	player.queue_free()
 
 
 static func _pickup_on_black() -> void:
@@ -39,19 +63,27 @@ static func _pickup_on_black() -> void:
 	await tree.create_timer(PICKUP_BLACK_HOLD_AFTER_DOOR).timeout
 
 
-static func _on_pickup_obtained(player_interactor: PlayerInteractor) -> void:
+static func _food_pickup_on_black() -> void:
+	await SceneTransition.play_door_sfx_and_wait()
+	if GameState != null:
+		GameState.complete_food_supply_pickup()
+	var tree := Engine.get_main_loop() as SceneTree
+	if tree == null:
+		return
+	await tree.create_timer(PICKUP_BLACK_HOLD_AFTER_DOOR).timeout
+
+
+static func _on_pickup_obtained(player_interactor: PlayerInteractor, message: String) -> void:
 	if player_interactor == null or GameState == null:
 		return
 	GameState.play_item_obtained_sfx()
-	player_interactor.show_text("获得外卖。")
+	player_interactor.show_text(message)
 
 
-static func _play_arrived_dialog(player_interactor: PlayerInteractor) -> void:
+static func _play_arrived_dialog(player_interactor: PlayerInteractor, file_path: String) -> void:
 	if player_interactor == null:
 		return
-	var lines := DialogTextLoader.lines_from_strings(
-		PackedStringArray(["@外卖到了。", "去客厅大门取外卖吧。"]),
-	)
+	var lines := GameText.load_dialog(file_path)
 	if lines.is_empty():
 		return
 	await player_interactor.play_monologue_lines(lines)

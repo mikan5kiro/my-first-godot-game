@@ -17,6 +17,9 @@ size = Vector2(27, 35)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_g3o0j"]
 size = Vector2(16.25, 28)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ibrlr"]
+size = Vector2(30, 20)
+
 [node name="Node2D" type="Node2D" unique_id=1534642664]
 script = ExtResource("4_camera")
 
@@ -34,7 +37,7 @@ tile_map_data = PackedByteArray("AAD+/wMABAABAAoAAAD+/wQABAABAAsAAAD+/wUABAABAAw
 tile_set = ExtResource("1_7ilqw")
 
 [node name="TileMapLayer3" type="TileMapLayer" parent="." unique_id=1424732808]
-tile_map_data = PackedByteArray("AAABAAQABAAMAA0AAAABAAUABAAMAA4AAAACAAQABAANAA0AAAACAAUABAANAA4AAAADAAUABAAOAA4AAAABAAYABAAMAA8AAAACAAYABAANAA8AAAADAAYABAAOAA8AAAAFAAcABAAOAAwAAAAFAAgABAAOAA0AAAA=")
+tile_map_data = PackedByteArray("AAABAAYABAAMAA8AAAACAAYABAANAA8AAAADAAYABAAOAA8AAAAFAAcABAAOAAwAAAABAAQABAAMAA0AAAABAAUABAAMAA4AAAACAAQABAANAA0AAAACAAUABAANAA4AAAADAAQABAAOAA0AAAADAAUABAAOAA4AAAA=")
 tile_set = ExtResource("1_7ilqw")
 
 [node name="CharacterBody2D" parent="." unique_id=2137992065 instance=ExtResource("2_mrp8g")]
@@ -87,3 +90,13 @@ metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Cook" unique_id=1324050073]
 position = Vector2(118.125, 120)
 shape = SubResource("RectangleShape2D_g3o0j")
+
+[node name="water" type="Area2D" parent="." unique_id=2001776772]
+script = ExtResource("7_investigate")
+message = "水池。"
+required_facing = "up"
+metadata/_custom_type_script = "uid://bvuy1puvytkd4"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="water" unique_id=978717387]
+position = Vector2(75, 113)
+shape = SubResource("RectangleShape2D_ibrlr")

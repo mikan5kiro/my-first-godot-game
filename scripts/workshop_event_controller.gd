@@ -1,8 +1,5 @@
 extends Node
 
-const HUNGER_PROMPT_FILE := "res://dialogues/workshop_hunger_prompt.txt"
-const KITCHEN_AFTERNOON_PROMPT_FILE := "res://dialogues/kitchen_afternoon_prompt.txt"
-
 var _is_playing_event := false
 
 
@@ -35,10 +32,7 @@ func _play_workshop_hunger_event() -> void:
 
 	GameState.clear_flag(GameState.FLAG_WORKSHOP_HUNGER_PENDING)
 
-	var dialog_lines := DialogTextLoader.load_dialog_lines(
-		HUNGER_PROMPT_FILE,
-		PackedStringArray(["@有点饿了，点个外卖吧。", "打开物品栏，选择手机，点一份外卖。"]),
-	)
+	var dialog_lines := GameText.load_dialog(GameText.FILE_WORKSHOP_HUNGER_PROMPT)
 	if dialog_lines.is_empty():
 		return
 
@@ -53,10 +47,7 @@ func _play_kitchen_afternoon_event() -> void:
 
 	GameState.clear_flag(GameState.FLAG_KITCHEN_AFTERNOON_PENDING)
 
-	var dialog_lines := DialogTextLoader.load_dialog_lines(
-		KITCHEN_AFTERNOON_PROMPT_FILE,
-		PackedStringArray(["@还有时间，做点什么呢……"]),
-	)
+	var dialog_lines := GameText.load_dialog(GameText.FILE_KITCHEN_AFTERNOON_PROMPT)
 	if dialog_lines.is_empty():
 		return
 

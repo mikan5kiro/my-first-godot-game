@@ -28,6 +28,7 @@ theme_override_constants/margin_right = 2
 theme_override_constants/margin_bottom = 2
 
 [node name="Content" type="VBoxContainer" parent="Panel/Margin"]
+clip_contents = true
 layout_mode = 2
 theme_override_constants/separation = 4
 

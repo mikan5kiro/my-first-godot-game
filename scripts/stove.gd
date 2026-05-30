@@ -4,7 +4,7 @@ class_name StoveInteractable
 const CHOICE_YES := "yes"
 const CHOICE_NO := "no"
 
-const MSG_STOVE := "灶台。"
+const MSG_STOVE := GameText.STOVE_LABEL
 const STOVE_IGNITION_SFX: AudioStream = preload("res://audios/ガスコンロ点火.mp3")
 const COOKING_SFX: AudioStream = preload("res://audios/餃子を揚げる.mp3")
 const STOVE_TURN_OFF_SFX: AudioStream = preload("res://audios/ガスコンロの火を止める.mp3")
@@ -28,8 +28,8 @@ func get_interaction_dialog_lines() -> Array[DialogLine]:
 	return DialogTextLoader.lines_from_strings(
 		PackedStringArray([
 			MSG_STOVE,
-			"@虽然还有食材，但还不是吃饭的时间呢。",
-			"等%s再来做吧。" % next_meal,
+			GameText.STOVE_OFF_MEAL_TIME,
+			GameText.stove_wait_until(next_meal),
 		]),
 	)
 
@@ -39,6 +39,8 @@ func interact(interactor: Node) -> String:
 		return ""
 
 	if _should_show_off_meal_time_lines():
+		if GameState != null:
+			GameState.mark_stove_off_meal_time_prompt_played()
 		return ""
 
 	if GameState == null or not GameState.can_cook() or not GameState.is_meal_time():
@@ -49,10 +51,10 @@ func interact(interactor: Node) -> String:
 		return MSG_STOVE
 
 	player_interactor.show_choice(
-		"灶台。要做饭吗？",
+		GameText.STOVE_COOK_PROMPT,
 		[
-			{"id": CHOICE_YES, "label": "要"},
-			{"id": CHOICE_NO, "label": "不要"},
+			{"id": CHOICE_YES, "label": GameText.CHOICE_YES},
+			{"id": CHOICE_NO, "label": GameText.CHOICE_NO},
 		],
 		_on_choice.bind(player_interactor),
 	)
@@ -102,7 +104,7 @@ func _on_cooking_fade_out_start(player_interactor: PlayerInteractor) -> void:
 	if player_interactor == null:
 		return
 	GameState.play_item_obtained_sfx()
-	player_interactor.show_text("获得自己做的饭。")
+	player_interactor.show_text(GameText.MEAL_COOKED)
 
 
 func _play_sfx_full(stream: AudioStream) -> void:

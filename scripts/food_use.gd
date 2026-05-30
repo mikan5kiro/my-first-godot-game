@@ -34,7 +34,7 @@ static func run_eat_sequence(context_node: Node, player_interactor: PlayerIntera
 	if GameState == null or GameState.find_inventory_index(item) < 0:
 		return
 	if not GameState.is_meal_time():
-		player_interactor.show_text(GameState.MSG_NOT_MEAL_TIME)
+		player_interactor.show_text(GameText.NOT_MEAL_TIME)
 		return
 
 	player_interactor.hide_text_immediately()
@@ -75,4 +75,4 @@ static func _perform_eat_on_black(context_node: Node, item: ItemData) -> void:
 static func _on_eat_fade_out_start(player_interactor: PlayerInteractor) -> void:
 	if player_interactor == null:
 		return
-	player_interactor.show_text("吃完饭了。")
+	player_interactor.show_text(GameText.MEAL_EATEN)

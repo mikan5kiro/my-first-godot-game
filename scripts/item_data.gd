@@ -12,7 +12,7 @@ class_name ItemData
 
 
 func is_meal_item() -> bool:
-	return is_meal or id == "meal"
+	return is_meal or id == "meal" or id == "delivery"
 
 
 func can_use() -> bool:
@@ -21,7 +21,7 @@ func can_use() -> bool:
 
 func get_use_blocked_message() -> String:
 	if is_meal_item():
-		return "需要到餐桌旁才能吃。"
+		return GameText.MEAL_USE_NEED_TABLE
 	return ""
 
 

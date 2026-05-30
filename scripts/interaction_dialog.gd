@@ -6,8 +6,8 @@ enum DialogMode {
 	CHARACTER,
 }
 
-const PANEL_HEIGHT_TEXT_ONLY := 112.0
-const PANEL_HEIGHT_WITH_CHOICES := 172.0
+const PANEL_HEIGHT := 112.0
+const CHOICE_ROW_HEIGHT := 20.0
 
 @onready var panel: PanelContainer = $Panel
 @onready var avatar_slot: AspectRatioContainer = $Panel/Margin/Content/TextRow/AvatarSlot
@@ -59,7 +59,6 @@ func set_text(value: String) -> void:
 func set_choices(labels: PackedStringArray, selected_index: int) -> void:
 	clear_choices()
 	if labels.is_empty():
-		_set_panel_height(PANEL_HEIGHT_TEXT_ONLY)
 		return
 
 	for index in labels.size():
@@ -68,7 +67,6 @@ func set_choices(labels: PackedStringArray, selected_index: int) -> void:
 		_choice_rows.append(row)
 
 	choices_container.show()
-	_set_panel_height(PANEL_HEIGHT_WITH_CHOICES)
 
 
 func clear_choices() -> void:
@@ -78,12 +76,12 @@ func clear_choices() -> void:
 	_choice_rows.clear()
 	if choices_container != null:
 		choices_container.hide()
-	_set_panel_height(PANEL_HEIGHT_TEXT_ONLY)
+	_set_panel_height(PANEL_HEIGHT)
 
 
 func _create_choice_row(label_text: String, selected: bool) -> PanelContainer:
 	var row := PanelContainer.new()
-	row.custom_minimum_size = Vector2(0, 24.0)
+	row.custom_minimum_size = Vector2(0, CHOICE_ROW_HEIGHT)
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var style := RpgUiStyle.make_item_row_selected_style() if selected else RpgUiStyle.make_item_row_normal_style()
 	row.add_theme_stylebox_override("panel", style)

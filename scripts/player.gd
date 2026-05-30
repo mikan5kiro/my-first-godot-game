@@ -122,3 +122,10 @@ func _is_controls_locked() -> bool:
 
 func set_controls_locked(locked: bool) -> void:
 	_external_controls_locked = locked
+	if locked:
+		velocity = Vector2.ZERO
+		snap_to_idle()
+
+
+func snap_to_idle() -> void:
+	update_animation(Vector2.ZERO)

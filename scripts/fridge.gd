@@ -14,10 +14,10 @@ func interact(interactor: Node) -> String:
 		return ""
 
 	player_interactor.show_choice(
-		"冰箱。要查看剩余食材吗？",
+		GameText.FRIDGE_PROMPT,
 		[
-			{"id": CHOICE_YES, "label": "要"},
-			{"id": CHOICE_NO, "label": "不要"},
+			{"id": CHOICE_YES, "label": GameText.CHOICE_YES},
+			{"id": CHOICE_NO, "label": GameText.CHOICE_NO},
 		],
 		_on_choice.bind(player_interactor),
 	)
@@ -28,7 +28,7 @@ func _on_choice(choice_id: String, player_interactor: PlayerInteractor) -> void:
 	match choice_id:
 		CHOICE_YES:
 			if GameState == null or GameState.food_meals <= 0:
-				player_interactor.show_text("没有食材了。")
+				player_interactor.show_text(GameText.FOOD_SUPPLY_EMPTY)
 			else:
 				player_interactor.show_text(GameState.get_food_supply_text())
 		CHOICE_NO:

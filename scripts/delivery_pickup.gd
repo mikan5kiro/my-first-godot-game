@@ -7,7 +7,10 @@ func get_interaction_priority() -> int:
 
 
 func can_interact(interactor: Node) -> bool:
-	if GameState == null or not GameState.has_flag(GameState.FLAG_DELIVERY_WAITING_PICKUP):
+	if GameState == null:
+		return false
+	if not GameState.has_flag(GameState.FLAG_DELIVERY_WAITING_PICKUP) \
+		and not GameState.has_flag(GameState.FLAG_FOOD_SUPPLY_WAITING_PICKUP):
 		return false
 	return super.can_interact(interactor)
 
@@ -28,7 +31,12 @@ func _start_pickup(player_interactor: PlayerInteractor) -> void:
 	var player := player_interactor.get_parent() as CharacterBody2D
 	if player != null and player.has_method("set_controls_locked"):
 		player.set_controls_locked(true)
-	await DeliverySequence.run_pickup(self, player_interactor)
+
+	if GameState.has_flag(GameState.FLAG_DELIVERY_WAITING_PICKUP):
+		await DeliverySequence.run_pickup(self, player_interactor)
+	elif GameState.has_flag(GameState.FLAG_FOOD_SUPPLY_WAITING_PICKUP):
+		await DeliverySequence.run_food_pickup(self, player_interactor)
+
 	if player != null and player.has_method("set_controls_locked"):
 		player.set_controls_locked(false)
 

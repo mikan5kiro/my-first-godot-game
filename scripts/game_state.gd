@@ -1,7 +1,7 @@
 extends Node
 
 ## 全局游戏状态（Autoload: GameState）。
-## 饱食度、状态（sanity）、金钱、天数/时段、剧情 flag 的唯一数据源。
+## 饥饿度、状态（sanity）、金钱、天数/时段、剧情 flag 的唯一数据源。
 
 signal stats_changed
 signal time_changed(day: int, period: TimePeriod)
@@ -51,19 +51,22 @@ const FLAG_DESK_INVESTIGATED := "desk_investigated"
 const FLAG_BOOKSHELF_INVESTIGATED := "bookshelf_investigated"
 const FLAG_WORKSHOP_HUNGER_PROMPT := "workshop_hunger_prompt_played"
 const FLAG_WORKSHOP_HUNGER_PENDING := "workshop_hunger_pending"
+const FLAG_DELIVERY_ORDERED := "delivery_ordered"
 const FLAG_DELIVERY_WAITING_PICKUP := "delivery_waiting_pickup"
 const FLAG_DELIVERY_PICKED_UP := "delivery_picked_up"
+const FLAG_FOOD_SUPPLY_ORDERED := "food_supply_ordered"
+const FLAG_FOOD_SUPPLY_WAITING_PICKUP := "food_supply_waiting_pickup"
 const FLAG_DELIVERY_COOKING_PROMPT := "delivery_cooking_prompt_played"
 const FLAG_KITCHEN_AFTERNOON_PROMPT := "kitchen_afternoon_prompt_played"
 const FLAG_KITCHEN_AFTERNOON_PENDING := "kitchen_afternoon_pending"
+const FLAG_STOVE_OFF_MEAL_TIME_PROMPT := "stove_off_meal_time_prompt_played"
 const DEFAULT_PHONE_ITEM: ItemData = preload("res://resources/items/phone.tres")
 const MEAL_ITEM: ItemData = preload("res://resources/items/meal.tres")
 const DELIVERY_ITEM: ItemData = preload("res://resources/items/delivery.tres")
 const ITEM_OBTAINED_SFX: AudioStream = preload("res://audios/決定ボタンを押す26.mp3")
-const MSG_NOT_MEAL_TIME := "现在不是饭点。"
 
 @export_group("Initial Values")
-@export_range(0, 100, 1) var initial_hunger: int = 35
+@export_range(0, 100, 1) var initial_hunger: int = 30
 @export_range(0, 100, 1) var initial_sanity: int = 65
 @export var initial_money: int = 200
 @export var initial_food_meals: int = 0
@@ -75,7 +78,15 @@ const MSG_NOT_MEAL_TIME := "现在不是饭点。"
 @export var buy_food_cost: int = 25
 @export var buy_food_meals_amount: int = 3
 @export var delivery_cost: int = 40
-@export_range(0, 100, 1) var meal_hunger_restore: int = 40
+@export var order_arrival_delay_sec: float = 10.0
+@export_range(0, 100, 1) var meal_hunger_restore: int = 50
+
+@export_group("Hunger Rhythm")
+@export_range(0, 100, 1) var hunger_not_hungry_threshold: int = 50
+@export_range(0, 100, 1) var hunger_very_hungry_threshold: int = 20
+@export_range(0, 100, 1) var period_hunger_decay: int = 10
+@export_range(0, 100, 1) var meal_period_hunger_pulse: int = 35
+@export_range(0, 100, 1) var missed_meal_hunger_penalty: int = 25
 
 @export_group("Limits")
 @export_range(0, 100, 1) var min_hunger: int = 0
@@ -84,10 +95,10 @@ const MSG_NOT_MEAL_TIME := "现在不是饭点。"
 @export_range(0, 100, 1) var max_sanity: int = 100
 
 @export_group("Daily Settlement")
-@export var daily_hunger_drain: int = 10
+@export var daily_hunger_drain: int = 0
 @export var daily_sanity_drain: int = 0
 
-var hunger: int = 35
+var hunger: int = 30
 var sanity: int = 65
 var money: int = 200
 var food_meals: int = 0
@@ -97,6 +108,8 @@ var flags: Dictionary = {}
 var inventory_items: Array[ItemData] = []
 var active_tasks: PackedStringArray = PackedStringArray()
 var is_locked: bool = false
+var _ate_current_meal_period: bool = false
+var _bought_food_today: bool = false
 var _item_obtained_sfx_player: AudioStreamPlayer
 
 
@@ -130,12 +143,10 @@ func get_next_meal_time_display_name() -> String:
 
 
 func get_hunger_label() -> String:
-	if hunger >= 70:
-		return "吃饱"
-	if hunger >= 40:
-		return "还行"
-	if hunger >= 20:
-		return "有点饿"
+	if hunger >= hunger_not_hungry_threshold:
+		return "不饿"
+	if hunger >= hunger_very_hungry_threshold:
+		return "饿了"
 	return "很饿"
 
 
@@ -175,8 +186,8 @@ func get_food_meals_label() -> String:
 
 func get_food_supply_text() -> String:
 	if food_meals <= 0:
-		return "没有食材了。"
-	return "里面还有 %d 顿食材。" % food_meals
+		return GameText.FOOD_SUPPLY_EMPTY
+	return GameText.food_supply_count(food_meals)
 
 
 func can_cook() -> bool:
@@ -226,12 +237,21 @@ func eat_meal(item: ItemData) -> bool:
 	if find_inventory_index(item) < 0:
 		return false
 	remove_inventory_item(item)
+	_ate_current_meal_period = true
 	add_stat(&"hunger", meal_hunger_restore)
 	advance_period()
 	return true
 
 
+func has_bought_food_today() -> bool:
+	return _bought_food_today
+
+
 func can_buy_food_supply() -> bool:
+	if _bought_food_today:
+		return false
+	if has_flag(FLAG_FOOD_SUPPLY_ORDERED) or has_flag(FLAG_FOOD_SUPPLY_WAITING_PICKUP):
+		return false
 	return money >= buy_food_cost
 
 
@@ -243,7 +263,9 @@ func buy_food_supply() -> bool:
 	if is_locked or not can_buy_food_supply():
 		return false
 	money -= buy_food_cost
-	food_meals += buy_food_meals_amount
+	_bought_food_today = true
+	set_flag(FLAG_FOOD_SUPPLY_ORDERED)
+	PendingArrivalController.schedule_food_arrival()
 	stats_changed.emit()
 	return true
 
@@ -253,7 +275,13 @@ func is_phone_delivery_unlocked() -> bool:
 
 
 func can_order_delivery() -> bool:
-	return money >= delivery_cost
+	if money < delivery_cost:
+		return false
+	if has_flag(FLAG_DELIVERY_ORDERED):
+		return false
+	if has_flag(FLAG_DELIVERY_WAITING_PICKUP):
+		return false
+	return find_inventory_index_by_id(DELIVERY_ITEM.id) < 0
 
 
 func workshop_investigations_complete() -> bool:
@@ -264,12 +292,18 @@ func should_trigger_workshop_hunger_on_exit() -> bool:
 	return workshop_investigations_complete() and not has_flag(FLAG_WORKSHOP_HUNGER_PROMPT)
 
 
+func mark_stove_off_meal_time_prompt_played() -> void:
+	set_flag(FLAG_STOVE_OFF_MEAL_TIME_PROMPT)
+
+
 func should_trigger_kitchen_afternoon_on_exit() -> bool:
-	return period == TimePeriod.AFTERNOON and not has_flag(FLAG_KITCHEN_AFTERNOON_PROMPT)
+	return has_flag(FLAG_STOVE_OFF_MEAL_TIME_PROMPT) \
+		and not has_flag(FLAG_KITCHEN_AFTERNOON_PROMPT)
 
 
 func is_workshop_delivery_quest_active() -> bool:
 	return has_flag(FLAG_WORKSHOP_HUNGER_PROMPT) \
+		and not has_flag(FLAG_DELIVERY_ORDERED) \
 		and not has_flag(FLAG_DELIVERY_WAITING_PICKUP) \
 		and not has_flag(FLAG_DELIVERY_PICKED_UP)
 
@@ -278,26 +312,32 @@ func order_delivery() -> bool:
 	if is_locked or not can_order_delivery() or not is_meal_time():
 		return false
 	money -= delivery_cost
-	add_stat(&"hunger", meal_hunger_restore)
-	return true
-
-
-func order_delivery_quest() -> bool:
-	if is_locked or not can_order_delivery() or not is_meal_time():
-		return false
-	money -= delivery_cost
+	set_flag(FLAG_DELIVERY_ORDERED)
+	PendingArrivalController.schedule_delivery_arrival()
 	stats_changed.emit()
 	return true
 
 
 func mark_delivery_waiting_pickup() -> void:
+	clear_flag(FLAG_DELIVERY_ORDERED)
 	set_flag(FLAG_DELIVERY_WAITING_PICKUP)
+
+
+func mark_food_supply_waiting_pickup() -> void:
+	clear_flag(FLAG_FOOD_SUPPLY_ORDERED)
+	set_flag(FLAG_FOOD_SUPPLY_WAITING_PICKUP)
 
 
 func complete_delivery_pickup(play_item_sfx: bool = true) -> void:
 	add_inventory_item(DELIVERY_ITEM, play_item_sfx)
 	clear_flag(FLAG_DELIVERY_WAITING_PICKUP)
 	set_flag(FLAG_DELIVERY_PICKED_UP)
+
+
+func complete_food_supply_pickup() -> void:
+	food_meals += buy_food_meals_amount
+	clear_flag(FLAG_FOOD_SUPPLY_WAITING_PICKUP)
+	stats_changed.emit()
 
 
 func reset_to_defaults() -> void:
@@ -311,6 +351,8 @@ func reset_to_defaults() -> void:
 	inventory_items = _duplicate_inventory(initial_inventory)
 	active_tasks = PackedStringArray()
 	is_locked = false
+	_ate_current_meal_period = false
+	_bought_food_today = false
 	stats_changed.emit()
 	time_changed.emit(day, period)
 	inventory_changed.emit()
@@ -506,6 +548,9 @@ func advance_period() -> void:
 	if is_locked:
 		return
 
+	var leaving_period := period
+	_apply_period_leave_hunger(leaving_period)
+
 	var period_index: int = PERIOD_ORDER.find(period)
 	if period_index < 0:
 		period_index = 0
@@ -515,6 +560,8 @@ func advance_period() -> void:
 		return
 
 	period = PERIOD_ORDER[period_index + 1]
+	_apply_period_enter_hunger(period)
+	stats_changed.emit()
 	time_changed.emit(day, period)
 
 
@@ -529,11 +576,37 @@ func end_day() -> void:
 		hunger = clampi(hunger - daily_hunger_drain, min_hunger, max_hunger)
 	if daily_sanity_drain != 0:
 		sanity = clampi(sanity - daily_sanity_drain, min_sanity, max_sanity)
-	stats_changed.emit()
 
 	day += 1
 	period = TimePeriod.MORNING
+	_bought_food_today = false
+	_apply_period_enter_hunger(period)
+	stats_changed.emit()
 	time_changed.emit(day, period)
+
+
+static func _is_meal_period(value: TimePeriod) -> bool:
+	return value == TimePeriod.NOON or value == TimePeriod.EVENING
+
+
+func _apply_period_leave_hunger(leaving_period: TimePeriod) -> void:
+	if _is_meal_period(leaving_period) and not _ate_current_meal_period:
+		_apply_hunger_change(-missed_meal_hunger_penalty)
+	if period_hunger_decay > 0:
+		_apply_hunger_change(-period_hunger_decay)
+
+
+func _apply_period_enter_hunger(entering_period: TimePeriod) -> void:
+	if not _is_meal_period(entering_period):
+		return
+	_apply_hunger_change(-meal_period_hunger_pulse)
+	_ate_current_meal_period = false
+
+
+func _apply_hunger_change(delta: int) -> void:
+	if delta == 0:
+		return
+	hunger = clampi(hunger + delta, min_hunger, max_hunger)
 
 
 func lock() -> void:
