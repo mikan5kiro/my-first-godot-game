@@ -12,6 +12,8 @@ signal confirmed
 @export_range(0.4, 4.0, 0.05) var breath_cycle_duration := 1.2
 @export var columns := 1
 @export var slot_min_width := 148.0
+@export_range(16.0, 40.0, 1.0) var row_min_height := 24.0
+@export_range(10.0, 18.0, 1.0) var row_font_size := 14.0
 @export var empty_detail_text := ""
 @export var show_count_suffix := false
 
@@ -89,6 +91,26 @@ func clear_detail() -> void:
 func set_detail_text(text: String) -> void:
 	if _detail_label != null:
 		_detail_label.text = text
+
+
+func set_detail_single_line(enabled: bool) -> void:
+	if not _ensure_nodes() or _detail_label == null:
+		return
+	if enabled:
+		_detail_label.max_lines_visible = 1
+		_detail_label.autowrap_mode = 0
+		_detail_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	else:
+		_detail_label.max_lines_visible = 2
+		_detail_label.autowrap_mode = 3
+		_detail_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+
+
+func set_list_vertical_separation(value: int) -> void:
+	if not _ensure_nodes():
+		return
+	if _list_container != null:
+		_list_container.add_theme_constant_override("v_separation", maxi(value, 0))
 
 
 func move_selection_grid(column_step: int, row_step: int) -> void:
@@ -170,7 +192,7 @@ func _rebuild_rows(previous_id: String) -> void:
 func _create_row(title: String, count: int = 1) -> PanelContainer:
 	var row := PanelContainer.new()
 	var min_width: float = slot_min_width if _uses_grid_navigation() else 0.0
-	row.custom_minimum_size = Vector2(min_width, 24.0)
+	row.custom_minimum_size = Vector2(min_width, row_min_height)
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.mouse_filter = Control.MOUSE_FILTER_STOP
 	row.gui_input.connect(_on_row_gui_input.bind(row))
@@ -192,7 +214,7 @@ func _create_row(title: String, count: int = 1) -> PanelContainer:
 		var name_label := Label.new()
 		name_label.text = title
 		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		name_label.add_theme_font_size_override("font_size", 14)
+		name_label.add_theme_font_size_override("font_size", int(row_font_size))
 		name_label.clip_text = true
 		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		name_label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)
@@ -200,14 +222,14 @@ func _create_row(title: String, count: int = 1) -> PanelContainer:
 
 		var count_label := Label.new()
 		count_label.text = ": %d" % count
-		count_label.add_theme_font_size_override("font_size", 14)
+		count_label.add_theme_font_size_override("font_size", int(row_font_size))
 		count_label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)
 		body.add_child(count_label)
 	else:
 		var name_label := Label.new()
 		name_label.text = title
 		name_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		name_label.add_theme_font_size_override("font_size", 14)
+		name_label.add_theme_font_size_override("font_size", int(row_font_size))
 		name_label.clip_text = true
 		name_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 		name_label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)

@@ -1,0 +1,154 @@
+[gd_scene format=3 uid="uid://bwxfku6hspkoi"]
+
+[ext_resource type="Script" path="res://scripts/status_panel_view.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cnpet3xdh51na" path="res://images/avatar.png" id="2_avatar"]
+
+[node name="StatusPanelView" type="PanelContainer"]
+custom_minimum_size = Vector2(420, 136)
+script = ExtResource("1_script")
+
+[node name="Margin" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="StatusContent" type="VBoxContainer" parent="Margin"]
+custom_minimum_size = Vector2(0, 112)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="SlotTitle" type="Label" parent="Margin/StatusContent"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.72, 0.76, 0.84, 0.85)
+theme_override_font_sizes/font_size = 14
+text = "存档1"
+
+[node name="StatusBody" type="HBoxContainer" parent="Margin/StatusContent"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="AvatarSlot" type="AspectRatioContainer" parent="Margin/StatusContent/StatusBody"]
+layout_mode = 2
+size_flags_vertical = 4
+
+[node name="AvatarFrame" type="PanelContainer" parent="Margin/StatusContent/StatusBody/AvatarSlot"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="AvatarContent" type="Control" parent="Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="AvatarImage" type="TextureRect" parent="Margin/StatusContent/StatusBody/AvatarSlot/AvatarFrame/AvatarContent"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 4.0
+offset_top = 4.0
+offset_right = -4.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_avatar")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="InfoColumn" type="VBoxContainer" parent="Margin/StatusContent/StatusBody"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_constants/separation = 2
+
+[node name="PlayerName" type="Label" parent="Margin/StatusContent/StatusBody/InfoColumn"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
+theme_override_font_sizes/font_size = 18
+text = "玩家"
+
+[node name="StatGrid" type="VBoxContainer" parent="Margin/StatusContent/StatusBody/InfoColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="TimeRow" type="HBoxContainer" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="Label" type="Label" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow"]
+custom_minimum_size = Vector2(40, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
+theme_override_font_sizes/font_size = 16
+text = "时间"
+
+[node name="Value" type="Label" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 16
+text = "第 1 天 / 早晨"
+
+[node name="StatsRow" type="HBoxContainer" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HungerRow" type="HBoxContainer" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/HungerRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
+theme_override_font_sizes/font_size = 15
+text = "饥饿度"
+
+[node name="Value" type="Label" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/HungerRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 15
+text = "不饿"
+
+[node name="SanityRow" type="HBoxContainer" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/SanityRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
+theme_override_font_sizes/font_size = 15
+text = "状态"
+
+[node name="Value" type="Label" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/SanityRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 15
+text = "乐观"
+
+[node name="MoneyRow" type="HBoxContainer" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="Label" type="Label" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/MoneyRow"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.58, 0.78, 0.95, 1)
+theme_override_font_sizes/font_size = 15
+text = "金钱"
+
+[node name="Value" type="Label" parent="Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/MoneyRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 15
+text = "0米"

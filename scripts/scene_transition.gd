@@ -7,6 +7,7 @@ var _overlay: ColorRect
 var _transitioning := false
 var _pending_spawn_marker := ""
 var _pending_facing_direction := ""
+var _pending_spawn_position: Variant = null
 var _door_sfx_player: Node = null
 
 
@@ -61,7 +62,19 @@ func wait_until_idle() -> void:
 
 
 func has_pending_spawn() -> bool:
-	return not _pending_spawn_marker.is_empty()
+	return not _pending_spawn_marker.is_empty() or _pending_spawn_position is Vector2
+
+
+func set_pending_spawn_position(position: Vector2, facing_direction: String = "") -> void:
+	_pending_spawn_position = position
+	_pending_facing_direction = facing_direction
+	_pending_spawn_marker = ""
+
+
+func clear_pending_spawn() -> void:
+	_pending_spawn_marker = ""
+	_pending_facing_direction = ""
+	_pending_spawn_position = null
 
 
 func transition_to(scene_path: String, spawn_marker_name: String = "", facing_direction: String = "") -> void:
@@ -71,9 +84,12 @@ func transition_to(scene_path: String, spawn_marker_name: String = "", facing_di
 	await _fade_to_black()
 	_pending_spawn_marker = spawn_marker_name
 	_pending_facing_direction = facing_direction
+	if not spawn_marker_name.is_empty():
+		_pending_spawn_position = null
 	get_tree().change_scene_to_file(scene_path)
 	await _fade_from_black()
 	_transitioning = false
+	clear_pending_spawn()
 
 
 func play_action_with_fade(
@@ -95,6 +111,13 @@ func play_action_with_fade(
 
 
 func _on_scene_changed() -> void:
+	if _pending_spawn_position is Vector2:
+		var position: Vector2 = _pending_spawn_position
+		var facing_direction := _pending_facing_direction
+		_pending_spawn_position = null
+		_pending_facing_direction = ""
+		_apply_absolute_spawn(position, facing_direction)
+		return
 	if _pending_spawn_marker.is_empty():
 		return
 	var marker_name := _pending_spawn_marker
@@ -121,6 +144,25 @@ func _apply_spawn(spawn_marker_name: String, facing_direction: String = "") -> v
 	if not SpawnUtils.snap_node_to_marker(player, scene_root, spawn_marker_name):
 		push_warning("SceneTransition: 找不到 Marker '%s'" % spawn_marker_name)
 		return
+	if not facing_direction.is_empty() and player.has_method("set_facing_direction"):
+		player.set_facing_direction(facing_direction)
+
+	if scene_root.has_method("apply_camera_limits"):
+		scene_root.apply_camera_limits()
+
+
+func _apply_absolute_spawn(position: Vector2, facing_direction: String = "") -> void:
+	var scene_root := _get_scene_root()
+	if scene_root == null:
+		push_warning("SceneTransition: 当前场景为空")
+		return
+
+	var player := _find_player(scene_root)
+	if player == null:
+		push_warning("SceneTransition: 找不到玩家")
+		return
+
+	player.global_position = position
 	if not facing_direction.is_empty() and player.has_method("set_facing_direction"):
 		player.set_facing_direction(facing_direction)
 

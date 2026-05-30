@@ -71,6 +71,19 @@ theme_override_font_sizes/font_size = 18
 text = "物品"
 horizontal_alignment = 1
 
+[node name="SaveRow" type="PanelContainer" parent="MainMenuRoot/MenuPanel/Margin/MenuList"]
+custom_minimum_size = Vector2(0, 34)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MainMenuRoot/MenuPanel/Margin/MenuList/SaveRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
+theme_override_font_sizes/font_size = 18
+text = "存档"
+horizontal_alignment = 1
+
 [node name="ReadRow" type="PanelContainer" parent="MainMenuRoot/MenuPanel/Margin/MenuList" unique_id=996598934]
 custom_minimum_size = Vector2(0, 34)
 layout_mode = 2
@@ -81,7 +94,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_colors/font_color = Color(0.92, 0.93, 0.96, 1)
 theme_override_font_sizes/font_size = 18
-text = "读取"
+text = "主菜单"
 horizontal_alignment = 1
 
 [node name="SplitLine" type="ColorRect" parent="MainMenuRoot" unique_id=332845533]

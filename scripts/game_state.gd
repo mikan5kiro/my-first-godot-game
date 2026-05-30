@@ -64,6 +64,8 @@ const DEFAULT_PHONE_ITEM: ItemData = preload("res://resources/items/phone.tres")
 const MEAL_ITEM: ItemData = preload("res://resources/items/meal.tres")
 const DELIVERY_ITEM: ItemData = preload("res://resources/items/delivery.tres")
 const ITEM_OBTAINED_SFX: AudioStream = preload("res://audios/決定ボタンを押す26.mp3")
+const SAVE_VERSION := 1
+const ITEM_RESOURCE_PATH := "res://resources/items/%s.tres"
 
 @export_group("Initial Values")
 @export_range(0, 100, 1) var initial_hunger: int = 30
@@ -143,25 +145,115 @@ func get_next_meal_time_display_name() -> String:
 
 
 func get_hunger_label() -> String:
-	if hunger >= hunger_not_hungry_threshold:
+	return hunger_label_for(hunger)
+
+
+func get_sanity_label() -> String:
+	return sanity_label_for(sanity)
+
+
+func get_money_label() -> String:
+	return money_label_for(money)
+
+
+func hunger_label_for(value: int) -> String:
+	if value >= hunger_not_hungry_threshold:
 		return "不饿"
-	if hunger >= hunger_very_hungry_threshold:
+	if value >= hunger_very_hungry_threshold:
 		return "饿了"
 	return "很饿"
 
 
-func get_sanity_label() -> String:
-	if sanity >= 80:
+func sanity_label_for(value: int) -> String:
+	if value >= 80:
 		return "乐观"
-	if sanity >= 50:
+	if value >= 50:
 		return "普通"
-	if sanity >= 20:
+	if value >= 20:
 		return "忧郁"
 	return "？？？"
 
 
-func get_money_label() -> String:
-	return "%d米" % money
+func money_label_for(value: int) -> String:
+	return "%d米" % value
+
+
+func get_time_label_for(day_value: int, period_value: TimePeriod) -> String:
+	return "第 %d 天 / %s" % [day_value, period_to_display_name(period_value)]
+
+
+static func period_from_name(name: String) -> TimePeriod:
+	for key in PERIOD_NAMES:
+		if PERIOD_NAMES[key] == name:
+			return key
+	return TimePeriod.NOON
+
+
+func to_save_data() -> Dictionary:
+	var inventory_ids: PackedStringArray = []
+	for item in inventory_items:
+		if item != null and not item.id.is_empty():
+			inventory_ids.append(item.id)
+
+	return {
+		"version": SAVE_VERSION,
+		"hunger": hunger,
+		"sanity": sanity,
+		"money": money,
+		"food_meals": food_meals,
+		"day": day,
+		"period": period_to_name(period),
+		"flags": flags.duplicate(),
+		"inventory": inventory_ids,
+		"tasks": active_tasks.duplicate(),
+		"ate_current_meal_period": _ate_current_meal_period,
+		"bought_food_today": _bought_food_today,
+	}
+
+
+func apply_save_data(data: Dictionary) -> void:
+	hunger = int(data.get("hunger", initial_hunger))
+	sanity = int(data.get("sanity", initial_sanity))
+	money = int(data.get("money", initial_money))
+	food_meals = int(data.get("food_meals", initial_food_meals))
+	day = int(data.get("day", initial_day))
+	period = period_from_name(str(data.get("period", period_to_name(initial_period))))
+	flags = data.get("flags", {}).duplicate()
+	active_tasks = PackedStringArray(data.get("tasks", []))
+	_ate_current_meal_period = bool(data.get("ate_current_meal_period", false))
+	_bought_food_today = bool(data.get("bought_food_today", false))
+	is_locked = false
+
+	inventory_items.clear()
+	for item_id in data.get("inventory", []):
+		var resource_path := ITEM_RESOURCE_PATH % String(item_id)
+		if ResourceLoader.exists(resource_path):
+			inventory_items.append(load(resource_path))
+
+	stats_changed.emit()
+	time_changed.emit(day, period)
+	inventory_changed.emit()
+	tasks_changed.emit()
+
+
+func get_status_labels_from_data(data: Dictionary, player_name: String = "玩家") -> Dictionary:
+	if data.is_empty():
+		return {
+			"player_name": "空档案",
+			"time": "--",
+			"hunger": "--",
+			"sanity": "--",
+			"money": "--",
+		}
+
+	var period_value := period_from_name(str(data.get("period", period_to_name(initial_period))))
+	return {
+		"player_name": str(data.get("player_name", player_name)),
+		"time": get_time_label_for(int(data.get("day", initial_day)), period_value),
+		"hunger": hunger_label_for(int(data.get("hunger", initial_hunger))),
+		"sanity": sanity_label_for(int(data.get("sanity", initial_sanity))),
+		"money": money_label_for(int(data.get("money", initial_money))),
+	}
 
 
 func get_money_description() -> String:

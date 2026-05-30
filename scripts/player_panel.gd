@@ -2,7 +2,8 @@ extends CanvasLayer
 
 enum Tab {
 	ITEMS,
-	READ,
+	SAVE,
+	TITLE,
 }
 
 @export_file("*.tscn") var title_scene_path: String = "res://scenes/title_screen.tscn"
@@ -23,7 +24,8 @@ const MENU_ROW_HEIGHT := 34.0
 @onready var main_menu_root: Control = $MainMenuRoot
 @onready var detail_menu_root: Control = $MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot
 @onready var items_row: PanelContainer = $MainMenuRoot/MenuPanel/Margin/MenuList/ItemsRow
-@onready var read_row: PanelContainer = $MainMenuRoot/MenuPanel/Margin/MenuList/ReadRow
+@onready var title_row: PanelContainer = $MainMenuRoot/MenuPanel/Margin/MenuList/ReadRow
+@onready var save_row: PanelContainer = $MainMenuRoot/MenuPanel/Margin/MenuList/SaveRow
 @onready var player_name_label: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/PlayerName
 @onready var time_value: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow/Value
 @onready var hunger_value: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/HungerRow/Value
@@ -41,6 +43,7 @@ var _menu_breath := BorderBreathAnimator.new()
 var _hover_sfx_player: AudioStreamPlayer
 var _confirm_sfx_player: AudioStreamPlayer
 var _panel_sfx_player: AudioStreamPlayer
+var _pending_save_overwrite_slot: int = -1
 
 
 func _ready() -> void:
@@ -51,10 +54,11 @@ func _ready() -> void:
 	_detail_list_panel.breath_cycle_duration = menu_breath_cycle_duration
 	_detail_list_panel.navigation_moved.connect(_on_detail_navigation_moved)
 	_detail_list_panel.confirmed.connect(_on_detail_confirmed)
-	_menu_rows = [items_row, read_row]
+	_menu_rows = [items_row, save_row, title_row]
 	_configure_menu_rows()
 	items_row.gui_input.connect(_on_items_row_gui_input)
-	read_row.gui_input.connect(_on_read_row_gui_input)
+	title_row.gui_input.connect(_on_title_row_gui_input)
+	save_row.gui_input.connect(_on_save_row_gui_input)
 
 	if get_tree() != null:
 		get_tree().scene_changed.connect(_on_scene_changed)
@@ -77,6 +81,10 @@ func _ready() -> void:
 func _apply_detail_binding(tab: Tab) -> void:
 	match tab:
 		Tab.ITEMS:
+			_detail_list_panel.row_min_height = 24.0
+			_detail_list_panel.row_font_size = 14.0
+			_detail_list_panel.set_list_vertical_separation(2)
+			_detail_list_panel.set_detail_single_line(false)
 			_detail_list_panel.columns = item_menu_columns
 			_detail_list_panel.slot_min_width = item_slot_min_width
 			_detail_list_panel.show_count_suffix = true
@@ -87,16 +95,35 @@ func _apply_detail_binding(tab: Tab) -> void:
 				_get_item_detail,
 				_get_item_stable_id,
 			)
-		Tab.READ:
+		Tab.TITLE:
+			_detail_list_panel.row_min_height = 24.0
+			_detail_list_panel.row_font_size = 14.0
+			_detail_list_panel.set_list_vertical_separation(2)
+			_detail_list_panel.set_detail_single_line(false)
 			_detail_list_panel.columns = 1
 			_detail_list_panel.slot_min_width = 0.0
 			_detail_list_panel.show_count_suffix = false
-			_detail_list_panel.empty_detail_text = "读取功能预留"
+			_detail_list_panel.empty_detail_text = "返回主菜单"
 			_detail_list_panel.bind(
-				_get_task_entries,
-				_get_task_title,
-				_get_task_detail,
-				_get_task_stable_id,
+				_get_title_menu_entries,
+				_get_title_menu_title,
+				_get_title_menu_detail,
+				_get_title_menu_stable_id,
+			)
+		Tab.SAVE:
+			_detail_list_panel.row_min_height = 24.0
+			_detail_list_panel.row_font_size = 14.0
+			_detail_list_panel.set_list_vertical_separation(2)
+			_detail_list_panel.set_detail_single_line(true)
+			_detail_list_panel.columns = 2
+			_detail_list_panel.slot_min_width = item_slot_min_width
+			_detail_list_panel.show_count_suffix = false
+			_detail_list_panel.empty_detail_text = "选择一个档案槽"
+			_detail_list_panel.bind(
+				_get_save_slot_entries,
+				_get_save_slot_title,
+				_get_save_slot_detail,
+				_get_save_slot_stable_id,
 			)
 
 
@@ -178,6 +205,58 @@ func _get_task_stable_id(index: int) -> String:
 	if GameState == null or index < 0 or index >= GameState.active_tasks.size():
 		return ""
 	return String(GameState.active_tasks[index])
+
+
+func _get_save_slot_entries() -> Array:
+	var entries: Array = []
+	for slot in SaveManager.SLOT_COUNT:
+		entries.append(slot)
+	return entries
+
+
+func _get_save_slot_title(index: int) -> String:
+	if index < 0 or index >= SaveManager.SLOT_COUNT:
+		return ""
+	return "档案 %d" % (index + 1)
+
+
+func _get_save_slot_detail(index: int) -> String:
+	if index < 0 or index >= SaveManager.SLOT_COUNT:
+		return ""
+	if not SaveManager.has_save(index):
+		return "空档案"
+	if _pending_save_overwrite_slot == index:
+		return "确定要覆盖该存档吗？"
+	var data := SaveManager.read_save_data(index)
+	var labels := GameState.get_status_labels_from_data(data, player_display_name)
+	return "%s　%s　%s　%s" % [
+		labels.get("time", "--"),
+		labels.get("hunger", "--"),
+		labels.get("sanity", "--"),
+		labels.get("money", "--"),
+	]
+
+
+func _get_save_slot_stable_id(index: int) -> String:
+	if index < 0 or index >= SaveManager.SLOT_COUNT:
+		return ""
+	return "save_slot_%d" % index
+
+
+func _get_title_menu_entries() -> Array:
+	return ["return_title"]
+
+
+func _get_title_menu_title(_index: int) -> String:
+	return "返回主菜单"
+
+
+func _get_title_menu_detail(_index: int) -> String:
+	return "返回主菜单（当前未保存进度将丢失）"
+
+
+func _get_title_menu_stable_id(_index: int) -> String:
+	return "return_title"
 
 
 func _configure_menu_rows() -> void:
@@ -319,6 +398,7 @@ func _close_panel() -> void:
 func _open_detail_menu() -> void:
 	_play_confirm_sfx()
 	_detail_menu_open = true
+	_pending_save_overwrite_slot = -1
 	_apply_detail_binding(_active_tab)
 	_detail_list_panel.refresh()
 	_refresh_status_panel_content()
@@ -327,6 +407,7 @@ func _open_detail_menu() -> void:
 func _close_detail_menu(play_sfx: bool = false) -> void:
 	if not _detail_menu_open:
 		return
+	_pending_save_overwrite_slot = -1
 	_detail_menu_open = false
 	if play_sfx:
 		_play_close_detail_sfx()
@@ -356,8 +437,32 @@ func _on_read_row_gui_input(event: InputEvent) -> void:
 		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
 		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
 			var previous_tab: Tab = _active_tab
-			_set_active_tab(Tab.READ)
-			if previous_tab != Tab.READ:
+			_set_active_tab(Tab.TITLE)
+			if previous_tab != Tab.TITLE:
+				_play_hover_sfx()
+			_open_detail_menu()
+			get_viewport().set_input_as_handled()
+
+
+func _on_title_row_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
+		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
+			var previous_tab: Tab = _active_tab
+			_set_active_tab(Tab.TITLE)
+			if previous_tab != Tab.TITLE:
+				_play_hover_sfx()
+			_open_detail_menu()
+			get_viewport().set_input_as_handled()
+
+
+func _on_save_row_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
+		if mouse_event.pressed and mouse_event.button_index == MOUSE_BUTTON_LEFT:
+			var previous_tab: Tab = _active_tab
+			_set_active_tab(Tab.SAVE)
+			if previous_tab != Tab.SAVE:
 				_play_hover_sfx()
 			_open_detail_menu()
 			get_viewport().set_input_as_handled()
@@ -424,10 +529,19 @@ func _play_ui_sfx(player: AudioStreamPlayer, stream: AudioStream) -> void:
 
 func _on_detail_navigation_moved(_index: int) -> void:
 	_play_hover_sfx()
+	if _active_tab == Tab.SAVE and _pending_save_overwrite_slot >= 0:
+		_pending_save_overwrite_slot = -1
+		_detail_list_panel.refresh()
 
 
 func _on_detail_confirmed() -> void:
 	_play_confirm_sfx()
+	if _active_tab == Tab.SAVE:
+		_try_save_selected_slot()
+		return
+	if _active_tab == Tab.TITLE:
+		_try_return_title()
+		return
 	if _active_tab != Tab.ITEMS or GameState == null:
 		return
 
@@ -468,6 +582,31 @@ func _try_use_selected_item(item: ItemData) -> void:
 		await FoodUse.run_eat_sequence(self, player_interactor, item)
 		return
 
+
+func _try_save_selected_slot() -> void:
+	if not SaveManager.can_save():
+		_detail_list_panel.set_detail_text("当前状态无法存档。")
+		return
+	var index := _detail_list_panel.get_selected_index()
+	if index < 0 or index >= SaveManager.SLOT_COUNT:
+		return
+	if SaveManager.has_save(index) and _pending_save_overwrite_slot != index:
+		_pending_save_overwrite_slot = index
+		_detail_list_panel.refresh()
+		return
+	_pending_save_overwrite_slot = -1
+	if SaveManager.save_game(index, player_display_name):
+		_detail_list_panel.refresh()
+		_detail_list_panel.set_detail_text("已存入档案 %d。" % (index + 1))
+	else:
+		_detail_list_panel.set_detail_text("存档失败。")
+
+
+func _try_return_title() -> void:
+	_close_panel()
+	if not title_scene_path.is_empty():
+		SceneTransition.transition_to(title_scene_path)
+
 func _refresh_tab_visuals() -> void:
 	_menu_breath.stop()
 	var half_cycle: float = menu_breath_cycle_duration * 0.5
@@ -489,14 +628,13 @@ func _refresh_all() -> void:
 
 
 func _on_tasks_changed() -> void:
-	if visible and _detail_menu_open and _active_tab == Tab.READ:
-		_detail_list_panel.refresh()
+	pass
 
 
 func _refresh_status() -> void:
 	if GameState == null:
 		return
-	time_value.text = "第 %d 天 / %s" % [GameState.day, GameState.period_to_display_name(GameState.period)]
+	time_value.text = GameState.get_time_label_for(GameState.day, GameState.period)
 	hunger_value.text = GameState.get_hunger_label()
 	sanity_value.text = GameState.get_sanity_label()
 	money_value.text = GameState.get_money_label()
