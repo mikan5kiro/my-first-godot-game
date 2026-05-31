@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://b11ftcb85rd51" path="res://scripts/dining_table.gd" id="8_dining"]
 [ext_resource type="Script" uid="uid://ctpy6vye6kqeu" path="res://scripts/delivery_pickup.gd" id="9_delivery_pickup"]
 [ext_resource type="Script" uid="uid://b2nv3ovm3n4h8" path="res://scripts/workshop_event_controller.gd" id="10_workshop_event"]
+[ext_resource type="AudioStream" uid="uid://tn76o1161huc" path="res://audios/教室の戸を開ける.mp3" id="11_classroom_door"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iy33j"]
 texture = ExtResource("1_5bmjw")
@@ -171,6 +172,9 @@ size = Vector2(51, 36.5)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_gxh2u"]
 size = Vector2(26, 32)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pruyq"]
+size = Vector2(54, 23)
+
 [node name="LivingRoom" type="Node2D" unique_id=1179704806]
 script = ExtResource("5_camera")
 
@@ -319,3 +323,18 @@ shape = SubResource("RectangleShape2D_gxh2u")
 
 [node name="Spawn_FromKitchen" type="Marker2D" parent="." unique_id=391182879]
 position = Vector2(285, -61)
+
+[node name="verandaArea" type="Area2D" parent="." unique_id=1448582149]
+script = ExtResource("7_8c7us")
+target_scene = "uid://ddkrbptyx83w6"
+spawn_marker_name = "Spawn_FromLiving"
+door_sfx = ExtResource("11_classroom_door")
+play_close_sfx = false
+metadata/_custom_type_script = "uid://cj22ggupilu5w"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="verandaArea" unique_id=1397336629]
+position = Vector2(292, 212.5)
+shape = SubResource("RectangleShape2D_pruyq")
+
+[node name="Spawn_FromVeranda" type="Marker2D" parent="." unique_id=241258323]
+position = Vector2(293, 203)

@@ -25,7 +25,7 @@ static func run_pickup(context_node: Node, player_interactor: PlayerInteractor) 
 	if context_node == null or player_interactor == null or GameState == null:
 		return
 	player_interactor.hide_text_immediately()
-	await SceneTransition.play_action_with_fade(_pickup_on_black, -1.0)
+	await SceneTransition.play_action_with_fade(_pickup_on_black, -1.0, Callable(), true)
 	_on_pickup_obtained(player_interactor, GameText.DELIVERY_PICKUP_OBTAINED)
 
 
@@ -33,7 +33,7 @@ static func run_food_pickup(context_node: Node, player_interactor: PlayerInterac
 	if context_node == null or player_interactor == null or GameState == null:
 		return
 	player_interactor.hide_text_immediately()
-	await SceneTransition.play_action_with_fade(_food_pickup_on_black, -1.0)
+	await SceneTransition.play_action_with_fade(_food_pickup_on_black, -1.0, Callable(), true)
 	_on_pickup_obtained(
 		player_interactor,
 		GameText.food_pickup_obtained(GameState.food_meals),

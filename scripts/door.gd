@@ -4,6 +4,8 @@ class_name InteractableDoor
 @export_file("*.tscn") var target_scene: String = "res://scenes/客厅.tscn"
 @export var spawn_marker_name: String = "Spawn_FromWorkshop"
 @export var transition_delay_after_sfx: float = 0.12
+@export var door_sfx: AudioStream
+@export var play_close_sfx: bool = true
 
 @export_group("Lock")
 @export var unlock_flag: String = ""
@@ -57,13 +59,19 @@ func interact(interactor: Node) -> String:
 	if interactor != null and interactor.has_method("get_facing_name"):
 		facing_name = String(interactor.call("get_facing_name"))
 
-	SceneTransition.play_door_sfx()
-	if transition_delay_after_sfx > 0.0:
-		var timer := get_tree().create_timer(transition_delay_after_sfx)
-		timer.timeout.connect(_on_transition_delay_finished.bind(facing_name), CONNECT_ONE_SHOT)
-	else:
-		SceneTransition.transition_to(target_scene, spawn_marker_name, facing_name)
+	_start_transition(facing_name)
 	return ""
+
+
+func _start_transition(facing_name: String) -> void:
+	await SceneTransition.transition_to_with_door_sfx(
+		target_scene,
+		spawn_marker_name,
+		facing_name,
+		door_sfx,
+		transition_delay_after_sfx,
+		play_close_sfx,
+	)
 
 
 func _on_blocked_interact() -> void:
@@ -103,7 +111,3 @@ func _message_as_line_array(source_message: String) -> PackedStringArray:
 			continue
 		lines.append(stripped)
 	return lines
-
-
-func _on_transition_delay_finished(facing_name: String) -> void:
-	SceneTransition.transition_to(target_scene, spawn_marker_name, facing_name)

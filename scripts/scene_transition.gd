@@ -1,7 +1,12 @@
 extends CanvasLayer
 
 @export var fade_duration: float = 0.35
+@export var door_open_sfx_delay_frames: int = 2
 @export var door_sfx_scene: PackedScene = preload("res://scenes/开关门声音.tscn")
+
+const DOOR_CLOSE_SFX: AudioStream = preload("res://audios/ドアを閉める2.mp3")
+const DOOR_OPEN_SFX_MAX_DURATION: float = 0.7
+const CUSTOM_DOOR_OPEN_SFX_MAX_DURATION: float = 1.8
 
 var _overlay: ColorRect
 var _transitioning := false
@@ -9,6 +14,7 @@ var _pending_spawn_marker := ""
 var _pending_facing_direction := ""
 var _pending_spawn_position: Variant = null
 var _door_sfx_player: Node = null
+var _default_door_stream: AudioStream = null
 
 
 func _ready() -> void:
@@ -32,23 +38,90 @@ func _ready() -> void:
 	_setup_door_sfx_player()
 
 
-func play_door_sfx() -> void:
-	if _door_sfx_player == null:
-		return
-	if _door_sfx_player.has_method("play"):
-		_door_sfx_player.call("play")
+func _resolve_door_sfx_stream(custom_stream: AudioStream = null) -> AudioStream:
+	if custom_stream != null:
+		return custom_stream
+	return _default_door_stream
 
 
-func play_door_sfx_and_wait() -> void:
-	if _door_sfx_player == null:
+func _get_door_sfx_volume_db() -> float:
+	if _door_sfx_player is AudioStreamPlayer2D:
+		return (_door_sfx_player as AudioStreamPlayer2D).volume_db
+	if _door_sfx_player is AudioStreamPlayer:
+		return (_door_sfx_player as AudioStreamPlayer).volume_db
+	return 0.0
+
+
+func _door_open_sfx_max_duration(custom_stream: AudioStream) -> float:
+	if custom_stream != null:
+		return CUSTOM_DOOR_OPEN_SFX_MAX_DURATION
+	return DOOR_OPEN_SFX_MAX_DURATION
+
+
+func _wait_for_stream_player(player: AudioStreamPlayer, max_duration: float) -> void:
+	await get_tree().create_timer(max_duration).timeout
+	if player.playing:
+		player.stop()
+
+
+func _play_stream_and_wait(stream: AudioStream, max_duration: float) -> void:
+	if stream == null:
 		return
-	if not (_door_sfx_player is AudioStreamPlayer):
-		play_door_sfx()
+	var player := AudioStreamPlayer.new()
+	player.bus = &"Master"
+	player.stream = stream
+	player.volume_db = _get_door_sfx_volume_db()
+	player.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(player)
+	player.play()
+	await _wait_for_stream_player(player, max_duration)
+	player.queue_free()
+
+
+func _play_stream(stream: AudioStream) -> void:
+	if stream == null:
 		return
-	var player := _door_sfx_player as AudioStreamPlayer
-	player.stop()
+	var player := AudioStreamPlayer.new()
+	player.bus = &"Master"
+	player.stream = stream
+	player.volume_db = _get_door_sfx_volume_db()
+	player.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(player)
+	player.finished.connect(player.queue_free, CONNECT_ONE_SHOT)
+	player.play()
+
+
+func _play_stream_until_finished(stream: AudioStream) -> void:
+	if stream == null:
+		return
+	var player := AudioStreamPlayer.new()
+	player.bus = &"Master"
+	player.stream = stream
+	player.volume_db = _get_door_sfx_volume_db()
+	player.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(player)
 	player.play()
 	await player.finished
+	player.queue_free()
+
+
+func play_door_sfx(custom_stream: AudioStream = null) -> void:
+	var stream := _resolve_door_sfx_stream(custom_stream)
+	if stream == null or _door_sfx_player == null:
+		return
+	if _door_sfx_player is AudioStreamPlayer2D:
+		var player := _door_sfx_player as AudioStreamPlayer2D
+		player.stream = stream
+		player.play()
+	elif _door_sfx_player is AudioStreamPlayer:
+		var player := _door_sfx_player as AudioStreamPlayer
+		player.stream = stream
+		player.play()
+
+
+func play_door_sfx_and_wait(custom_stream: AudioStream = null) -> void:
+	var stream := _resolve_door_sfx_stream(custom_stream)
+	await _play_stream_and_wait(stream, _door_open_sfx_max_duration(custom_stream))
 
 
 func is_transitioning() -> bool:
@@ -92,10 +165,37 @@ func transition_to(scene_path: String, spawn_marker_name: String = "", facing_di
 	clear_pending_spawn()
 
 
+func transition_to_with_door_sfx(
+	scene_path: String,
+	spawn_marker_name: String = "",
+	facing_direction: String = "",
+	custom_stream: AudioStream = null,
+	delay_after_sfx: float = 0.0,
+	play_close_sfx: bool = true,
+) -> void:
+	if _transitioning:
+		return
+	_transitioning = true
+	await _fade_to_black_with_door_open(custom_stream)
+	if delay_after_sfx > 0.0:
+		await get_tree().create_timer(delay_after_sfx).timeout
+	_pending_spawn_marker = spawn_marker_name
+	_pending_facing_direction = facing_direction
+	if not spawn_marker_name.is_empty():
+		_pending_spawn_position = null
+	get_tree().change_scene_to_file(scene_path)
+	await _fade_from_black()
+	_transitioning = false
+	clear_pending_spawn()
+	if play_close_sfx:
+		_play_stream(DOOR_CLOSE_SFX)
+
+
 func play_action_with_fade(
 	action: Callable,
 	duration: float = -1.0,
 	on_fade_out_start: Callable = Callable(),
+	play_close_sfx: bool = false,
 ) -> void:
 	if _transitioning:
 		return
@@ -108,6 +208,8 @@ func play_action_with_fade(
 		on_fade_out_start.call()
 	await _fade_to_alpha(0.0, use_duration)
 	_transitioning = false
+	if play_close_sfx:
+		await _play_stream_until_finished(DOOR_CLOSE_SFX)
 
 
 func _on_scene_changed() -> void:
@@ -198,6 +300,36 @@ func _fade_to_black() -> void:
 	await _fade_to_alpha(1.0, fade_duration)
 
 
+func _fade_to_black_with_door_open(custom_stream: AudioStream = null) -> void:
+	var stream := _resolve_door_sfx_stream(custom_stream)
+	var tween := create_tween()
+	tween.tween_property(_overlay, "color:a", 1.0, maxf(fade_duration, 0.01))
+
+	for _i in maxi(door_open_sfx_delay_frames, 0):
+		await get_tree().process_frame
+
+	if stream == null:
+		await tween.finished
+		return
+
+	var player := AudioStreamPlayer.new()
+	player.bus = &"Master"
+	player.stream = stream
+	player.volume_db = _get_door_sfx_volume_db()
+	player.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(player)
+	player.play()
+	var max_duration := _door_open_sfx_max_duration(custom_stream)
+	var open_limit_ends_at := Time.get_ticks_msec() + int(max_duration * 1000.0)
+	await tween.finished
+	var remaining_ms := open_limit_ends_at - Time.get_ticks_msec()
+	if remaining_ms > 0:
+		await get_tree().create_timer(remaining_ms / 1000.0).timeout
+	if player.playing:
+		player.stop()
+	player.queue_free()
+
+
 func _fade_from_black() -> void:
 	await _fade_to_alpha(0.0, fade_duration)
 
@@ -219,3 +351,8 @@ func _setup_door_sfx_player() -> void:
 		return
 
 	add_child(_door_sfx_player)
+	_door_sfx_player.process_mode = Node.PROCESS_MODE_ALWAYS
+	if _door_sfx_player is AudioStreamPlayer2D:
+		_default_door_stream = (_door_sfx_player as AudioStreamPlayer2D).stream
+	elif _door_sfx_player is AudioStreamPlayer:
+		_default_door_stream = (_door_sfx_player as AudioStreamPlayer).stream
