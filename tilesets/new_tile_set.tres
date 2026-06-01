@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://3kah2jaqcuou" path="res://tilesets/livingroom.png" id="3_gjbu8"]
 [ext_resource type="Texture2D" uid="uid://brl33v7udn8hk" path="res://tilesets/Sprite-0003.png" id="4_am8ro"]
 [ext_resource type="Texture2D" uid="uid://cgg6u8hrqpvpe" path="res://tilesets/kitchen.png" id="5_mw3aq"]
+[ext_resource type="Texture2D" uid="uid://d2r4pjcqiki4l" path="res://tilesets/xiaowu.png" id="6_r8n5j"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_ip4hn"]
 texture = ExtResource("1_xcqve")
@@ -814,6 +815,60 @@ texture = ExtResource("5_mw3aq")
 20:14/0 = 0
 19:14/0 = 0
 21:13/0 = 0
+16:13/0 = 0
+17:13/0 = 0
+18:13/0 = 0
+18:14/0 = 0
+17:14/0 = 0
+17:14/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+16:14/0 = 0
+16:14/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+15:13/0 = 0
+15:14/0 = 0
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_xy6nx"]
+texture = ExtResource("6_r8n5j")
+3:2/0 = 0
+4:2/0 = 0
+3:3/0 = 0
+4:3/0 = 0
+3:4/0 = 0
+4:4/0 = 0
+5:4/0 = 0
+6:4/0 = 0
+7:4/0 = 0
+8:4/0 = 0
+9:4/0 = 0
+3:5/0 = 0
+4:5/0 = 0
+5:5/0 = 0
+6:5/0 = 0
+7:5/0 = 0
+8:5/0 = 0
+9:5/0 = 0
+3:6/0 = 0
+3:6/0/physics_layer_0/polygon_0/points = PackedVector2Array(-0.0990963, -8, 8, -8, 8, 8, 0, 8)
+4:6/0 = 0
+4:6/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+5:6/0 = 0
+5:6/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+6:6/0 = 0
+6:6/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, -2.1801062, -8, -2.0810099, 8, -8, 8)
+12:3/0 = 0
+12:2/0 = 0
+12:4/0 = 0
+12:5/0 = 0
+12:6/0 = 0
+12:6/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+13:6/0 = 0
+13:6/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
+13:5/0 = 0
+13:4/0 = 0
+13:3/0 = 0
+14:4/0 = 0
+14:5/0 = 0
+14:6/0 = 0
+14:6/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 
 [resource]
 physics_layer_0/collision_layer = 1
@@ -822,3 +877,4 @@ sources/1 = SubResource("TileSetAtlasSource_3lhy0")
 sources/2 = SubResource("TileSetAtlasSource_am8ro")
 sources/3 = SubResource("TileSetAtlasSource_mw3aq")
 sources/4 = SubResource("TileSetAtlasSource_r8n5j")
+sources/5 = SubResource("TileSetAtlasSource_xy6nx")

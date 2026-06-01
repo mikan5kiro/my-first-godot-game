@@ -1,0 +1,33 @@
+[gd_scene format=4 uid="uid://croomarea01ph"]
+
+[ext_resource type="TileSet" uid="uid://hhk12cus28nt" path="res://tilesets/new_tile_set.tres" id="1_tileset"]
+[ext_resource type="PackedScene" uid="uid://c3lu3pg63y4ue" path="res://scenes/player.tscn" id="2_player"]
+[ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="3_camera"]
+[ext_resource type="Script" uid="uid://cj22ggupilu5w" path="res://scripts/door.gd" id="4_door"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_return_door"]
+size = Vector2(20, 16)
+
+[node name="RoomArea" type="Node2D"]
+script = ExtResource("3_camera")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+tile_map_data = PackedByteArray("AAAAAP//AAABAAoAAAABAP//AAABAAoAAAACAP//AAABAAoAAAADAP//AAABAAoAAAAEAP//AAACAAoAAAAAAP7/AAABAAsAAAAAAP3/AAABAAsAAAAAAPz/AAABAAsAAAABAP7/AAABAAsAAAABAP3/AAABAAsAAAABAPz/AAABAAsAAAACAP7/AAABAAsAAAACAP3/AAABAAsAAAACAPz/AAABAAsAAAADAP7/AAABAAsAAAADAP3/AAABAAsAAAADAPz/AAABAAsAAAAEAP7/AAACAAsAAAAEAP3/AAACAAsAAAAEAPz/AAACAAsAAAAAAPv/AAAAAAoAAAAEAPv/AAACAAoAAAAAAAQAAAABAAwAAAAEAAQAAAACAAwAAAABAAQAAAABAAwAAAACAAQAAAABAAwAAAADAAQAAAABAAwAAAA=")
+tile_set = ExtResource("1_tileset")
+
+[node name="CharacterBody2D" parent="." instance=ExtResource("2_player")]
+position = Vector2(64, 40)
+scale = Vector2(0.8, 0.8)
+
+[node name="ReturnDoor" type="Area2D" parent="."]
+script = ExtResource("4_door")
+target_scene = "uid://bnvaaleowgit6"
+spawn_marker_name = "Spawn_FromRoomArea"
+required_facing = "down"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReturnDoor"]
+position = Vector2(64, 48)
+shape = SubResource("RectangleShape2D_return_door")
+
+[node name="Spawn_Living2Room" type="Marker2D" parent="."]
+position = Vector2(64, 40)

@@ -11,6 +11,8 @@
 [ext_resource type="Script" uid="uid://ctpy6vye6kqeu" path="res://scripts/delivery_pickup.gd" id="9_delivery_pickup"]
 [ext_resource type="Script" uid="uid://b2nv3ovm3n4h8" path="res://scripts/workshop_event_controller.gd" id="10_workshop_event"]
 [ext_resource type="AudioStream" uid="uid://tn76o1161huc" path="res://audios/教室の戸を開ける.mp3" id="11_classroom_door"]
+[ext_resource type="Script" uid="uid://c2yr53t1cilur" path="res://scripts/ending_door.gd" id="12_ending_door"]
+[ext_resource type="Script" uid="uid://cwncy4n817b0m" path="res://scripts/room_area_door.gd" id="13_room_door"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iy33j"]
 texture = ExtResource("1_5bmjw")
@@ -164,7 +166,7 @@ sources/0 = SubResource("TileSetAtlasSource_iy33j")
 size = Vector2(35, 58)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_srddp"]
-size = Vector2(20, 68)
+size = Vector2(22, 35.75)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_c55kc"]
 size = Vector2(51, 36.5)
@@ -256,6 +258,9 @@ position = Vector2(80, 86)
 [node name="Spawn_FromBedRoom" type="Marker2D" parent="." unique_id=413549704]
 position = Vector2(80, 117)
 
+[node name="Spawn_FromRoomArea" type="Marker2D" parent="." unique_id=1823497011]
+position = Vector2(145, 145)
+
 [node name="Spawn_FromBathRoom" type="Marker2D" parent="." unique_id=666249230]
 position = Vector2(144, 86)
 
@@ -266,19 +271,24 @@ position = Vector2(248, 225)
 shape = SubResource("WorldBoundaryShape2D_6byh1")
 
 [node name="RoomArea" type="Area2D" parent="." unique_id=358346593]
-script = ExtResource("7_8c7us")
-target_scene = ""
+script = ExtResource("13_room_door")
+target_scene = "uid://croomarea01ph"
+spawn_marker_name = "Spawn_Living2Room"
 unlock_flag = "room_area_unlocked"
-blocked_message = "暂时没必要进入这个房间。"
+blocked_message = "这个房间的门无法打开。"
+blocked_once_flag = "room_area_blocked_seen"
+blocked_repeat_message = "这个房间的门无法打开。"
+metadata/_custom_type_script = "uid://cj22ggupilu5w"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RoomArea" unique_id=1168766563]
 position = Vector2(145, 133)
 shape = SubResource("RectangleShape2D_8c7us")
 
 [node name="GateArea" type="Area2D" parent="." unique_id=477305465]
-script = ExtResource("6_iy33j")
-message = "现在暂时没有要去的地方。"
+script = ExtResource("12_ending_door")
+door_sfx = ExtResource("11_classroom_door")
 required_facing = "up"
+metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="GateArea" unique_id=101758406]
 position = Vector2(311.5, -109)
@@ -292,13 +302,40 @@ required_facing = "up"
 position = Vector2(311.5, -109)
 shape = SubResource("RectangleShape2D_iy33j")
 
-[node name="Area2D" type="Area2D" parent="." unique_id=1845037733]
+[node name="tv" type="Area2D" parent="." unique_id=1845037733]
 script = ExtResource("6_iy33j")
-message = "电视。现在不太想看。"
+message = "电视。"
 required_facing = "right"
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=1606397395]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="tv" unique_id=1606397395]
 position = Vector2(348, 144)
+shape = SubResource("RectangleShape2D_srddp")
+
+[node name="mirror" type="Area2D" parent="." unique_id=2062601606]
+script = ExtResource("6_iy33j")
+message = "镜子。"
+required_facing = "right"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="mirror" unique_id=2134912556]
+position = Vector2(343, -18.5)
+shape = SubResource("RectangleShape2D_srddp")
+
+[node name="yijia" type="Area2D" parent="." unique_id=1897119444]
+script = ExtResource("6_iy33j")
+message = "衣架。"
+required_facing = "right"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="yijia" unique_id=199145744]
+position = Vector2(329, 72.125)
+shape = SubResource("RectangleShape2D_srddp")
+
+[node name="鞋柜" type="Area2D" parent="." unique_id=634082287]
+script = ExtResource("6_iy33j")
+message = "鞋柜。"
+required_facing = "right"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="鞋柜" unique_id=929117167]
+position = Vector2(346, -80)
 shape = SubResource("RectangleShape2D_srddp")
 
 [node name="Area2D2" type="Area2D" parent="." unique_id=1630587038]
@@ -312,8 +349,6 @@ shape = SubResource("RectangleShape2D_c55kc")
 script = ExtResource("7_8c7us")
 target_scene = "uid://cvnwwo4rq4g2k"
 spawn_marker_name = "Spawn_Living2Kitchen"
-unlock_flag = "kitchen_unlocked"
-blocked_message = "厨房。现在暂时没必要去。"
 required_facing = "left"
 metadata/_custom_type_script = "uid://cj22ggupilu5w"
 

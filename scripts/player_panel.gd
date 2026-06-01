@@ -20,6 +20,7 @@ enum Tab {
 @export var close_detail_sfx: AudioStream
 
 const MENU_ROW_HEIGHT := 34.0
+const HIDDEN_STAT_LABEL := "？？？"
 
 @onready var main_menu_root: Control = $MainMenuRoot
 @onready var detail_menu_root: Control = $MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot
@@ -227,13 +228,11 @@ func _get_save_slot_detail(index: int) -> String:
 		return "空档案"
 	if _pending_save_overwrite_slot == index:
 		return "确定要覆盖该存档吗？"
-	var data := SaveManager.read_save_data(index)
-	var labels := GameState.get_status_labels_from_data(data, player_display_name)
 	return "%s　%s　%s　%s" % [
-		labels.get("time", "--"),
-		labels.get("hunger", "--"),
-		labels.get("sanity", "--"),
-		labels.get("money", "--"),
+		HIDDEN_STAT_LABEL,
+		HIDDEN_STAT_LABEL,
+		HIDDEN_STAT_LABEL,
+		HIDDEN_STAT_LABEL,
 	]
 
 
@@ -634,10 +633,10 @@ func _on_tasks_changed() -> void:
 func _refresh_status() -> void:
 	if GameState == null:
 		return
-	time_value.text = GameState.get_time_label_for(GameState.day, GameState.period)
-	hunger_value.text = GameState.get_hunger_label()
-	sanity_value.text = GameState.get_sanity_label()
-	money_value.text = GameState.get_money_label()
+	time_value.text = HIDDEN_STAT_LABEL
+	hunger_value.text = HIDDEN_STAT_LABEL
+	sanity_value.text = HIDDEN_STAT_LABEL
+	money_value.text = HIDDEN_STAT_LABEL
 
 
 func _on_time_changed(_day: int, _period: int) -> void:

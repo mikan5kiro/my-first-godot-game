@@ -60,7 +60,7 @@ shape = SubResource("RectangleShape2D_jq7jo")
 
 [node name="Area2D2" type="Area2D" parent="." unique_id=1066381967]
 script = ExtResource("5_kggxr")
-message = "一张床。"
+message = "一张大床。"
 required_facing = "left"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D2" unique_id=559776502]

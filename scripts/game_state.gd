@@ -63,6 +63,7 @@ const FLAG_STOVE_OFF_MEAL_TIME_PROMPT := "stove_off_meal_time_prompt_played"
 const DEFAULT_PHONE_ITEM: ItemData = preload("res://resources/items/phone.tres")
 const MEAL_ITEM: ItemData = preload("res://resources/items/meal.tres")
 const DELIVERY_ITEM: ItemData = preload("res://resources/items/delivery.tres")
+const SHINY_ITEM_ID := "shiny_thing"
 const ITEM_OBTAINED_SFX: AudioStream = preload("res://audios/決定ボタンを押す26.mp3")
 const SAVE_VERSION := 1
 const ITEM_RESOURCE_PATH := "res://resources/items/%s.tres"
@@ -377,7 +378,7 @@ func can_order_delivery() -> bool:
 
 
 func workshop_investigations_complete() -> bool:
-	return has_flag(FLAG_DESK_INVESTIGATED) and has_flag(FLAG_BOOKSHELF_INVESTIGATED)
+	return has_flag(FLAG_DESK_INVESTIGATED)
 
 
 func should_trigger_workshop_hunger_on_exit() -> bool:
@@ -587,6 +588,10 @@ func find_inventory_index_by_id(item_id: String) -> int:
 		if current != null and current.id == item_id:
 			return index
 	return -1
+
+
+func has_shiny_thing() -> bool:
+	return find_inventory_index_by_id(SHINY_ITEM_ID) >= 0
 
 
 func clear_inventory() -> void:

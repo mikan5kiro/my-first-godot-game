@@ -41,5 +41,3 @@ shape = SubResource("WorldBoundaryShape2D_5sgqe")
 
 [node name="FirstEnterMonologue" type="Node" parent="." unique_id=672410330]
 script = ExtResource("5_mk2ma")
-once_flag = "bathroom_first_enter"
-lines = "@厕所。没什么特别的。"

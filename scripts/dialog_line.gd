@@ -8,6 +8,7 @@ enum Type {
 
 var dialog_type: Type = Type.NARRATION
 var text: String = ""
+var play_item_obtained_sfx: bool = false
 
 
 static func narration(line_text: String) -> DialogLine:

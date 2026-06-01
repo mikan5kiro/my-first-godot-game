@@ -50,6 +50,8 @@ func play_dialog_lines(lines: Array[DialogLine]) -> void:
 
 
 func _show_line(line: DialogLine) -> void:
+	if line.play_item_obtained_sfx and GameState != null:
+		GameState.play_item_obtained_sfx()
 	var mode := InteractionDialog.DialogMode.CHARACTER if line.dialog_type == DialogLine.Type.CHARACTER else InteractionDialog.DialogMode.NARRATION
 	_presenter.show_text(line.text, mode)
 

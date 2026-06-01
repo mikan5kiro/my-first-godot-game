@@ -7,9 +7,16 @@ extends CanvasLayer
 const DOOR_CLOSE_SFX: AudioStream = preload("res://audios/ドアを閉める2.mp3")
 const DOOR_OPEN_SFX_MAX_DURATION: float = 0.7
 const CUSTOM_DOOR_OPEN_SFX_MAX_DURATION: float = 1.8
+const TITLE_BGM: AudioStream = preload("res://audios/maou_bgm_piano40.mp3")
+const TITLE_BGM_VOLUME_DB := -6.0
 
 var _overlay: ColorRect
+var _ui_container: Control
 var _transitioning := false
+var _ending_ui_root: Control
+var _ending_bgm_player: AudioStreamPlayer
+var _ending_waiting_for_input := false
+var _ending_input_received := false
 var _pending_spawn_marker := ""
 var _pending_facing_direction := ""
 var _pending_spawn_position: Variant = null
@@ -20,22 +27,48 @@ var _default_door_stream: AudioStream = null
 func _ready() -> void:
 	layer = 100
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	set_process_input(true)
 	get_tree().scene_changed.connect(_on_scene_changed)
 
-	var container := Control.new()
-	container.set_anchors_preset(Control.PRESET_FULL_RECT)
-	container.set_offsets_preset(Control.PRESET_FULL_RECT)
-	container.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	add_child(container)
+	_ui_container = Control.new()
+	_ui_container.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_ui_container.set_offsets_preset(Control.PRESET_FULL_RECT)
+	_ui_container.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(_ui_container)
 
 	_overlay = ColorRect.new()
 	_overlay.color = Color(0, 0, 0, 0)
 	_overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_overlay.set_offsets_preset(Control.PRESET_FULL_RECT)
 	_overlay.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	container.add_child(_overlay)
+	_ui_container.add_child(_overlay)
 
 	_setup_door_sfx_player()
+
+
+func _input(event: InputEvent) -> void:
+	if not _ending_waiting_for_input or event.is_echo():
+		return
+	if _is_any_input_press(event):
+		_ending_input_received = true
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not _ending_waiting_for_input or event.is_echo():
+		return
+	if _is_any_input_press(event):
+		_ending_input_received = true
+		get_viewport().set_input_as_handled()
+
+
+func _is_any_input_press(event: InputEvent) -> bool:
+	if event is InputEventKey and event.pressed:
+		return true
+	if event is InputEventMouseButton and event.pressed:
+		return true
+	if event is InputEventJoypadButton and event.pressed:
+		return true
+	return false
 
 
 func _resolve_door_sfx_stream(custom_stream: AudioStream = null) -> AudioStream:
@@ -191,6 +224,33 @@ func transition_to_with_door_sfx(
 		_play_stream(DOOR_CLOSE_SFX)
 
 
+func play_ending(
+	door_sfx: AudioStream = null,
+	end_text: String = "THE END",
+	title_scene_path: String = "res://scenes/title_screen.tscn",
+) -> void:
+	if _transitioning:
+		return
+	_transitioning = true
+	await _fade_to_black_with_door_open(door_sfx)
+	await _play_stream_until_finished(DOOR_CLOSE_SFX)
+	_show_ending_text(end_text)
+	_play_ending_bgm()
+	_ending_waiting_for_input = true
+	_ending_input_received = false
+	while not _ending_input_received:
+		await get_tree().process_frame
+	_ending_waiting_for_input = false
+	_clear_ending_ui()
+	if title_scene_path.is_empty():
+		await _fade_from_black()
+		_transitioning = false
+		return
+	get_tree().change_scene_to_file(title_scene_path)
+	await _fade_from_black()
+	_transitioning = false
+
+
 func play_action_with_fade(
 	action: Callable,
 	duration: float = -1.0,
@@ -338,6 +398,53 @@ func _fade_to_alpha(target_alpha: float, duration: float) -> void:
 	var tween := create_tween()
 	tween.tween_property(_overlay, "color:a", clampf(target_alpha, 0.0, 1.0), maxf(duration, 0.01))
 	await tween.finished
+
+
+func _show_ending_text(text: String) -> void:
+	_clear_ending_ui()
+	_ending_ui_root = CenterContainer.new()
+	_ending_ui_root.set_anchors_preset(Control.PRESET_FULL_RECT)
+	_ending_ui_root.set_offsets_preset(Control.PRESET_FULL_RECT)
+	_ending_ui_root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+
+	var label := Label.new()
+	label.text = text
+	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	label.add_theme_font_size_override("font_size", 32)
+	label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL)
+
+	_ending_ui_root.add_child(label)
+	_ui_container.add_child(_ending_ui_root)
+
+
+func _play_ending_bgm() -> void:
+	if TITLE_BGM == null:
+		return
+
+	var stream := TITLE_BGM.duplicate(true)
+	if stream is AudioStreamMP3:
+		(stream as AudioStreamMP3).loop = true
+	elif stream is AudioStreamOggVorbis:
+		(stream as AudioStreamOggVorbis).loop = true
+
+	_ending_bgm_player = AudioStreamPlayer.new()
+	_ending_bgm_player.bus = &"Master"
+	_ending_bgm_player.volume_db = TITLE_BGM_VOLUME_DB
+	_ending_bgm_player.stream = stream
+	_ending_bgm_player.process_mode = Node.PROCESS_MODE_ALWAYS
+	add_child(_ending_bgm_player)
+	_ending_bgm_player.play()
+
+
+func _clear_ending_ui() -> void:
+	if _ending_ui_root != null and is_instance_valid(_ending_ui_root):
+		_ending_ui_root.queue_free()
+	_ending_ui_root = null
+	if _ending_bgm_player != null and is_instance_valid(_ending_bgm_player):
+		_ending_bgm_player.stop()
+		_ending_bgm_player.queue_free()
+	_ending_bgm_player = null
 
 
 func _setup_door_sfx_player() -> void:
