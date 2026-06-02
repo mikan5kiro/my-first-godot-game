@@ -67,7 +67,7 @@ const MEAL_USE_NEED_TABLE := "需要到餐桌旁才能吃。"
 
 # --- 单行提示：结局 ---
 const ENDING_DOOR_PROMPT := "要离开这里吗？"
-const ENDING_DOOR_READY_PROMPT := "准备好离开这里了吗？"
+const ENDING_DOOR_READY_PROMPT := "准备好告别这段回忆了吗？"
 const ENDING_CHOICE_YES := "是"
 const ENDING_CHOICE_NO := "不是"
 const ENDING_DISPLAY_TEXT := "the end"

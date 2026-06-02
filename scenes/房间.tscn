@@ -58,7 +58,7 @@ shape = SubResource("RectangleShape2D_return_door")
 
 [node name="箱子1" type="Area2D" parent="." unique_id=201708108]
 script = ExtResource("5_w0eea")
-message = "堆着一些半空的纸箱子。里面放着少量杂物。"
+message = "堆着几个半空的纸箱子。里面放着一些杂物。"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="箱子1" unique_id=1730893719]
@@ -67,7 +67,7 @@ shape = SubResource("RectangleShape2D_l6hh6")
 
 [node name="箱子2" type="Area2D" parent="." unique_id=1757764052]
 script = ExtResource("5_w0eea")
-message = "堆着一些半空的纸箱子。里面放着少量杂物。"
+message = "堆着几个半空的纸箱子。里面放着一些杂物。"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="箱子2" unique_id=661053541]
@@ -78,15 +78,7 @@ shape = SubResource("RectangleShape2D_l6hh6")
 script = ExtResource("6_photo_frame")
 intro_message = "一张已经没人在用的桌子。
 桌子上摆着一个相框。上面有一层薄薄的灰尘。"
-detail_message = "拿起相框，里面是一张两个人的合照。
-像是在游乐园的缆车上拍的，一个人笑得很开心，另一个人笑得有些拘谨。
-@……当时没想到这张照片会留下来。如果更认真一点拍就好了。
-@……
-@……这样啊。
-那段在这里留下的记忆，还好好地存在着。
-即使那个人已经不在这里了。
-@曾经不愿打开这扇门，看到已经搬空的房间的我。
-@现在，已经没事了。"
+detail_message_file_path = "res://dialogues/events/photo_frame_memory_monologue.txt"
 repeat_message = "一张已经没人在用的桌子。"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 

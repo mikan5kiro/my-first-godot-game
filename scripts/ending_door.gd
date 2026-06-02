@@ -29,8 +29,8 @@ func interact(interactor: Node) -> String:
 	if player_interactor == null:
 		return ""
 
-	var has_shiny_thing := _has_shiny_thing()
-	var prompt := GameText.ENDING_DOOR_READY_PROMPT if has_shiny_thing else GameText.ENDING_DOOR_PROMPT
+	var is_true_ending := _can_play_departure_effect()
+	var prompt := GameText.ENDING_DOOR_READY_PROMPT if is_true_ending else GameText.ENDING_DOOR_PROMPT
 
 	player_interactor.show_choice(
 		prompt,

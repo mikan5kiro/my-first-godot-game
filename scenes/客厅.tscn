@@ -175,6 +175,9 @@ size = Vector2(22, 59)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_x8a60"]
 size = Vector2(22, 59)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dining_chair"]
+size = Vector2(18, 12)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_c55kc"]
 size = Vector2(51, 36.5)
 
@@ -285,13 +288,16 @@ shape = SubResource("WorldBoundaryShape2D_6byh1")
 
 [node name="RoomArea" type="Area2D" parent="." unique_id=358346593]
 script = ExtResource("13_room_door")
+unlock_pre_open_pause = 0.5
+unlock_black_hold_after_open_sfx = 0.75
 target_scene = "res://scenes/房间.tscn"
 spawn_marker_name = "Spawn_Living2Room"
 transition_delay_after_sfx = 0.35
-unlock_pre_open_pause = 0.5
-unlock_black_hold_after_open_sfx = 0.75
 unlock_flag = "room_area_unlocked"
-blocked_message = "有种不想打开这扇门的心情。"
+blocked_message = "这个房间的门紧闭着。
+@以前的我一直不敢面对这个房间。"
+blocked_once_flag = "doorflag"
+blocked_repeat_message = "这个房间的门紧闭着。"
 required_facing = "down"
 metadata/_custom_type_script = "uid://cj22ggupilu5w"
 
@@ -345,7 +351,10 @@ shape = SubResource("RectangleShape2D_srddp")
 
 [node name="鞋柜" type="Area2D" parent="." unique_id=634082287]
 script = ExtResource("6_iy33j")
-message = "鞋柜。"
+message = "鞋柜。
+@从前总是把鞋放在外面呢。"
+once_flag = "xiegui_investigated"
+repeat_message = "鞋柜。"
 required_facing = "right"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="鞋柜" unique_id=929117167]
@@ -354,7 +363,7 @@ shape = SubResource("RectangleShape2D_srddp")
 
 [node name="沙发" type="Area2D" parent="." unique_id=2068407967]
 script = ExtResource("14_sofa")
-message = "沙发。"
+message = "刚好够两个人坐的沙发。"
 move_player_to_interaction_point = true
 player_interaction_point_path = NodePath("SitPoint")
 player_pose_animation = "sitright"
@@ -366,6 +375,23 @@ position = Vector2(222, 140)
 [node name="CollisionShape2D" type="CollisionShape2D" parent="沙发" unique_id=988936468]
 position = Vector2(221, 144)
 shape = SubResource("RectangleShape2D_x8a60")
+
+[node name="餐桌椅子" type="Area2D" parent="." unique_id=829582155]
+script = ExtResource("14_sofa")
+allow_select_when_facing_mismatch = false
+interaction_priority_override = -5
+message = "椅子。"
+move_player_to_interaction_point = true
+player_interaction_point_path = NodePath("../SitPoint")
+player_pose_animation = "sitback"
+required_facing = "up"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="餐桌椅子" unique_id=89575690]
+position = Vector2(231, 73)
+shape = SubResource("RectangleShape2D_dining_chair")
+
+[node name="SitPoint" type="Marker2D" parent="." unique_id=286861574]
+position = Vector2(241, 54)
 
 [node name="Area2D2" type="Area2D" parent="." unique_id=1630587038]
 script = ExtResource("8_dining")
