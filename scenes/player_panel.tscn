@@ -182,7 +182,7 @@ theme_override_constants/separation = 2
 layout_mode = 2
 theme_override_colors/font_color = Color(0.95, 0.96, 0.98, 1)
 theme_override_font_sizes/font_size = 18
-text = "玩家"
+text = "主人公"
 
 [node name="StatGrid" type="VBoxContainer" parent="MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn" unique_id=982283271]
 layout_mode = 2

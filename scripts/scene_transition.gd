@@ -7,6 +7,7 @@ extends CanvasLayer
 const DOOR_CLOSE_SFX: AudioStream = preload("res://audios/ドアを閉める2.mp3")
 const DOOR_OPEN_SFX_MAX_DURATION: float = 0.7
 const CUSTOM_DOOR_OPEN_SFX_MAX_DURATION: float = 1.8
+const DOOR_DELAY_AFTER_OPEN_SFX := 0.12
 const TITLE_BGM: AudioStream = preload("res://audios/maou_bgm_piano40.mp3")
 const TITLE_BGM_VOLUME_DB := -6.0
 
@@ -210,8 +211,7 @@ func transition_to_with_door_sfx(
 		return
 	_transitioning = true
 	await _fade_to_black_with_door_open(custom_stream)
-	if delay_after_sfx > 0.0:
-		await get_tree().create_timer(delay_after_sfx).timeout
+	await _wait_before_door_close_sfx(delay_after_sfx)
 	_pending_spawn_marker = spawn_marker_name
 	_pending_facing_direction = facing_direction
 	if not spawn_marker_name.is_empty():
@@ -224,15 +224,56 @@ func transition_to_with_door_sfx(
 		_play_stream(DOOR_CLOSE_SFX)
 
 
+func transition_to_with_door_sfx_after_black(
+	scene_path: String,
+	spawn_marker_name: String = "",
+	facing_direction: String = "",
+	custom_stream: AudioStream = null,
+	delay_after_sfx: float = 0.0,
+	play_close_sfx: bool = true,
+) -> void:
+	if _transitioning:
+		return
+	_transitioning = true
+	await _fade_to_black()
+	await play_door_sfx_and_wait(custom_stream)
+	await _wait_before_door_close_sfx(delay_after_sfx)
+	_pending_spawn_marker = spawn_marker_name
+	_pending_facing_direction = facing_direction
+	if not spawn_marker_name.is_empty():
+		_pending_spawn_position = null
+	get_tree().change_scene_to_file(scene_path)
+	await _fade_from_black()
+	_transitioning = false
+	clear_pending_spawn()
+	if play_close_sfx:
+		_play_stream(DOOR_CLOSE_SFX)
+
+
+func claim_title_bgm(parent: Node, bus: StringName = &"Master", volume_db: float = TITLE_BGM_VOLUME_DB) -> AudioStreamPlayer:
+	if _ending_bgm_player == null or not is_instance_valid(_ending_bgm_player) or not _ending_bgm_player.playing:
+		return null
+	remove_child(_ending_bgm_player)
+	_ending_bgm_player.bus = bus
+	_ending_bgm_player.volume_db = volume_db
+	parent.add_child(_ending_bgm_player)
+	var player := _ending_bgm_player
+	_ending_bgm_player = null
+	return player
+
+
 func play_ending(
 	door_sfx: AudioStream = null,
 	end_text: String = "THE END",
 	title_scene_path: String = "res://scenes/title_screen.tscn",
+	delay_after_sfx: float = DOOR_DELAY_AFTER_OPEN_SFX,
 ) -> void:
 	if _transitioning:
 		return
 	_transitioning = true
 	await _fade_to_black_with_door_open(door_sfx)
+	await _wait_before_door_close_sfx(delay_after_sfx)
+	await get_tree().create_timer(fade_duration).timeout
 	await _play_stream_until_finished(DOOR_CLOSE_SFX)
 	_show_ending_text(end_text)
 	_play_ending_bgm()
@@ -275,10 +316,10 @@ func play_action_with_fade(
 func _on_scene_changed() -> void:
 	if _pending_spawn_position is Vector2:
 		var position: Vector2 = _pending_spawn_position
-		var facing_direction := _pending_facing_direction
+		var absolute_spawn_facing_direction := _pending_facing_direction
 		_pending_spawn_position = null
 		_pending_facing_direction = ""
-		_apply_absolute_spawn(position, facing_direction)
+		_apply_absolute_spawn(position, absolute_spawn_facing_direction)
 		return
 	if _pending_spawn_marker.is_empty():
 		return
@@ -360,6 +401,11 @@ func _fade_to_black() -> void:
 	await _fade_to_alpha(1.0, fade_duration)
 
 
+func _wait_before_door_close_sfx(delay_after_sfx: float) -> void:
+	if delay_after_sfx > 0.0:
+		await get_tree().create_timer(delay_after_sfx).timeout
+
+
 func _fade_to_black_with_door_open(custom_stream: AudioStream = null) -> void:
 	var stream := _resolve_door_sfx_stream(custom_stream)
 	var tween := create_tween()
@@ -419,6 +465,8 @@ func _show_ending_text(text: String) -> void:
 
 
 func _play_ending_bgm() -> void:
+	if _ending_bgm_player != null and is_instance_valid(_ending_bgm_player) and _ending_bgm_player.playing:
+		return
 	if TITLE_BGM == null:
 		return
 
@@ -441,10 +489,6 @@ func _clear_ending_ui() -> void:
 	if _ending_ui_root != null and is_instance_valid(_ending_ui_root):
 		_ending_ui_root.queue_free()
 	_ending_ui_root = null
-	if _ending_bgm_player != null and is_instance_valid(_ending_bgm_player):
-		_ending_bgm_player.stop()
-		_ending_bgm_player.queue_free()
-	_ending_bgm_player = null
 
 
 func _setup_door_sfx_player() -> void:

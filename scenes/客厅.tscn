@@ -13,6 +13,7 @@
 [ext_resource type="AudioStream" uid="uid://tn76o1161huc" path="res://audios/教室の戸を開ける.mp3" id="11_classroom_door"]
 [ext_resource type="Script" uid="uid://c2yr53t1cilur" path="res://scripts/ending_door.gd" id="12_ending_door"]
 [ext_resource type="Script" uid="uid://cwncy4n817b0m" path="res://scripts/room_area_door.gd" id="13_room_door"]
+[ext_resource type="Script" uid="uid://ca1itm73c522e" path="res://scripts/sofa_investigate.gd" id="14_sofa"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_iy33j"]
 texture = ExtResource("1_5bmjw")
@@ -165,8 +166,14 @@ sources/0 = SubResource("TileSetAtlasSource_iy33j")
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_iy33j"]
 size = Vector2(35, 58)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2ah0h"]
+size = Vector2(22, 59)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_srddp"]
-size = Vector2(22, 35.75)
+size = Vector2(22, 59)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x8a60"]
+size = Vector2(22, 59)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_c55kc"]
 size = Vector2(51, 36.5)
@@ -207,7 +214,7 @@ tile_set = SubResource("TileSet_8c7us")
 
 [node name="TileMapLayer6" type="TileMapLayer" parent="." unique_id=436065905]
 scale = Vector2(1.2, 1.2)
-tile_map_data = PackedByteArray("AAAKAAEAAgAIAAEAAAALAAEAAgAJAAEAAAAMAAEAAgAKAAEAAAANAAEAAgALAAEAAAAKAAIAAgAIAAIAAAAKAAMAAgAIAAMAAAALAAIAAgAJAAIAAAALAAMAAgAMAAIAAAAMAAIAAgAKAAIAAAAMAAMAAgANAAIAAAANAAIAAgALAAIAAAANAAMAAgALAAMAAAA=")
+tile_map_data = PackedByteArray("AAAKAAEAAgAIAAEAAAALAAEAAgAJAAEAAAAMAAEAAgAKAAEAAAANAAEAAgALAAEAAAAKAAIAAgAIAAIAAAAKAAMAAgAIAAMAAAALAAIAAgAJAAIAAAALAAMAAgAJAAMAAAAMAAIAAgAKAAIAAAAMAAMAAgAKAAMAAAANAAIAAgALAAIAAAANAAMAAgALAAMAAAA=")
 tile_set = ExtResource("2_6byh1")
 
 [node name="TileMapLayer9" type="TileMapLayer" parent="." unique_id=198666555]
@@ -229,8 +236,14 @@ scale = Vector2(1.1, 1.1)
 tile_map_data = PackedByteArray("AAASAAAAAgANAAoAAAASAAEAAgANAAsAAAASAAIAAgANAAwAAAASAAMAAgANAA0AAAASAAQAAgANAA4AAAATAPz/AgAMAAwAAAATAP3/AgAMAA0AAAATAP7/AgAMAA4AAAATAP//AgAMAA8AAAATAAAAAgAOAAoAAAATAAEAAgAOAAsAAAATAAIAAgAOAAwAAAATAAMAAgAOAA0AAAATAAQAAgAOAA4AAAA=")
 tile_set = ExtResource("2_6byh1")
 
+[node name="TileMapLayer11" type="TileMapLayer" parent="." unique_id=1859109311]
+visible = false
+scale = Vector2(1.1, 1.1)
+tile_map_data = PackedByteArray("AAASAAEAAgAGAAoAAAATAAEAAgAHAAoAAAA=")
+tile_set = ExtResource("2_6byh1")
+
 [node name="CharacterBody2D" parent="." unique_id=2137992065 instance=ExtResource("3_0uxcb")]
-position = Vector2(163, 96)
+position = Vector2(154, 89)
 scale = Vector2(0.8, 0.8)
 
 [node name="DoorWork" parent="." unique_id=266272542 instance=ExtResource("4_pvw6c")]
@@ -259,7 +272,7 @@ position = Vector2(80, 86)
 position = Vector2(80, 117)
 
 [node name="Spawn_FromRoomArea" type="Marker2D" parent="." unique_id=1823497011]
-position = Vector2(145, 145)
+position = Vector2(144, 117)
 
 [node name="Spawn_FromBathRoom" type="Marker2D" parent="." unique_id=666249230]
 position = Vector2(144, 86)
@@ -272,12 +285,14 @@ shape = SubResource("WorldBoundaryShape2D_6byh1")
 
 [node name="RoomArea" type="Area2D" parent="." unique_id=358346593]
 script = ExtResource("13_room_door")
-target_scene = "uid://croomarea01ph"
+target_scene = "res://scenes/房间.tscn"
 spawn_marker_name = "Spawn_Living2Room"
+transition_delay_after_sfx = 0.35
+unlock_pre_open_pause = 0.5
+unlock_black_hold_after_open_sfx = 0.75
 unlock_flag = "room_area_unlocked"
-blocked_message = "这个房间的门无法打开。"
-blocked_once_flag = "room_area_blocked_seen"
-blocked_repeat_message = "这个房间的门无法打开。"
+blocked_message = "有种不想打开这扇门的心情。"
+required_facing = "down"
 metadata/_custom_type_script = "uid://cj22ggupilu5w"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="RoomArea" unique_id=1168766563]
@@ -286,7 +301,6 @@ shape = SubResource("RectangleShape2D_8c7us")
 
 [node name="GateArea" type="Area2D" parent="." unique_id=477305465]
 script = ExtResource("12_ending_door")
-door_sfx = ExtResource("11_classroom_door")
 required_facing = "up"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
@@ -309,7 +323,7 @@ required_facing = "right"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="tv" unique_id=1606397395]
 position = Vector2(348, 144)
-shape = SubResource("RectangleShape2D_srddp")
+shape = SubResource("RectangleShape2D_2ah0h")
 
 [node name="mirror" type="Area2D" parent="." unique_id=2062601606]
 script = ExtResource("6_iy33j")
@@ -326,7 +340,7 @@ message = "衣架。"
 required_facing = "right"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="yijia" unique_id=199145744]
-position = Vector2(329, 72.125)
+position = Vector2(332, 62)
 shape = SubResource("RectangleShape2D_srddp")
 
 [node name="鞋柜" type="Area2D" parent="." unique_id=634082287]
@@ -337,6 +351,21 @@ required_facing = "right"
 [node name="CollisionShape2D" type="CollisionShape2D" parent="鞋柜" unique_id=929117167]
 position = Vector2(346, -80)
 shape = SubResource("RectangleShape2D_srddp")
+
+[node name="沙发" type="Area2D" parent="." unique_id=2068407967]
+script = ExtResource("14_sofa")
+message = "沙发。"
+move_player_to_interaction_point = true
+player_interaction_point_path = NodePath("SitPoint")
+player_pose_animation = "sitright"
+required_facing = "left"
+
+[node name="SitPoint" type="Marker2D" parent="沙发" unique_id=963505049]
+position = Vector2(222, 140)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="沙发" unique_id=988936468]
+position = Vector2(221, 144)
+shape = SubResource("RectangleShape2D_x8a60")
 
 [node name="Area2D2" type="Area2D" parent="." unique_id=1630587038]
 script = ExtResource("8_dining")
@@ -349,6 +378,8 @@ shape = SubResource("RectangleShape2D_c55kc")
 script = ExtResource("7_8c7us")
 target_scene = "uid://cvnwwo4rq4g2k"
 spawn_marker_name = "Spawn_Living2Kitchen"
+door_sfx = ExtResource("11_classroom_door")
+play_close_sfx = false
 required_facing = "left"
 metadata/_custom_type_script = "uid://cj22ggupilu5w"
 

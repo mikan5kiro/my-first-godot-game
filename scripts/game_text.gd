@@ -23,7 +23,8 @@ const FILE_KITCHEN_AFTERNOON_PROMPT := EVENTS_DIR + "kitchen_afternoon_prompt.tx
 
 # --- 单行提示：通用 ---
 const NOT_MEAL_TIME := "现在不是饭点。"
-const ROOM_DOOR_UNLOCK_PROMPT := "要使用闪闪发光的东西开门吗？"
+const ROOM_DOOR_UNLOCK_PROMPT := "要现在打开门吗？"
+const PHOTO_FRAME_CHOICE_PROMPT := "要查看相框吗？"
 
 # --- 单行提示：手机 ---
 const PHONE_PROMPT := "要用手机做什么？"
@@ -66,6 +67,7 @@ const MEAL_USE_NEED_TABLE := "需要到餐桌旁才能吃。"
 
 # --- 单行提示：结局 ---
 const ENDING_DOOR_PROMPT := "要离开这里吗？"
+const ENDING_DOOR_READY_PROMPT := "准备好离开这里了吗？"
 const ENDING_CHOICE_YES := "是"
 const ENDING_CHOICE_NO := "不是"
 const ENDING_DISPLAY_TEXT := "the end"

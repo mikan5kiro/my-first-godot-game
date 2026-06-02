@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://bvuy1puvytkd4" path="res://scripts/investigate_item.gd" id="7_investigate"]
 [ext_resource type="Script" uid="uid://dcigmgdmlafpu" path="res://scripts/scene_enter_monologue.gd" id="8_enter"]
 [ext_resource type="Script" uid="uid://cnepprailm6tu" path="res://scripts/kitchen_exit_door.gd" id="9_kitchen_exit_door"]
+[ext_resource type="AudioStream" uid="uid://tn76o1161huc" path="res://audios/教室の戸を開ける.mp3" id="10_classroom_door"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bems3"]
 size = Vector2(27, 35)
@@ -47,6 +48,8 @@ position = Vector2(131, 151)
 [node name="InteractableDoor" type="Area2D" parent="." unique_id=1591922307]
 script = ExtResource("9_kitchen_exit_door")
 spawn_marker_name = "Spawn_FromKitchen"
+door_sfx = ExtResource("10_classroom_door")
+play_close_sfx = false
 required_facing = "right"
 metadata/_custom_type_script = "uid://cj22ggupilu5w"
 
@@ -63,7 +66,7 @@ shape = SubResource("WorldBoundaryShape2D_2b6py")
 
 [node name="Fridge" type="Area2D" parent="." unique_id=920980610]
 script = ExtResource("7_investigate")
-message = "冰箱。"
+message = "冰箱。里面放着一些食材和调料。"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Fridge" unique_id=150541740]
@@ -72,7 +75,7 @@ shape = SubResource("RectangleShape2D_g3o0j")
 
 [node name="Cabinet" type="Area2D" parent="." unique_id=1884563501]
 script = ExtResource("7_investigate")
-message = "柜子。"
+message = "柜子。里面放着一些餐具和厨具。"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Cabinet" unique_id=1884563502]
 position = Vector2(34, 114)

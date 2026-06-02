@@ -5,7 +5,7 @@ class_name StatusPanelView
 
 const HIDDEN_STAT_LABEL := "？？？"
 
-@export var player_display_name: String = "玩家"
+@export var player_display_name: String = "主人公"
 
 @onready var player_name_label: Label = $Margin/StatusContent/StatusBody/InfoColumn/PlayerName
 @onready var time_value: Label = $Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow/Value

@@ -13,7 +13,7 @@ size = Vector2(42, 19)
 size = Vector2(38, 43)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kggxr"]
-size = Vector2(15, 16)
+size = Vector2(16.5, 16)
 
 [node name="Node2D" type="Node2D" unique_id=963527363]
 script = ExtResource("4_camera")
@@ -69,9 +69,18 @@ shape = SubResource("RectangleShape2D_b7esm")
 
 [node name="Area2D3" type="Area2D" parent="." unique_id=1355152532]
 script = ExtResource("5_kggxr")
-message = "床头柜。没什么值得在意的东西。"
+message = "床头柜。"
 required_facing = "up"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D3" unique_id=1142798750]
 position = Vector2(56, 77)
+shape = SubResource("RectangleShape2D_kggxr")
+
+[node name="Area2D4" type="Area2D" parent="." unique_id=797888171]
+script = ExtResource("5_kggxr")
+message = "这里有一个飘窗。"
+required_facing = "left"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D4" unique_id=315956271]
+position = Vector2(-4.25, 133)
 shape = SubResource("RectangleShape2D_kggxr")

@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://bvuy1puvytkd4" path="res://scripts/investigate_item.gd" id="6_item"]
 [ext_resource type="Script" uid="uid://dcigmgdmlafpu" path="res://scripts/scene_enter_monologue.gd" id="8_enter"]
 [ext_resource type="Script" uid="uid://b263llhk0y7pl" path="res://scripts/workshop_exit_door.gd" id="9_workshop_exit_door"]
+[ext_resource type="Script" uid="uid://ca1itm73c522e" path="res://scripts/sofa_investigate.gd" id="10_seat"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_4kvkx"]
 size = Vector2(22, 20)
@@ -19,6 +20,9 @@ size = Vector2(60, 24)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dvlsi"]
 size = Vector2(46, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_81qx1"]
+size = Vector2(10, 7)
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_78ydu"]
 
@@ -37,7 +41,7 @@ tile_map_data = PackedByteArray("AAAMAPr/AAACAA0AAAACAPr/AAABAAoAAAADAPr/AAABAAo
 tile_set = ExtResource("2_78ydu")
 
 [node name="桌子窗户书架" type="TileMapLayer" parent="." unique_id=1472101920]
-tile_map_data = PackedByteArray("AAALAP3/AAALAA4AAAAGAP//AAALAAgAAAAGAAAAAAALAAkAAAAGAAEAAAALAAoAAAAHAP//AAAMAAgAAAAHAAAAAAAMAAkAAAAHAAEAAAAMAAoAAAAIAP//AAANAAgAAAAIAAAAAAANAAkAAAAIAAEAAAANAAoAAAAJAP//AQALAAUAAAAJAAAAAQALAAYAAAAKAP7/AQAMAAQAAAAKAP//AQAMAAUAAAAKAAAAAQAMAAYAAAAFAP//AAAKAAgAAAAFAAAAAAAKAAkAAAAFAAEAAAAKAAoAAAAJAP7/AQALAAQAAAAGAPz/AAAFAAgAAAAGAP3/AAAFAAkAAAAGAP7/AAAFAAoAAAAHAPz/AAAGAAgAAAAHAP3/AAAGAAkAAAAHAP7/AAAGAAoAAAA=")
+tile_map_data = PackedByteArray("AAAGAP//AAALAAgAAAAGAAAAAAALAAkAAAAGAAEAAAALAAoAAAAHAP//AAAMAAgAAAAHAAAAAAAMAAkAAAAHAAEAAAAMAAoAAAAIAP//AAANAAgAAAAIAAAAAAANAAkAAAAIAAEAAAANAAoAAAAJAP//AQALAAUAAAAJAAAAAQALAAYAAAAKAP7/AQAMAAQAAAAKAP//AQAMAAUAAAAKAAAAAQAMAAYAAAAFAP//AAAKAAgAAAAFAAAAAAAKAAkAAAAFAAEAAAAKAAoAAAAJAP7/AQALAAQAAAAGAPz/AAAFAAgAAAAGAP3/AAAFAAkAAAAGAP7/AAAFAAoAAAAHAPz/AAAGAAgAAAAHAP3/AAAGAAkAAAAHAP7/AAAGAAoAAAALAPz/AAALAA4AAAA=")
 tile_set = ExtResource("2_78ydu")
 
 [node name="BookshelfArea" type="Area2D" parent="." unique_id=1157638977]
@@ -59,7 +63,7 @@ shape = SubResource("RectangleShape2D_w653m")
 
 [node name="DeskArea" type="Area2D" parent="." unique_id=605630984]
 script = ExtResource("6_item")
-message = "办公桌。"
+message = "一张大办公桌。不管是学习还是娱乐都很合适。"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DeskArea" unique_id=1258320522]
 position = Vector2(112, -1)
@@ -76,14 +80,33 @@ tile_set = ExtResource("2_78ydu")
 [node name="ShelfArea" type="Area2D" parent="." unique_id=270691263]
 script = ExtResource("6_item")
 message = "放着各种各样的裙子。"
+required_facing = "down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ShelfArea" unique_id=546017104]
 position = Vector2(88, 53)
 shape = SubResource("RectangleShape2D_dvlsi")
 
 [node name="椅子" type="TileMapLayer" parent="." unique_id=1087840528]
-tile_map_data = PackedByteArray("AAAGAAEAAAAFAAwAAAAHAAEAAAAGAAwAAAAGAAAAAAAFAAsAAAAHAAAAAAAGAAsAAAA=")
+tile_map_data = PackedByteArray("AAAGAAAAAAAFAAsAAAAHAAAAAAAGAAsAAAAGAAEAAAAFAAwAAAAHAAEAAAAGAAwAAAA=")
 tile_set = ExtResource("2_78ydu")
+
+[node name="InvestigateItem" type="Area2D" parent="椅子" unique_id=1626040147]
+script = ExtResource("10_seat")
+allow_select_when_facing_mismatch = false
+interaction_priority_override = -5
+message = "椅子。"
+move_player_to_interaction_point = true
+player_interaction_point_path = NodePath("SitPoint")
+player_pose_animation = "sitback"
+required_facing = "up"
+metadata/_custom_type_script = "uid://bvuy1puvytkd4"
+
+[node name="SitPoint" type="Marker2D" parent="椅子/InvestigateItem" unique_id=1911572760]
+position = Vector2(112, 11)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="椅子/InvestigateItem" unique_id=1519977666]
+position = Vector2(112, 23)
+shape = SubResource("RectangleShape2D_81qx1")
 
 [node name="棉花娃娃" type="TileMapLayer" parent="." unique_id=626662616]
 tile_map_data = PackedByteArray("AAAIAP3/BQAHAAQAAAAIAP7/BQAHAAUAAAAJAP3/BQAIAAQAAAAJAP7/BQAIAAUAAAAKAP3/BQAJAAQAAAAKAP7/BQAJAAUAAAA=")

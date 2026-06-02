@@ -8,7 +8,7 @@ extends Control
 @onready var load_slot_list: VBoxContainer = $LoadPage/PanelRoot/Margin/SlotList
 @export_file("*.tscn") var first_scene_path := "res://scenes/卧室.tscn"
 @export var status_panel_scene: PackedScene = preload("res://scenes/status_panel_view.tscn")
-@export var player_display_name: String = "玩家"
+@export var player_display_name: String = "主人公"
 @export var title_bgm: AudioStream
 @export_range(-80.0, 24.0, 0.5) var title_bgm_volume_db := -6.0
 @export var title_bgm_bus := &"Master"
@@ -331,6 +331,12 @@ func _tween_border_color(style: StyleBoxFlat, target: Color, duration: float) ->
 
 
 func _play_title_bgm() -> void:
+	if SceneTransition != null:
+		var claimed := SceneTransition.claim_title_bgm(self, title_bgm_bus, title_bgm_volume_db)
+		if claimed != null:
+			_bgm_player = claimed
+			return
+
 	if title_bgm == null:
 		return
 

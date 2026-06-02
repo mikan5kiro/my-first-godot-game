@@ -41,7 +41,7 @@ func read_save_data(slot: int) -> Dictionary:
 	return parsed
 
 
-func save_game(slot: int, player_name: String = "玩家") -> bool:
+func save_game(slot: int, player_name: String = "主人公") -> bool:
 	if not _is_valid_slot(slot):
 		save_completed.emit(slot, false)
 		return false

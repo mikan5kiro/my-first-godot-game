@@ -3,8 +3,10 @@ class_name EndingDoor
 
 const CHOICE_YES := "yes"
 const CHOICE_NO := "no"
+const TURN_TO_DOOR_HOLD_DURATION := 0.6
 
 @export var door_sfx: AudioStream
+@export_range(0.0, 2.0, 0.05) var black_hold_after_open_sfx: float = 0.4
 
 var _is_activating := false
 
@@ -27,8 +29,11 @@ func interact(interactor: Node) -> String:
 	if player_interactor == null:
 		return ""
 
+	var has_shiny_thing := _has_shiny_thing()
+	var prompt := GameText.ENDING_DOOR_READY_PROMPT if has_shiny_thing else GameText.ENDING_DOOR_PROMPT
+
 	player_interactor.show_choice(
-		GameText.ENDING_DOOR_PROMPT,
+		prompt,
 		[
 			{"id": CHOICE_YES, "label": GameText.ENDING_CHOICE_YES},
 			{"id": CHOICE_NO, "label": GameText.ENDING_CHOICE_NO},
@@ -36,6 +41,18 @@ func interact(interactor: Node) -> String:
 		_on_choice.bind(player_interactor, interactor),
 	)
 	return ""
+
+
+func _has_shiny_thing() -> bool:
+	return GameState != null and GameState.has_shiny_thing()
+
+
+func _has_photo_investigated() -> bool:
+	return GameState != null and GameState.has_photo_investigated()
+
+
+func _can_play_departure_effect() -> bool:
+	return _has_shiny_thing() and _has_photo_investigated()
 
 
 func _on_choice(choice_id: String, player_interactor: PlayerInteractor, interactor: Node) -> void:
@@ -51,7 +68,11 @@ func _start_ending(player_interactor: PlayerInteractor, interactor: Node) -> voi
 	player_interactor.hide_text_immediately()
 	if interactor != null and interactor.has_method("set_controls_locked"):
 		interactor.set_controls_locked(true)
-	await EndingSequence.run(door_sfx)
+	if _can_play_departure_effect() and interactor is CharacterBody2D:
+		await EndingDepartureEffect.run(interactor as CharacterBody2D)
+	if TURN_TO_DOOR_HOLD_DURATION > 0.0:
+		await get_tree().create_timer(TURN_TO_DOOR_HOLD_DURATION).timeout
+	await EndingSequence.run(door_sfx, black_hold_after_open_sfx)
 	_is_activating = false
 
 

@@ -4,30 +4,120 @@
 [ext_resource type="PackedScene" uid="uid://c3lu3pg63y4ue" path="res://scenes/player.tscn" id="2_player"]
 [ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="3_camera"]
 [ext_resource type="Script" uid="uid://cj22ggupilu5w" path="res://scripts/door.gd" id="4_door"]
+[ext_resource type="Script" uid="uid://bvuy1puvytkd4" path="res://scripts/investigate_item.gd" id="5_w0eea"]
+[ext_resource type="Script" uid="uid://bjl2836axji86" path="res://scripts/photo_frame_investigate.gd" id="6_photo_frame"]
+[ext_resource type="Script" uid="uid://ca1itm73c522e" path="res://scripts/sofa_investigate.gd" id="7_f16eq"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_return_door"]
 size = Vector2(20, 16)
 
-[node name="RoomArea" type="Node2D"]
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_l6hh6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w0eea"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_f16eq"]
+size = Vector2(20, 36)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_o3un5"]
+size = Vector2(27, 13)
+
+[node name="RoomArea" type="Node2D" unique_id=1883516539]
 script = ExtResource("3_camera")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="."]
-tile_map_data = PackedByteArray("AAAAAP//AAABAAoAAAABAP//AAABAAoAAAACAP//AAABAAoAAAADAP//AAABAAoAAAAEAP//AAACAAoAAAAAAP7/AAABAAsAAAAAAP3/AAABAAsAAAAAAPz/AAABAAsAAAABAP7/AAABAAsAAAABAP3/AAABAAsAAAABAPz/AAABAAsAAAACAP7/AAABAAsAAAACAP3/AAABAAsAAAACAPz/AAABAAsAAAADAP7/AAABAAsAAAADAP3/AAABAAsAAAADAPz/AAABAAsAAAAEAP7/AAACAAsAAAAEAP3/AAACAAsAAAAEAPz/AAACAAsAAAAAAPv/AAAAAAoAAAAEAPv/AAACAAoAAAAAAAQAAAABAAwAAAAEAAQAAAACAAwAAAABAAQAAAABAAwAAAACAAQAAAABAAwAAAADAAQAAAABAAwAAAA=")
+[node name="内墙" type="TileMapLayer" parent="." unique_id=2063412545]
+tile_map_data = PackedByteArray("AAAAAAAAAAAEAAQAAAAAAAEAAAAEAAUAAAABAAAAAAAFAAQAAAABAAEAAAAFAAUAAAACAAAAAAAGAAQAAAACAAEAAAAGAAUAAAAAAAIAAAAEAAUAAAAAAAMAAAAEAAUAAAAAAAQAAAAEAAYAAAABAAIAAAAFAAUAAAABAAMAAAAFAAUAAAABAAQAAAAFAAYAAAACAAIAAAAGAAUAAAACAAMAAAAGAAUAAAACAAQAAAAGAAYAAAADAAAAAAAFAAQAAAADAAEAAAAFAAUAAAADAAIAAAAFAAUAAAADAAMAAAAFAAUAAAADAAQAAAAFAAYAAAAEAAAAAAAGAAQAAAAEAAEAAAAGAAUAAAAEAAIAAAAGAAUAAAAEAAMAAAAGAAUAAAAEAAQAAAAGAAYAAAAFAAAAAAAFAAQAAAAFAAEAAAAFAAUAAAAFAAIAAAAFAAUAAAAFAAMAAAAFAAUAAAAFAAQAAAAFAAYAAAAGAAAAAAAGAAQAAAAGAAEAAAAGAAUAAAAGAAIAAAAGAAUAAAAGAAMAAAAGAAUAAAAGAAQAAAAGAAYAAAAHAAAAAAAHAAQAAAAHAAEAAAAHAAUAAAAHAAIAAAAHAAUAAAAHAAMAAAAHAAUAAAAHAAQAAAAHAAYAAAAAAP//AAAEAAMAAAABAP//AAAFAAMAAAACAP//AAAFAAMAAAADAP//AAAFAAMAAAAEAP//AAAFAAMAAAAFAP//AAAFAAMAAAAGAP//AAAFAAMAAAAHAP//AAAHAAMAAAAAAP7/AAAEAAIAAAAAAP3/AAAEAAIAAAAAAPz/AAAEAAIAAAAAAPv/AAAEAAAAAAABAPv/AAAFAAAAAAACAPv/AAAFAAAAAAADAPv/AAAFAAAAAAAEAPv/AAAFAAAAAAAFAPv/AAAFAAAAAAAGAPv/AAAFAAAAAAAHAPv/AAAHAAAAAAAHAPz/AAAHAAEAAAAHAP3/AAAHAAEAAAAHAP7/AAAHAAEAAAABAPz/AAAFAAEAAAABAP3/AAAFAAEAAAABAP7/AAAFAAEAAAACAPz/AAAFAAEAAAACAP3/AAAFAAEAAAACAP7/AAAFAAEAAAADAPz/AAAFAAEAAAADAP3/AAAFAAEAAAADAP7/AAAFAAEAAAAEAPz/AAAFAAEAAAAEAP3/AAAFAAEAAAAEAP7/AAAFAAEAAAAFAPz/AAAFAAEAAAAFAP3/AAAFAAEAAAAFAP7/AAAFAAEAAAAGAPz/AAAFAAEAAAAGAP3/AAAFAAEAAAAGAP7/AAAFAAEAAAA=")
 tile_set = ExtResource("1_tileset")
 
-[node name="CharacterBody2D" parent="." instance=ExtResource("2_player")]
-position = Vector2(64, 40)
+[node name="家具" type="TileMapLayer" parent="." unique_id=212984251]
+tile_map_data = PackedByteArray("AAAAAAAABgAEAAYAAAAAAAEABgAEAAcAAAABAAAABgAFAAYAAAABAAEABgAFAAcAAAABAAIABgAFAAgAAAACAAAABgAGAAYAAAACAAEABgAGAAcAAAACAAIABgAGAAgAAAADAAAABgAHAAYAAAADAAEABgAHAAcAAAAAAP7/BgAEAAQAAAAAAP//BgAEAAUAAAABAP7/BgAFAAQAAAABAP//BgAFAAUAAAACAP7/BgAGAAQAAAACAP//BgAGAAUAAAADAP7/BgAHAAQAAAADAP//BgAHAAUAAAAGAP3/AAABAAEAAAAGAP7/AAABAAIAAAAGAP//AAABAAMAAAAHAP3/AAACAAEAAAAHAP7/AAACAAIAAAAHAP//AAACAAMAAAA=")
+tile_set = ExtResource("1_tileset")
+
+[node name="箱子" type="TileMapLayer" parent="." unique_id=740600945]
+tile_map_data = PackedByteArray("AAADAAMABgAHAAoAAAADAAQABgAHAAsAAAAEAAMABgAIAAoAAAAEAAQABgAIAAsAAAADAAIABgAHAAkAAAAEAAIABgAIAAkAAAAFAAIABgAJAAkAAAAFAAMABgAJAAoAAAAFAAQABgAJAAsAAAAGAAIABgAFAAkAAAAGAAMABgAFAAoAAAAGAAQABgAFAAsAAAAHAAIABgAGAAkAAAAHAAMABgAGAAoAAAAHAAQABgAGAAsAAAA=")
+tile_set = ExtResource("1_tileset")
+
+[node name="外墙" type="TileMapLayer" parent="." unique_id=1131514293]
+tile_map_data = PackedByteArray("AAD///r/AAAAAAoAAAAAAPr/AAABAAoAAAABAPr/AAABAAoAAAACAPr/AAABAAoAAAADAPr/AAABAAoAAAAEAPr/AAABAAoAAAAFAPr/AAABAAoAAAAGAPr/AAABAAoAAAAHAPr/AAABAAoAAAAIAPr/AAACAAoAAAAIAPv/AAACAA4AAAAIAPz/AAACAA4AAAAIAP3/AAACAA4AAAAIAP7/AAACAA4AAAAIAP//AAACAA4AAAAIAAAAAAACAA4AAAAIAAEAAAACAA4AAAAIAAIAAAACAA4AAAAIAAMAAAACAA4AAAAIAAQAAAACAA4AAAAIAAUAAAACAA8AAAAHAAUAAAABAA8AAAAGAAUAAAABAA8AAAAFAAUAAAABAA8AAAAEAAUAAAABAA8AAAADAAUAAAABAA8AAAACAAUAAAABAA8AAAABAAUAAAABAA8AAAAAAAUAAAABAA8AAAD//wUAAAAAAA8AAAD//wQAAAAAAAsAAAD//wMAAAAAAAsAAAD//wIAAAAAAAsAAAD//wEAAAAAAAsAAAD//wAAAAAAAAsAAAD/////AAAAAAsAAAD///7/AAAAAAsAAAD///3/AAAAAAsAAAD///z/AAAAAAsAAAD///v/AAAAAAsAAAA=")
+tile_set = ExtResource("1_tileset")
+
+[node name="CharacterBody2D" parent="." unique_id=646858982 instance=ExtResource("2_player")]
+position = Vector2(86, 9.000002)
 scale = Vector2(0.8, 0.8)
 
-[node name="ReturnDoor" type="Area2D" parent="."]
-script = ExtResource("4_door")
-target_scene = "uid://bnvaaleowgit6"
-spawn_marker_name = "Spawn_FromRoomArea"
-required_facing = "down"
+[node name="Spawn_Living2Room" type="Marker2D" parent="." unique_id=1799278184]
+position = Vector2(111, 3)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="ReturnDoor"]
-position = Vector2(64, 48)
+[node name="ReturnDoor" type="Area2D" parent="." unique_id=1454402132]
+script = ExtResource("4_door")
+spawn_marker_name = "Spawn_FromRoomArea"
+required_facing = "up"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ReturnDoor" unique_id=1970670231]
+position = Vector2(112, -4)
 shape = SubResource("RectangleShape2D_return_door")
 
-[node name="Spawn_Living2Room" type="Marker2D" parent="."]
-position = Vector2(64, 40)
+[node name="箱子1" type="Area2D" parent="." unique_id=201708108]
+script = ExtResource("5_w0eea")
+message = "堆着一些半空的纸箱子。里面放着少量杂物。"
+metadata/_custom_type_script = "uid://bvuy1puvytkd4"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="箱子1" unique_id=1730893719]
+position = Vector2(67, 55)
+shape = SubResource("RectangleShape2D_l6hh6")
+
+[node name="箱子2" type="Area2D" parent="." unique_id=1757764052]
+script = ExtResource("5_w0eea")
+message = "堆着一些半空的纸箱子。里面放着少量杂物。"
+metadata/_custom_type_script = "uid://bvuy1puvytkd4"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="箱子2" unique_id=661053541]
+position = Vector2(107, 51)
+shape = SubResource("RectangleShape2D_l6hh6")
+
+[node name="桌子" type="Area2D" parent="." unique_id=2053265970]
+script = ExtResource("6_photo_frame")
+intro_message = "一张已经没人在用的桌子。
+桌子上摆着一个相框。上面有一层薄薄的灰尘。"
+detail_message = "拿起相框，里面是一张两个人的合照。
+像是在游乐园的缆车上拍的，一个人笑得很开心，另一个人笑得有些拘谨。
+@……当时没想到这张照片会留下来。如果更认真一点拍就好了。
+@……
+@……这样啊。
+那段在这里留下的记忆，还好好地存在着。
+即使那个人已经不在这里了。
+@曾经不愿打开这扇门，看到已经搬空的房间的我。
+@现在，已经没事了。"
+repeat_message = "一张已经没人在用的桌子。"
+metadata/_custom_type_script = "uid://bvuy1puvytkd4"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="桌子" unique_id=525477708]
+position = Vector2(25, 4)
+shape = SubResource("RectangleShape2D_w0eea")
+
+[node name="阳台门" type="Area2D" parent="." unique_id=1732596457]
+script = ExtResource("5_w0eea")
+message = "通往阳台的门。"
+required_facing = "left"
+metadata/_custom_type_script = "uid://bvuy1puvytkd4"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="阳台门" unique_id=523427038]
+position = Vector2(-2, 45)
+shape = SubResource("RectangleShape2D_f16eq")
+
+[node name="SofaInvestigateItem" type="Area2D" parent="." unique_id=495040786]
+script = ExtResource("7_f16eq")
+allow_select_when_facing_mismatch = false
+interaction_priority_override = -5
+message = "椅子。"
+move_player_to_interaction_point = true
+player_interaction_point_path = NodePath("SitPoint")
+player_pose_animation = "sitback"
+required_facing = "up"
+metadata/_custom_type_script = "uid://ca1itm73c522e"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="SofaInvestigateItem" unique_id=2109460083]
+position = Vector2(31.5, 26.5)
+shape = SubResource("RectangleShape2D_o3un5")
+
+[node name="SitPoint" type="Marker2D" parent="SofaInvestigateItem" unique_id=1172949542]
+position = Vector2(32, 17)

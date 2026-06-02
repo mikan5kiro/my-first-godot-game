@@ -8,7 +8,7 @@ enum Tab {
 
 @export_file("*.tscn") var title_scene_path: String = "res://scenes/title_screen.tscn"
 @export var panel_toggle_action: StringName = &"ui_cancel"
-@export var player_display_name: String = "玩家"
+@export var player_display_name: String = "主人公"
 @export_range(0.4, 4.0, 0.05) var menu_breath_cycle_duration := 1.2
 @export var main_menu_width := RpgUiStyle.BOTTOM_PANEL_WIDTH
 @export var item_menu_columns := 2
@@ -228,12 +228,7 @@ func _get_save_slot_detail(index: int) -> String:
 		return "空档案"
 	if _pending_save_overwrite_slot == index:
 		return "确定要覆盖该存档吗？"
-	return "%s　%s　%s　%s" % [
-		HIDDEN_STAT_LABEL,
-		HIDDEN_STAT_LABEL,
-		HIDDEN_STAT_LABEL,
-		HIDDEN_STAT_LABEL,
-	]
+	return "存档 %d" % (index + 1)
 
 
 func _get_save_slot_stable_id(index: int) -> String:

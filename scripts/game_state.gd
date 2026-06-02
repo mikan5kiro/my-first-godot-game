@@ -47,6 +47,7 @@ const FLAG_KITCHEN_UNLOCKED := "kitchen_unlocked"
 const FLAG_KITCHEN_DOOR_BLOCKED_SEEN := "kitchen_door_blocked_seen"
 const FLAG_ROOM_AREA_UNLOCKED := "room_area_unlocked"
 const FLAG_ROOM_AREA_BLOCKED_SEEN := "room_area_blocked_seen"
+const FLAG_PHOTO_INVESTIGATED := "photo_investigated"
 const FLAG_DESK_INVESTIGATED := "desk_investigated"
 const FLAG_BOOKSHELF_INVESTIGATED := "bookshelf_investigated"
 const FLAG_WORKSHOP_HUNGER_PROMPT := "workshop_hunger_prompt_played"
@@ -60,7 +61,6 @@ const FLAG_DELIVERY_COOKING_PROMPT := "delivery_cooking_prompt_played"
 const FLAG_KITCHEN_AFTERNOON_PROMPT := "kitchen_afternoon_prompt_played"
 const FLAG_KITCHEN_AFTERNOON_PENDING := "kitchen_afternoon_pending"
 const FLAG_STOVE_OFF_MEAL_TIME_PROMPT := "stove_off_meal_time_prompt_played"
-const DEFAULT_PHONE_ITEM: ItemData = preload("res://resources/items/phone.tres")
 const MEAL_ITEM: ItemData = preload("res://resources/items/meal.tres")
 const DELIVERY_ITEM: ItemData = preload("res://resources/items/delivery.tres")
 const SHINY_ITEM_ID := "shiny_thing"
@@ -75,7 +75,7 @@ const ITEM_RESOURCE_PATH := "res://resources/items/%s.tres"
 @export var initial_food_meals: int = 0
 @export var initial_day: int = 1
 @export var initial_period: TimePeriod = TimePeriod.NOON
-@export var initial_inventory: Array[ItemData] = [DEFAULT_PHONE_ITEM]
+@export var initial_inventory: Array[ItemData] = []
 
 @export_group("Food")
 @export var buy_food_cost: int = 25
@@ -237,7 +237,7 @@ func apply_save_data(data: Dictionary) -> void:
 	tasks_changed.emit()
 
 
-func get_status_labels_from_data(data: Dictionary, player_name: String = "玩家") -> Dictionary:
+func get_status_labels_from_data(data: Dictionary, player_name: String = "主人公") -> Dictionary:
 	if data.is_empty():
 		return {
 			"player_name": "空档案",
@@ -592,6 +592,10 @@ func find_inventory_index_by_id(item_id: String) -> int:
 
 func has_shiny_thing() -> bool:
 	return find_inventory_index_by_id(SHINY_ITEM_ID) >= 0
+
+
+func has_photo_investigated() -> bool:
+	return has_flag(FLAG_PHOTO_INVESTIGATED)
 
 
 func clear_inventory() -> void:

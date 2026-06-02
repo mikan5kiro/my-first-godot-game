@@ -8,6 +8,7 @@
 [ext_resource type="AudioStream" uid="uid://tn76o1161huc" path="res://audios/教室の戸を開ける.mp3" id="6_classroom_door"]
 [ext_resource type="Script" uid="uid://cql1nf57emmxp" path="res://scripts/item_data.gd" id="7_0nb68"]
 [ext_resource type="Resource" uid="uid://buvciwwtepb5" path="res://resources/items/shiny_thing.tres" id="7_shiny_thing"]
+[ext_resource type="Script" uid="uid://ca1itm73c522e" path="res://scripts/sofa_investigate.gd" id="8_sofa"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_0tm7t"]
 
@@ -20,6 +21,9 @@ size = Vector2(19, 20)
 size = Vector2(30, 16.5)
 
 [sub_resource type="TileSet" id="TileSet_81bjk"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0nb68"]
+size = Vector2(102.5, 20)
 
 [node name="Veranda" type="Node2D" unique_id=1376991803]
 script = ExtResource("1_0tm7t")
@@ -81,6 +85,7 @@ target_scene = ""
 spawn_marker_name = ""
 unlock_flag = "lastroom_unlocked"
 blocked_message = "这个门无法打开。"
+required_facing = "up"
 metadata/_custom_type_script = "uid://cj22ggupilu5w"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InteractableDoor2" unique_id=1429786529]
@@ -97,12 +102,18 @@ position = Vector2(26, 22)
 shape = SubResource("RectangleShape2D_81bjk")
 
 [node name="sofa" type="Area2D" parent="." unique_id=143999433]
-script = ExtResource("5_avwop")
+script = ExtResource("8_sofa")
 message = "躺椅。"
-metadata/_custom_type_script = "uid://bvuy1puvytkd4"
+move_player_to_interaction_point = true
+player_interaction_point_path = NodePath("SitPoint")
+player_pose_animation = "sit"
+required_facing = "up"
+
+[node name="SitPoint" type="Marker2D" parent="sofa" unique_id=846288876]
+position = Vector2(-176, 30)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="sofa" unique_id=1649317017]
-position = Vector2(-176, 33)
+position = Vector2(-175, 32)
 shape = SubResource("RectangleShape2D_81bjk")
 
 [node name="dryflower" type="Area2D" parent="." unique_id=570706455]
@@ -122,3 +133,27 @@ shape = SubResource("RectangleShape2D_81bjk")
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=1193630581]
 tile_set = SubResource("TileSet_81bjk")
+
+[node name="InvestigateItem" type="Area2D" parent="." unique_id=479321460]
+script = ExtResource("5_avwop")
+message = "窗外能看到对面的楼房。
+视线的远处有一片湖，湖的上方突兀地伫立着一座办公楼。"
+once_flag = "window1_investigated"
+repeat_message = "窗外能看到对面的楼房。"
+metadata/_custom_type_script = "uid://bvuy1puvytkd4"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InvestigateItem" unique_id=203585391]
+position = Vector2(-10.75, 67)
+shape = SubResource("RectangleShape2D_0nb68")
+
+[node name="InvestigateItem2" type="Area2D" parent="." unique_id=2001306696]
+script = ExtResource("5_avwop")
+message = "窗外能看到对面的楼房。
+周围是一片荒地，远处是零星的几栋楼，再远处是雾蒙蒙的群山。"
+once_flag = "window2_investigated"
+repeat_message = "窗外能看到对面的楼房。"
+metadata/_custom_type_script = "uid://bvuy1puvytkd4"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InvestigateItem2" unique_id=1116851284]
+position = Vector2(-141, 67)
+shape = SubResource("RectangleShape2D_0nb68")

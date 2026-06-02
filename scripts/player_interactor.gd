@@ -73,6 +73,27 @@ func try_interact(interactor: Node2D, event: InputEvent = null) -> void:
 		show_text(result)
 
 
+func try_seat_toggle(interactor: Node2D, _event: InputEvent = null) -> bool:
+	if interactor == null:
+		return false
+	if is_text_visible():
+		return false
+
+	var seat_candidates: Array[Area2D] = []
+	for area in get_overlapping_areas():
+		if area is Interactable and area.has_method("try_seat_toggle"):
+			seat_candidates.append(area)
+
+	if seat_candidates.is_empty():
+		return false
+
+	var target := InteractionSelector.find_best(self, seat_candidates, interactor)
+	if target == null:
+		return false
+
+	return bool(target.call("try_seat_toggle", interactor))
+
+
 func try_handle_choice_input(event: InputEvent) -> bool:
 	if not _choice_player.is_active():
 		return false
