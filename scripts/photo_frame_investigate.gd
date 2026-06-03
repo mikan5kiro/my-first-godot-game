@@ -6,7 +6,6 @@ const CHOICE_NO := "no"
 const MEMORY_RELIEF_SFX: AudioStream = preload("res://audios/鍵を開ける1.mp3")
 const MEMORY_SCENE_PATH_DEFAULT := "res://scenes/房间差分.tscn"
 const MEMORY_TRIGGER_TEXT := "那个曾经逃避离别，害怕面对孤身一人的我。"
-const MEMORY_FLASH_COLOR := Color(1.0, 1.0, 1.0, 1.0)
 
 @export_multiline var intro_message: String = ""
 @export_file("*.txt") var intro_message_file_path: String = ""
@@ -20,12 +19,14 @@ const MEMORY_FLASH_COLOR := Color(1.0, 1.0, 1.0, 1.0)
 @export_range(-40.0, 12.0, 0.5) var memory_relief_sfx_volume_db: float = 0.0
 @export_file("*.tscn") var memory_scene_path: String = MEMORY_SCENE_PATH_DEFAULT
 @export var memory_trigger_text: String = MEMORY_TRIGGER_TEXT
-@export_range(0.0, 3.0, 0.05) var memory_hold_duration: float = 1.
+@export_range(0.0, 3.0, 0.05) var memory_hold_duration: float = 1.6
 @export_range(0.05, 1.5, 0.05) var memory_fade_duration: float = 0.5
-@export var memory_overlay_tint: Color = Color(1.0, 0.93, 0.78, 0.86)
-@export var memory_overlay_drift: Vector2 = Vector2(2.0, -2.0)
-@export_range(0.1, 2.0, 0.05) var memory_pulse_duration: float = 0.8
-@export_range(0.1, 1.0, 0.05) var memory_pulse_alpha: float = 0.72
+@export var memory_overlay_tint: Color = Color(0.96, 0.84, 0.62, 0.82)
+@export var memory_entry_flicker_enabled: bool = true
+@export_range(1, 8, 1) var memory_entry_flicker_count: int = 3
+@export_range(0.02, 0.25, 0.01) var memory_entry_flicker_step_duration: float = 0.06
+@export_range(0.05, 0.8, 0.01) var memory_entry_flicker_max_alpha: float = 0.26
+@export_range(0.0, 1.0, 0.01) var memory_entry_flicker_brightness: float = 0.35
 
 var _memory_overlay_scene: Node = null
 
@@ -185,8 +186,6 @@ func _slice_dialog_lines(lines: Array[DialogLine], from_index: int, to_index: in
 
 
 func _play_memory_flashback(source_player: CharacterBody2D) -> void:
-	if SceneTransition == null:
-		return
 	var current_scene := get_tree().current_scene
 	if current_scene == null:
 		return
@@ -198,17 +197,18 @@ func _play_memory_flashback(source_player: CharacterBody2D) -> void:
 		if source_player.has_method("get_facing_name"):
 			player_facing = String(source_player.call("get_facing_name"))
 
-	await SceneTransition.play_action_with_fade_color(
-		_show_memory_scene_overlay.bind(current_scene, player_position, player_facing),
-		memory_fade_duration,
-		MEMORY_FLASH_COLOR,
-	)
+	_show_memory_scene_overlay(current_scene, player_position, player_facing)
+	var overlay := _memory_overlay_scene as CanvasItem
+	if overlay == null or not is_instance_valid(overlay):
+		if memory_hold_duration > 0.0:
+			await get_tree().create_timer(memory_hold_duration).timeout
+		return
+
+	await _play_memory_entry_flicker(overlay)
+	await _fade_memory_overlay_to(overlay, memory_overlay_tint.a, memory_fade_duration)
 	await _play_memory_hold_effect()
-	await SceneTransition.play_action_with_fade_color(
-		_hide_memory_scene_overlay,
-		memory_fade_duration,
-		MEMORY_FLASH_COLOR,
-	)
+	await _fade_memory_overlay_to(overlay, 0.0, memory_fade_duration)
+	_hide_memory_scene_overlay()
 
 
 func _show_memory_scene_overlay(current_scene: Node, player_position: Vector2, player_facing: String) -> void:
@@ -280,7 +280,7 @@ func _apply_memory_overlay_style(overlay_root: Node) -> void:
 	var canvas_item := overlay_root as CanvasItem
 	if canvas_item == null:
 		return
-	canvas_item.modulate = memory_overlay_tint
+	canvas_item.modulate = Color(memory_overlay_tint.r, memory_overlay_tint.g, memory_overlay_tint.b, 0.0)
 
 
 func _play_memory_hold_effect() -> void:
@@ -290,52 +290,7 @@ func _play_memory_hold_effect() -> void:
 	if overlay == null or not is_instance_valid(overlay):
 		await get_tree().create_timer(memory_hold_duration).timeout
 		return
-
-	var canvas_item := overlay as CanvasItem
-	var node_2d := overlay as Node2D
-	var pulse_tween: Tween = null
-	var drift_tween: Tween = null
-	var base_alpha := 1.0
-	var base_position := Vector2.ZERO
-	var pulse_target := clampf(memory_pulse_alpha, 0.0, 1.0)
-	var half_pulse := maxf(memory_pulse_duration * 0.5, 0.05)
-
-	if canvas_item != null:
-		base_alpha = canvas_item.modulate.a
-		pulse_tween = create_tween()
-		pulse_tween.set_loops()
-		pulse_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		pulse_tween.tween_method(
-			_set_canvas_item_alpha.bind(canvas_item),
-			base_alpha,
-			pulse_target,
-			half_pulse
-		)
-		pulse_tween.tween_method(
-			_set_canvas_item_alpha.bind(canvas_item),
-			pulse_target,
-			base_alpha,
-			half_pulse
-		)
-
-	if node_2d != null and memory_overlay_drift != Vector2.ZERO:
-		base_position = node_2d.position
-		drift_tween = create_tween()
-		drift_tween.set_loops()
-		drift_tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-		drift_tween.tween_property(node_2d, "position", base_position + memory_overlay_drift, half_pulse)
-		drift_tween.tween_property(node_2d, "position", base_position, half_pulse)
-
 	await get_tree().create_timer(memory_hold_duration).timeout
-
-	if pulse_tween != null:
-		pulse_tween.kill()
-		if canvas_item != null and is_instance_valid(canvas_item):
-			_set_canvas_item_alpha(base_alpha, canvas_item)
-	if drift_tween != null:
-		drift_tween.kill()
-		if node_2d != null and is_instance_valid(node_2d):
-			node_2d.position = base_position
 
 
 func _set_canvas_item_alpha(alpha: float, target: CanvasItem) -> void:
@@ -344,3 +299,65 @@ func _set_canvas_item_alpha(alpha: float, target: CanvasItem) -> void:
 	var color := target.modulate
 	color.a = clampf(alpha, 0.0, 1.0)
 	target.modulate = color
+
+
+func _fade_memory_overlay_to(overlay: CanvasItem, target_alpha: float, duration: float) -> void:
+	if overlay == null or not is_instance_valid(overlay):
+		return
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	tween.tween_method(
+		_set_canvas_item_alpha.bind(overlay),
+		overlay.modulate.a,
+		clampf(target_alpha, 0.0, 1.0),
+		maxf(duration, 0.01)
+	)
+	await tween.finished
+
+
+func _play_memory_entry_flicker(overlay: CanvasItem) -> void:
+	if overlay == null or not is_instance_valid(overlay):
+		return
+	if not memory_entry_flicker_enabled:
+		return
+	var flicker_count := maxi(memory_entry_flicker_count, 1)
+	var step_duration := maxf(memory_entry_flicker_step_duration, 0.02)
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+
+	var tween := create_tween()
+	tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	for _i in range(flicker_count):
+		var flicker_alpha := clampf(
+			rng.randf_range(memory_entry_flicker_max_alpha * 0.45, memory_entry_flicker_max_alpha),
+			0.0,
+			1.0
+		)
+		var flicker_brightness := clampf(
+			rng.randf_range(memory_entry_flicker_brightness * 0.4, memory_entry_flicker_brightness),
+			0.0,
+			1.0
+		)
+		tween.tween_property(
+			overlay,
+			"modulate",
+			_overlay_color(flicker_alpha, flicker_brightness),
+			step_duration * 0.5
+		)
+		tween.tween_property(
+			overlay,
+			"modulate",
+			_overlay_color(0.0, 0.0),
+			step_duration * 0.5
+		)
+	await tween.finished
+
+
+func _overlay_color(alpha: float, flash_strength: float) -> Color:
+	var strength := clampf(flash_strength, 0.0, 1.0)
+	return Color(
+		lerpf(memory_overlay_tint.r, 1.0, strength),
+		lerpf(memory_overlay_tint.g, 1.0, strength),
+		lerpf(memory_overlay_tint.b, 1.0, strength),
+		clampf(alpha, 0.0, 1.0)
+	)

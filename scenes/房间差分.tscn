@@ -91,6 +91,7 @@ intro_message = "一张空荡荡的桌子。还维持着那个人搬走时的样
 detail_message_file_path = "res://dialogues/events/photo_frame_memory_monologue.txt"
 repeat_message = "一张空荡荡的桌子。"
 memory_relief_sfx_volume_db = -2.0
+memory_hold_duration = 1.2
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="桌子" unique_id=525477708]
