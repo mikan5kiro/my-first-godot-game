@@ -11,7 +11,11 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_return_door"]
 size = Vector2(20, 16)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_kw4ey"]
+size = Vector2(35, 25)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_l6hh6"]
+size = Vector2(25, 33.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w0eea"]
 
@@ -62,8 +66,8 @@ message = "堆着几个半空的纸箱子。里面放着一些杂物。"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="箱子1" unique_id=1730893719]
-position = Vector2(67, 55)
-shape = SubResource("RectangleShape2D_l6hh6")
+position = Vector2(67.5, 52.5)
+shape = SubResource("RectangleShape2D_kw4ey")
 
 [node name="箱子2" type="Area2D" parent="." unique_id=1757764052]
 script = ExtResource("5_w0eea")
@@ -71,7 +75,7 @@ message = "堆着几个半空的纸箱子。里面放着一些杂物。"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="箱子2" unique_id=661053541]
-position = Vector2(107, 51)
+position = Vector2(107, 52)
 shape = SubResource("RectangleShape2D_l6hh6")
 
 [node name="桌子" type="Area2D" parent="." unique_id=2053265970]
@@ -80,6 +84,7 @@ intro_message = "一张空荡荡的桌子。还维持着那个人搬走时的样
 桌子上摆着一个相框。上面有一层薄薄的灰尘。"
 detail_message_file_path = "res://dialogues/events/photo_frame_memory_monologue.txt"
 repeat_message = "一张空荡荡的桌子。"
+memory_relief_sfx_volume_db = -2.0
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="桌子" unique_id=525477708]

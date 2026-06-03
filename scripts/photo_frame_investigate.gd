@@ -3,6 +3,7 @@ class_name PhotoFrameInvestigateItem
 
 const CHOICE_YES := "yes"
 const CHOICE_NO := "no"
+const MEMORY_RELIEF_SFX: AudioStream = preload("res://audios/鍵を開ける1.mp3")
 
 @export_multiline var intro_message: String = ""
 @export_file("*.txt") var intro_message_file_path: String = ""
@@ -12,6 +13,8 @@ const CHOICE_NO := "no"
 @export var once_flag: String = GameState.FLAG_PHOTO_INVESTIGATED
 @export_multiline var repeat_message: String = ""
 @export_file("*.txt") var repeat_message_file_path: String = ""
+@export var memory_relief_sfx: AudioStream = MEMORY_RELIEF_SFX
+@export_range(-40.0, 12.0, 0.5) var memory_relief_sfx_volume_db: float = 0.0
 
 
 func get_interaction_dialog_lines() -> Array[DialogLine]:
@@ -85,6 +88,7 @@ func _play_detail(player_interactor: PlayerInteractor) -> void:
 		_mark_investigated()
 		return
 	await player_interactor.play_monologue_lines(detail_lines)
+	_play_memory_relief_sfx()
 	_mark_investigated()
 
 
@@ -121,3 +125,15 @@ func _set_player_controls_locked(player: CharacterBody2D, locked: bool) -> void:
 		return
 	if player.has_method("set_controls_locked"):
 		player.set_controls_locked(locked)
+
+
+func _play_memory_relief_sfx() -> void:
+	if memory_relief_sfx == null:
+		return
+	var player := AudioStreamPlayer.new()
+	player.bus = &"Master"
+	player.stream = memory_relief_sfx
+	player.volume_db = memory_relief_sfx_volume_db
+	add_child(player)
+	player.finished.connect(player.queue_free, CONNECT_ONE_SHOT)
+	player.play()
