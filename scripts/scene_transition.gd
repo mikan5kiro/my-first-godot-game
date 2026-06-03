@@ -301,9 +301,27 @@ func play_action_with_fade(
 	on_fade_out_start: Callable = Callable(),
 	play_close_sfx: bool = false,
 ) -> void:
+	await play_action_with_fade_color(
+		action,
+		duration,
+		Color(0.0, 0.0, 0.0, 1.0),
+		on_fade_out_start,
+		play_close_sfx,
+	)
+
+
+func play_action_with_fade_color(
+	action: Callable,
+	duration: float = -1.0,
+	fade_color: Color = Color(0.0, 0.0, 0.0, 1.0),
+	on_fade_out_start: Callable = Callable(),
+	play_close_sfx: bool = false,
+) -> void:
 	if _transitioning:
 		return
 	_transitioning = true
+	var original_color := _overlay.color
+	_overlay.color = Color(fade_color.r, fade_color.g, fade_color.b, _overlay.color.a)
 	var use_duration := fade_duration if duration <= 0.0 else duration
 	await _fade_to_alpha(1.0, use_duration)
 	if action.is_valid():
@@ -311,6 +329,7 @@ func play_action_with_fade(
 	if on_fade_out_start.is_valid():
 		on_fade_out_start.call()
 	await _fade_to_alpha(0.0, use_duration)
+	_overlay.color = Color(original_color.r, original_color.g, original_color.b, _overlay.color.a)
 	_transitioning = false
 	if play_close_sfx:
 		await _play_stream_until_finished(DOOR_CLOSE_SFX)
