@@ -229,6 +229,7 @@ func transition_to_with_door_sfx_after_black(
 	spawn_marker_name: String = "",
 	facing_direction: String = "",
 	custom_stream: AudioStream = null,
+	delay_before_sfx: float = 0.0,
 	delay_after_sfx: float = 0.0,
 	play_close_sfx: bool = true,
 ) -> void:
@@ -236,6 +237,8 @@ func transition_to_with_door_sfx_after_black(
 		return
 	_transitioning = true
 	await _fade_to_black()
+	if delay_before_sfx > 0.0:
+		await get_tree().create_timer(delay_before_sfx).timeout
 	await play_door_sfx_and_wait(custom_stream)
 	await _wait_before_door_close_sfx(delay_after_sfx)
 	_pending_spawn_marker = spawn_marker_name

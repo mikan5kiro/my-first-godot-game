@@ -5,6 +5,7 @@ const CHOICE_YES := "yes"
 const CHOICE_NO := "no"
 
 @export_range(0.0, 2.0, 0.05) var unlock_pre_open_pause: float = 0.45
+@export_range(0.0, 3.0, 0.05) var unlock_black_pause_before_open_sfx: float = 1.0
 @export_range(0.0, 2.0, 0.05) var unlock_black_hold_after_open_sfx: float = 0.6
 
 
@@ -103,6 +104,7 @@ func _play_unlock_transition(interactor: Node, facing_name: String) -> void:
 		spawn_marker_name,
 		facing_name,
 		door_sfx,
+		unlock_black_pause_before_open_sfx,
 		unlock_black_hold_after_open_sfx,
 		play_close_sfx,
 	)

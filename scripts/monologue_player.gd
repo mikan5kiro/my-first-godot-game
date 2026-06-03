@@ -24,6 +24,10 @@ func is_active() -> bool:
 	return _active
 
 
+func is_waiting_pause() -> bool:
+	return _is_waiting_pause
+
+
 func request_advance() -> void:
 	if _is_waiting_pause:
 		return

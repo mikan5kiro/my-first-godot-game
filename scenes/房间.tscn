@@ -76,10 +76,10 @@ shape = SubResource("RectangleShape2D_l6hh6")
 
 [node name="桌子" type="Area2D" parent="." unique_id=2053265970]
 script = ExtResource("6_photo_frame")
-intro_message = "一张已经没人在用的桌子。
+intro_message = "一张空荡荡的桌子。还维持着那个人搬走时的样子。
 桌子上摆着一个相框。上面有一层薄薄的灰尘。"
 detail_message_file_path = "res://dialogues/events/photo_frame_memory_monologue.txt"
-repeat_message = "一张已经没人在用的桌子。"
+repeat_message = "一张空荡荡的桌子。"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="桌子" unique_id=525477708]

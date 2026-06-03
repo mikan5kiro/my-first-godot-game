@@ -39,6 +39,10 @@ func _ready() -> void:
 
 
 func try_interact(interactor: Node2D, event: InputEvent = null) -> void:
+	if _monologue_player.is_waiting_pause():
+		# [pause] 等待期间对话框会隐藏；这里直接吞掉交互，避免触发其他操作。
+		return
+
 	if _choice_player.is_active():
 		if _should_ignore_interact_event(event):
 			return
@@ -81,17 +85,33 @@ func try_seat_toggle(interactor: Node2D, _event: InputEvent = null) -> bool:
 
 	var seat_candidates: Array[Area2D] = []
 	for area in get_overlapping_areas():
-		if area is Interactable and area.has_method("try_seat_toggle"):
-			seat_candidates.append(area)
+		if area == null or not area.has_method("try_toggle_sit"):
+			continue
+		seat_candidates.append(area)
 
 	if seat_candidates.is_empty():
 		return false
 
-	var target := InteractionSelector.find_best(self, seat_candidates, interactor)
-	if target == null:
-		return false
+	seat_candidates.sort_custom(func(a: Area2D, b: Area2D) -> bool:
+		var pa := _get_interaction_priority(a)
+		var pb := _get_interaction_priority(b)
+		if pa != pb:
+			return pa > pb
+		var da := interactor.global_position.distance_to(a.global_position)
+		var db := interactor.global_position.distance_to(b.global_position)
+		return da < db
+	)
 
-	return bool(target.call("try_seat_toggle", interactor))
+	for candidate in seat_candidates:
+		if bool(candidate.call("try_toggle_sit", interactor)):
+			return true
+	return false
+
+
+func _get_interaction_priority(target: Area2D) -> int:
+	if target == null or not target.has_method("get_interaction_priority"):
+		return 0
+	return int(target.call("get_interaction_priority"))
 
 
 func try_handle_choice_input(event: InputEvent) -> bool:
@@ -132,7 +152,7 @@ func show_text(
 
 
 func is_text_visible() -> bool:
-	return _dialog_presenter.is_visible() or _choice_player.is_active()
+	return _dialog_presenter.is_visible() or _choice_player.is_active() or _monologue_player.is_waiting_pause()
 
 
 func is_choice_active() -> bool:

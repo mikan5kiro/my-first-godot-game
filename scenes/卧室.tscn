@@ -5,12 +5,14 @@
 [ext_resource type="Script" uid="uid://cjc2uhc05qt8d" path="res://scripts/camera_bounds_simple.gd" id="4_camera"]
 [ext_resource type="PackedScene" uid="uid://bitsfjifg4oy3" path="res://scenes/门.tscn" id="5_b7esm"]
 [ext_resource type="Script" uid="uid://bvuy1puvytkd4" path="res://scripts/investigate_item.gd" id="5_kggxr"]
+[ext_resource type="Script" uid="uid://ex53b88nh2tk" path="res://scripts/priority_investigate_item.gd" id="7_priority"]
+[ext_resource type="Script" uid="uid://bt2f7s3homhxk" path="res://scripts/bed_investigate.gd" id="8_bed"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jq7jo"]
 size = Vector2(42, 19)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_b7esm"]
-size = Vector2(38, 43)
+size = Vector2(31, 30)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_kggxr"]
 size = Vector2(16.5, 16)
@@ -59,12 +61,20 @@ position = Vector2(88, 85.5)
 shape = SubResource("RectangleShape2D_jq7jo")
 
 [node name="Area2D2" type="Area2D" parent="." unique_id=1066381967]
-script = ExtResource("5_kggxr")
+script = ExtResource("8_bed")
 message = "一张大床。"
-required_facing = "left"
+move_player_to_interaction_point = true
+player_interaction_point_path = NodePath("SitPoint")
+player_pose_animation = "sitright"
+
+[node name="SitPoint" type="Marker2D" parent="Area2D2" unique_id=638975421]
+position = Vector2(35, 94)
+
+[node name="SitPointUp" type="Marker2D" parent="Area2D2" unique_id=1623379045]
+position = Vector2(35, 99)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D2" unique_id=559776502]
-position = Vector2(24, 96)
+position = Vector2(27.5, 97.25)
 shape = SubResource("RectangleShape2D_b7esm")
 
 [node name="Area2D3" type="Area2D" parent="." unique_id=1355152532]
@@ -77,10 +87,11 @@ position = Vector2(56, 77)
 shape = SubResource("RectangleShape2D_kggxr")
 
 [node name="Area2D4" type="Area2D" parent="." unique_id=797888171]
-script = ExtResource("5_kggxr")
-message = "这里有一个飘窗。"
+script = ExtResource("7_priority")
+interaction_priority_override = 1
+message = "这里有一个飘窗。向左看可以看到阳台。"
 required_facing = "left"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D4" unique_id=315956271]
-position = Vector2(-4.25, 133)
+position = Vector2(-8, 133)
 shape = SubResource("RectangleShape2D_kggxr")

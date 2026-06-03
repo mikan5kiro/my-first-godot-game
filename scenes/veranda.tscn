@@ -119,6 +119,7 @@ shape = SubResource("RectangleShape2D_81bjk")
 [node name="dryflower" type="Area2D" parent="." unique_id=570706455]
 script = ExtResource("5_avwop")
 message = "两个花艺纸袋。花已经枯萎很久了。
+[pause 1.0]
 @以前和那个人一起做的。一直没舍得扔。
 ……？
 仔细一看，其中一个纸袋的花泥里有一个闪闪发光的东西。

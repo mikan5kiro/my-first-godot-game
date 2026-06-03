@@ -276,33 +276,4 @@ func _handle_sit_toggle() -> bool:
 		return true
 	if _external_controls_locked or interact_area == null or interact_area.is_text_visible():
 		return false
-
-	var overlapping_areas := interact_area.get_overlapping_areas()
-	var candidates: Array[Area2D] = []
-	for area in overlapping_areas:
-		if area == null or not area.has_method("try_toggle_sit"):
-			continue
-		candidates.append(area)
-	if candidates.is_empty():
-		return false
-
-	candidates.sort_custom(func(a: Area2D, b: Area2D) -> bool:
-		var pa := _get_interaction_priority(a)
-		var pb := _get_interaction_priority(b)
-		if pa != pb:
-			return pa > pb
-		var da := global_position.distance_to(a.global_position)
-		var db := global_position.distance_to(b.global_position)
-		return da < db
-	)
-
-	for candidate in candidates:
-		if bool(candidate.call("try_toggle_sit", self)):
-			return true
-	return false
-
-
-func _get_interaction_priority(target: Area2D) -> int:
-	if target == null or not target.has_method("get_interaction_priority"):
-		return 0
-	return int(target.call("get_interaction_priority"))
+	return interact_area.try_seat_toggle(self)
