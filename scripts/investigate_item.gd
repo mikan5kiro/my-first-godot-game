@@ -2,11 +2,9 @@ extends Interactable
 class_name InvestigateItem
 
 @export_multiline var message: String = "这里有一些值得调查的内容。"
-@export_file("*.txt") var message_file_path: String = ""
 @export_group("Once Only")
 @export var once_flag: String = ""
 @export_multiline var repeat_message: String = ""
-@export_file("*.txt") var repeat_message_file_path: String = ""
 @export var effects: Array[StatEffect] = []
 @export var reward_items: Array[ItemData] = []
 @export_group("Player Interaction Pose")
@@ -50,14 +48,12 @@ func _uses_repeat_dialog() -> bool:
 
 
 func _reload_dialog_lines() -> void:
-	_dialog_lines = _load_dialog_lines(message, message_file_path)
+	_dialog_lines = _dialog_lines_from_message(message)
 	_mark_reward_obtain_lines(_dialog_lines)
-	_repeat_dialog_lines = _load_dialog_lines(repeat_message, repeat_message_file_path)
+	_repeat_dialog_lines = _dialog_lines_from_message(repeat_message)
 
 
-func _load_dialog_lines(source_message: String, file_path: String) -> Array[DialogLine]:
-	if not file_path.is_empty():
-		return DialogTextLoader.load_dialog_lines(file_path, _message_as_line_array(source_message))
+func _dialog_lines_from_message(source_message: String) -> Array[DialogLine]:
 	return DialogTextLoader.lines_from_strings(_message_as_line_array(source_message))
 
 

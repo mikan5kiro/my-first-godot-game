@@ -10,7 +10,7 @@ static func run_arrival(player_interactor: PlayerInteractor) -> void:
 		return
 	player_interactor.hide_text_immediately()
 	await SceneTransition.play_action_with_fade(_doorbell_on_black, -1.0)
-	await _play_arrived_dialog(player_interactor, GameText.FILE_DELIVERY_ARRIVAL)
+	await _play_arrived_dialog(player_interactor, GameText.DELIVERY_ARRIVAL_LINES)
 
 
 static func run_food_arrival(player_interactor: PlayerInteractor) -> void:
@@ -18,7 +18,7 @@ static func run_food_arrival(player_interactor: PlayerInteractor) -> void:
 		return
 	player_interactor.hide_text_immediately()
 	await SceneTransition.play_action_with_fade(_doorbell_on_black, -1.0)
-	await _play_arrived_dialog(player_interactor, GameText.FILE_FOOD_ARRIVAL)
+	await _play_arrived_dialog(player_interactor, GameText.FOOD_ARRIVAL_LINES)
 
 
 static func run_pickup(context_node: Node, player_interactor: PlayerInteractor) -> void:
@@ -80,10 +80,13 @@ static func _on_pickup_obtained(player_interactor: PlayerInteractor, message: St
 	player_interactor.show_text(message)
 
 
-static func _play_arrived_dialog(player_interactor: PlayerInteractor, file_path: String) -> void:
+static func _play_arrived_dialog(
+	player_interactor: PlayerInteractor,
+	raw_lines: Array,
+) -> void:
 	if player_interactor == null:
 		return
-	var lines := GameText.load_dialog(file_path)
+	var lines := DialogTextLoader.lines_from_strings(raw_lines)
 	if lines.is_empty():
 		return
 	await player_interactor.play_monologue_lines(lines)

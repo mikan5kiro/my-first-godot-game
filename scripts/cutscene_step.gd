@@ -18,8 +18,7 @@ enum StepType {
 @export var marker_name: String = ""
 @export_enum("up", "down", "left", "right") var facing: String = "down"
 @export var anim_name: String = ""
-@export_file("*.txt") var text_file: String = ""
-@export var fallback_lines: PackedStringArray = PackedStringArray()
+@export var dialog_lines: PackedStringArray = PackedStringArray()
 @export_range(0.0, 1.0, 0.01) var fade_alpha: float = 1.0
 @export var duration: float = 0.6
 @export var sfx: AudioStream

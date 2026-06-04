@@ -17,52 +17,20 @@ static func parse_line(raw: String) -> DialogLine:
 	return DialogLine.narration(line)
 
 
-static func lines_from_strings(lines: PackedStringArray) -> Array[DialogLine]:
+static func lines_from_strings(lines: Array) -> Array[DialogLine]:
+	return lines_from_strings_packed(PackedStringArray(lines))
+
+
+static func lines_from_strings_packed(lines: PackedStringArray) -> Array[DialogLine]:
 	var result: Array[DialogLine] = []
 	for raw in lines:
-		var stripped := raw.strip_edges()
+		var stripped: String = raw.strip_edges()
 		if stripped.is_empty():
+			continue
+		if stripped.begins_with("#"):
 			continue
 		result.append(parse_line(stripped))
 	return result
-
-
-static func load_dialog_lines(
-	file_path: String,
-	fallback: PackedStringArray = PackedStringArray(),
-) -> Array[DialogLine]:
-	var raw_lines := load_lines(file_path, fallback)
-	return lines_from_strings(raw_lines)
-
-
-static func load_lines(file_path: String, fallback: PackedStringArray = PackedStringArray()) -> PackedStringArray:
-	if file_path.is_empty():
-		return fallback
-
-	var file := FileAccess.open(file_path, FileAccess.READ)
-	if file == null:
-		push_warning("DialogTextLoader: 无法读取文本文件 '%s'" % file_path)
-		return fallback
-
-	var lines := PackedStringArray()
-	while not file.eof_reached():
-		var line := file.get_line().strip_edges()
-		if line.is_empty():
-			continue
-		if line.begins_with("#"):
-			continue
-		lines.append(line)
-
-	if lines.is_empty():
-		return fallback
-	return lines
-
-
-static func load_text(file_path: String, fallback: String = "") -> String:
-	var lines := load_lines(file_path)
-	if lines.is_empty():
-		return fallback
-	return "\n".join(lines)
 
 
 static func _parse_pause_seconds(line: String) -> float:

@@ -8,6 +8,7 @@ enum DialogMode {
 
 const PANEL_HEIGHT := 112.0
 const CHOICE_ROW_HEIGHT := 20.0
+const CHOICE_CURSOR_WIDTH := 14.0
 
 @onready var panel: PanelContainer = $Panel
 @onready var avatar_slot: AspectRatioContainer = $Panel/Margin/Content/TextRow/AvatarSlot
@@ -93,14 +94,45 @@ func _create_choice_row(label_text: String, selected: bool) -> PanelContainer:
 	margin.add_theme_constant_override("margin_bottom", 1)
 	row.add_child(margin)
 
-	var prefix := "▶ " if selected else "  "
+	var row_body := HBoxContainer.new()
+	row_body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	margin.add_child(row_body)
+
+	var cursor := ChoiceRowCursor.new()
+	cursor.show_marker = selected
+	cursor.marker_color = RpgUiStyle.TEXT_NORMAL if selected else RpgUiStyle.TEXT_DIM
+	cursor.custom_minimum_size = Vector2(CHOICE_CURSOR_WIDTH, 0)
+	cursor.size_flags_vertical = Control.SIZE_FILL
+	row_body.add_child(cursor)
+
 	var label := Label.new()
-	label.text = prefix + label_text
+	label.text = label_text
+	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	label.add_theme_color_override("font_color", RpgUiStyle.TEXT_NORMAL if selected else RpgUiStyle.TEXT_DIM)
 	label.add_theme_font_size_override("font_size", RpgUiStyle.DIALOG_FONT_SIZE)
-	margin.add_child(label)
+	row_body.add_child(label)
 
 	return row
+
+
+class ChoiceRowCursor extends Control:
+	var show_marker := false
+	var marker_color := Color.WHITE
+
+	func _draw() -> void:
+		if not show_marker:
+			return
+		var h := size.y
+		if h < 4.0:
+			return
+		var mid_y := h * 0.5
+		var tip_x := CHOICE_CURSOR_WIDTH - 3.0
+		var pts := PackedVector2Array([
+			Vector2(2.0, 3.0),
+			Vector2(2.0, h - 3.0),
+			Vector2(tip_x, mid_y),
+		])
+		draw_colored_polygon(pts, marker_color)
 
 
 func _set_panel_height(height: float) -> void:

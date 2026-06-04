@@ -10,7 +10,7 @@ static func run_after_delivery_eaten(player_interactor: PlayerInteractor) -> voi
 
 	await _wait_until_interactor_idle(player_interactor)
 
-	var dialog_lines := GameText.load_dialog(GameText.FILE_DELIVERY_COOKING_PROMPT)
+	var dialog_lines := DialogTextLoader.lines_from_strings(GameText.DELIVERY_COOKING_LINES)
 	if dialog_lines.is_empty():
 		return
 

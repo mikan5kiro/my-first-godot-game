@@ -8,13 +8,10 @@ const MEMORY_SCENE_PATH_DEFAULT := "res://scenes/房间差分.tscn"
 const MEMORY_TRIGGER_TEXT := "那个曾经逃避离别，害怕面对孤身一人的我。"
 
 @export_multiline var intro_message: String = ""
-@export_file("*.txt") var intro_message_file_path: String = ""
 @export_multiline var detail_message: String = ""
-@export_file("*.txt") var detail_message_file_path: String = ""
 @export var choice_prompt: String = GameText.PHOTO_FRAME_CHOICE_PROMPT
 @export var once_flag: String = GameState.FLAG_PHOTO_INVESTIGATED
 @export_multiline var repeat_message: String = ""
-@export_file("*.txt") var repeat_message_file_path: String = ""
 @export var memory_relief_sfx: AudioStream = MEMORY_RELIEF_SFX
 @export_range(-40.0, 12.0, 0.5) var memory_relief_sfx_volume_db: float = 0.0
 @export_file("*.tscn") var memory_scene_path: String = MEMORY_SCENE_PATH_DEFAULT
@@ -31,9 +28,14 @@ const MEMORY_TRIGGER_TEXT := "那个曾经逃避离别，害怕面对孤身一�
 var _memory_overlay_scene: Node = null
 
 
+func _ready() -> void:
+	if detail_message.is_empty():
+		detail_message = "\n".join(GameText.PHOTO_FRAME_MEMORY_LINES)
+
+
 func get_interaction_dialog_lines() -> Array[DialogLine]:
 	if _uses_repeat_dialog():
-		return _load_dialog_lines(repeat_message, repeat_message_file_path)
+		return _dialog_lines_from_message(repeat_message)
 	return []
 
 
@@ -41,8 +43,8 @@ func can_interact(interactor: Node) -> bool:
 	if not super.can_interact(interactor):
 		return false
 	if _uses_repeat_dialog():
-		return not _load_dialog_lines(repeat_message, repeat_message_file_path).is_empty()
-	return not _load_dialog_lines(intro_message, intro_message_file_path).is_empty()
+		return not _dialog_lines_from_message(repeat_message).is_empty()
+	return not _dialog_lines_from_message(intro_message).is_empty()
 
 
 func interact(interactor: Node) -> String:
@@ -71,7 +73,7 @@ func _first_investigation_flow(interactor: Node) -> void:
 
 	_set_player_controls_locked(player, true)
 
-	var intro_lines := _load_dialog_lines(intro_message, intro_message_file_path)
+	var intro_lines := _dialog_lines_from_message(intro_message)
 	if not intro_lines.is_empty():
 		await player_interactor.play_monologue_lines(intro_lines)
 
@@ -96,7 +98,7 @@ func _on_choice(choice_id: String, player_interactor: PlayerInteractor, player: 
 
 
 func _play_detail(player_interactor: PlayerInteractor, player: CharacterBody2D) -> void:
-	var detail_lines := _load_dialog_lines(detail_message, detail_message_file_path)
+	var detail_lines := _dialog_lines_from_message(detail_message)
 	if detail_lines.is_empty():
 		player_interactor.hide_text_immediately()
 		_mark_investigated()
@@ -122,9 +124,7 @@ func _mark_investigated() -> void:
 	GameState.set_flag(once_flag)
 
 
-func _load_dialog_lines(source_message: String, file_path: String) -> Array[DialogLine]:
-	if not file_path.is_empty():
-		return DialogTextLoader.load_dialog_lines(file_path, _message_as_line_array(source_message))
+func _dialog_lines_from_message(source_message: String) -> Array[DialogLine]:
 	return DialogTextLoader.lines_from_strings(_message_as_line_array(source_message))
 
 

@@ -32,7 +32,7 @@ func _play_workshop_hunger_event() -> void:
 
 	GameState.clear_flag(GameState.FLAG_WORKSHOP_HUNGER_PENDING)
 
-	var dialog_lines := GameText.load_dialog(GameText.FILE_WORKSHOP_HUNGER_PROMPT)
+	var dialog_lines := DialogTextLoader.lines_from_strings(GameText.WORKSHOP_HUNGER_LINES)
 	if dialog_lines.is_empty():
 		return
 
@@ -47,7 +47,7 @@ func _play_kitchen_afternoon_event() -> void:
 
 	GameState.clear_flag(GameState.FLAG_KITCHEN_AFTERNOON_PENDING)
 
-	var dialog_lines := GameText.load_dialog(GameText.FILE_KITCHEN_AFTERNOON_PROMPT)
+	var dialog_lines := DialogTextLoader.lines_from_strings(GameText.KITCHEN_AFTERNOON_LINES)
 	if dialog_lines.is_empty():
 		return
 

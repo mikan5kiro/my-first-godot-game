@@ -1,8 +1,6 @@
 extends RefCounted
 class_name CutscenePresets
 
-const BEDROOM_INTRO_TEXT := "res://dialogues/intro_awake.txt"
-const INTRO_CONTROLS_TEXT := "res://dialogues/intro_controls.txt"
 const BEDROOM_STAND_UP_SFX := preload("res://audios/衣擦れ.mp3")
 
 
@@ -15,12 +13,7 @@ static func bedroom_intro() -> CutsceneData:
 		_make_step(CutsceneStep.StepType.PLAY_ANIM, {"anim_name": "awake"}),
 		_make_step(
 			CutsceneStep.StepType.MONOLOGUE,
-			{
-				"text_file": BEDROOM_INTRO_TEXT,
-				"fallback_lines": PackedStringArray(
-					["@又是这个梦……", "@今天，得去把那件事做个了断。"]
-				),
-			}
+			{"dialog_lines": PackedStringArray(IntroDialogue.INTRO_AWAKE_LINES)}
 		),
 		_make_step(CutsceneStep.StepType.FADE, {"fade_alpha": 1.0, "duration": 0.6}),
 		_make_step(
@@ -34,12 +27,7 @@ static func bedroom_intro() -> CutsceneData:
 		_make_step(CutsceneStep.StepType.PLAY_IDLE),
 		_make_step(
 			CutsceneStep.StepType.MONOLOGUE,
-			{
-				"text_file": INTRO_CONTROLS_TEXT,
-				"fallback_lines": PackedStringArray(
-					["WASD 移动，E 调查，ESC 菜单/取消。"]
-				),
-			}
+			{"dialog_lines": PackedStringArray(IntroDialogue.INTRO_CONTROLS_LINES)}
 		),
 	]
 	return data

@@ -1,25 +1,57 @@
 class_name GameText
 extends RefCounted
 
-## 游戏事件文案统一入口。
+## 游戏文案统一入口。
 ## - 单行提示：改下方「单行提示」常量
-## - 多行旁白 / 引导：改 dialogues/events/ 里对应 txt（@ 开头为角色台词）
-##
-## 多行旁白一览：
-##   workshop_hunger_prompt.txt    引导：饿了，可以点外卖了
-##   delivery_arrival.txt          外卖送到门口
-##   delivery_cooking_prompt.txt   引导：吃完外卖，可以买食材了 / 厨房开放
-##   food_arrival.txt              食材送到门口
-##   kitchen_afternoon_prompt.txt  触发灶台「非饭点」对话后，离开厨房时的独白
-
-const EVENTS_DIR := "res://dialogues/events/"
+## - 多行旁白 / 引导：改下方 *_LINES 常量；开场见 scripts/intro_dialogue.gd
 
 # --- 多行旁白 / 引导 ---
-const FILE_WORKSHOP_HUNGER_PROMPT := EVENTS_DIR + "workshop_hunger_prompt.txt"
-const FILE_DELIVERY_ARRIVAL := EVENTS_DIR + "delivery_arrival.txt"
-const FILE_DELIVERY_COOKING_PROMPT := EVENTS_DIR + "delivery_cooking_prompt.txt"
-const FILE_FOOD_ARRIVAL := EVENTS_DIR + "food_arrival.txt"
-const FILE_KITCHEN_AFTERNOON_PROMPT := EVENTS_DIR + "kitchen_afternoon_prompt.txt"
+const WORKSHOP_HUNGER_LINES = [
+	"@有点饿了。点个外卖吧。",
+	"@附近的外卖都吃腻了。虽说一共也没几家。",
+	"@虽然不太健康，但饭还是要吃的。",
+	"@按时吃饭……好好照顾自己。",
+	"@……",
+	"#如果那个人在的话……",
+	"现在可以使用手机点外卖了。",
+]
+
+const DELIVERY_ARRIVAL_LINES = [
+	"@外卖到了。去门口拿一下吧。",
+]
+
+const DELIVERY_COOKING_LINES = [
+	"@……",
+	"@不好吃。",
+	"@是不是也该买点食材自己做饭了呢……",
+	"@以前都是和那个人一起去买的啊。",
+	"@那个总是会顺手买一堆零食的人。",
+	"@我不要去外面。用手机买就行了。",
+	"现在可以使用手机买食材了。厨房已解锁。",
+]
+
+const FOOD_ARRIVAL_LINES = [
+	"@食材到了。去门口拿一下吧。",
+]
+
+const KITCHEN_AFTERNOON_LINES = [
+	"@还有时间，做点什么呢……",
+	"@总之先回工作间吧。",
+]
+
+const PHOTO_FRAME_MEMORY_LINES = [
+	"拿起相框，里面是一张两个人的合照。",
+	"像是在游乐园的缆车上拍的，一个人笑得很开心，另一个人笑得有些拘谨。",
+	"@……当时没想到这张照片会留下来。如果更认真一点拍就好了。",
+	"[pause 1.7]",
+	"@……嗯。",
+	"@那些在这里留下的记忆，还好好地保存着。",
+	"[pause 0.7]",
+	"@那个曾经逃避离别，害怕面对孤身一人的我。",
+	"@一定很难过吧。",
+	"[pause 1.2]",
+	"@但是，现在已经没事了。",
+]
 
 # --- 单行提示：通用 ---
 const NOT_MEAL_TIME := "现在不是饭点。"
@@ -71,10 +103,6 @@ const ENDING_DOOR_READY_PROMPT := "准备好告别这段回忆了吗？"
 const ENDING_CHOICE_YES := "是"
 const ENDING_CHOICE_NO := "不是"
 const ENDING_DISPLAY_TEXT := "the end"
-
-
-static func load_dialog(file_path: String) -> Array[DialogLine]:
-	return DialogTextLoader.load_dialog_lines(file_path)
 
 
 static func food_pickup_obtained(meals: int) -> String:

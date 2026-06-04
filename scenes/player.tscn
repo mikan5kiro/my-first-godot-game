@@ -269,7 +269,7 @@ script = ExtResource("1_g2els")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=855831895]
 sprite_frames = SubResource("SpriteFrames_a38lo")
-animation = &"sitright"
+animation = &"sitback"
 metadata/_edit_lock_ = true
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1712781325]
