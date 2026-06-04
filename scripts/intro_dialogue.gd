@@ -3,8 +3,8 @@ class_name IntroDialogue
 
 const INTRO_AWAKE_LINES = [
 	"睁开眼，发现自己回到了以前住的出租屋。",
-	"[pause 1.0]",
-	"@……好熟悉的感觉。",
+	"虽然已经搬走，却一点也不意外，只觉得很熟悉。",
+	
 ]
 
 const INTRO_CONTROLS_LINES = [
