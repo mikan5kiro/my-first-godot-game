@@ -3,6 +3,7 @@ extends Control
 @onready var start_button: Button = $Menu/StartButton
 @onready var load_button: Button = $Menu/LoadButton
 @onready var quit_button: Button = $Menu/QuitButton
+@onready var title_text: TextureRect = $TitleText
 @onready var fade_overlay: ColorRect = $FadeOverlay
 @onready var load_page: Control = $LoadPage
 @onready var load_slot_list: VBoxContainer = $LoadPage/PanelRoot/Margin/SlotList
@@ -16,6 +17,8 @@ extends Control
 @export var confirm_sfx: AudioStream
 @export_range(0.0, 3.0, 0.05) var fade_in_duration := 0.4
 @export_range(0.4, 4.0, 0.05) var breath_cycle_duration := 1.2
+@export_range(0.0, 40.0, 0.5) var title_float_amplitude := 4.0
+@export_range(0.1, 6.0, 0.05) var title_float_speed := 0.5
 
 const PRESSED_BORDER := Color(0.38, 0.4, 0.48, 1)
 const LOAD_BUTTON_INDEX := 1
@@ -41,9 +44,12 @@ var _hover_sfx_player: AudioStreamPlayer
 var _confirm_sfx_player: AudioStreamPlayer
 var _button_breath := BorderBreathAnimator.new()
 var _breath_button: Button
+var _title_text_base_position := Vector2.ZERO
+var _title_float_time := 0.0
 
 
 func _ready() -> void:
+	_title_text_base_position = title_text.position
 	fade_overlay.color = Color(0, 0, 0, 1)
 	_setup_audio_players()
 	_play_title_bgm()
@@ -56,6 +62,16 @@ func _ready() -> void:
 	_ensure_valid_main_selection()
 	_refresh_selection_visuals(true)
 	_play_fade_in()
+
+
+func _process(delta: float) -> void:
+	if title_text == null or title_float_amplitude <= 0.0 or title_float_speed <= 0.0:
+		return
+	_title_float_time += delta
+	title_text.position = _title_text_base_position + Vector2(
+		0.0,
+		sin(_title_float_time * TAU * title_float_speed) * title_float_amplitude
+	)
 
 
 func _bind_button_actions() -> void:

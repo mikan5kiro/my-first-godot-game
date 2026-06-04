@@ -366,12 +366,12 @@ player_interaction_point_path = NodePath("SitPoint")
 player_pose_animation = "sitright"
 required_facing = "left"
 
-[node name="SitPoint" type="Marker2D" parent="沙发" unique_id=963505049]
-position = Vector2(222, 140)
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="沙发" unique_id=988936468]
 position = Vector2(221, 140.25)
 shape = SubResource("RectangleShape2D_x8a60")
+
+[node name="SitPoint" type="Marker2D" parent="沙发" unique_id=963505049]
+position = Vector2(222, 135)
 
 [node name="餐桌椅子" type="Area2D" parent="." unique_id=829582155]
 script = ExtResource("14_sofa")

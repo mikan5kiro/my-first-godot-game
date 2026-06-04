@@ -1,10 +1,11 @@
 [gd_scene format=3 uid="uid://be0i7ku2t8a0x"]
 
-[ext_resource type="Texture2D" uid="uid://dswhyjhfxaug4" path="res://images/Sprite-startmenu.png" id="1_bg"]
 [ext_resource type="AudioStream" uid="uid://b2ic3bxxsqr3h" path="res://audios/カーソル移動12.mp3" id="2_mgrm8"]
 [ext_resource type="Script" uid="uid://cu2in1qka13yl" path="res://scripts/title_screen.gd" id="2_script"]
+[ext_resource type="Texture2D" uid="uid://cxl5dkgw5w5py" path="res://images/Sprite-startmenu2.png" id="2_title"]
 [ext_resource type="AudioStream" uid="uid://dprlmotl5mhxf" path="res://audios/決定ボタンを押す38.mp3" id="3_dc4i4"]
-[ext_resource type="AudioStream" path="res://audios/maou_bgm_piano40.mp3" id="4_bgm"]
+[ext_resource type="AudioStream" uid="uid://dx0wq8836v46p" path="res://audios/maou_bgm_piano40.mp3" id="4_bgm"]
+[ext_resource type="Texture2D" uid="uid://be37o8yh26ejr" path="res://images/Sprite-startmenu1.png" id="6_3yumr"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
 bg_color = Color(0.05, 0.05, 0.08, 0.72)
@@ -51,7 +52,6 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("2_script")
 title_bgm = ExtResource("4_bgm")
-title_bgm_volume_db = -6.0
 hover_sfx = ExtResource("2_mgrm8")
 confirm_sfx = ExtResource("3_dc4i4")
 fade_in_duration = 0.8
@@ -64,9 +64,26 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
-texture = ExtResource("1_bg")
+texture = ExtResource("6_3yumr")
 expand_mode = 1
 stretch_mode = 6
+
+[node name="TitleText" type="TextureRect" parent="." unique_id=997193851]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -479.0
+offset_top = -284.0
+offset_right = 481.0
+offset_bottom = 256.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+texture = ExtResource("2_title")
+stretch_mode = 5
 
 [node name="Menu" type="VBoxContainer" parent="." unique_id=1330578977]
 layout_mode = 1
@@ -122,7 +139,7 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_hover")
 text = "退出游戏"
 
-[node name="LoadPage" type="Control" parent="."]
+[node name="LoadPage" type="Control" parent="." unique_id=1721370514]
 visible = false
 layout_mode = 1
 anchors_preset = 15
@@ -131,7 +148,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="PanelRoot" type="PanelContainer" parent="LoadPage"]
+[node name="PanelRoot" type="PanelContainer" parent="LoadPage" unique_id=899769747]
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -146,18 +163,19 @@ grow_horizontal = 2
 grow_vertical = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_normal")
 
-[node name="Margin" type="MarginContainer" parent="LoadPage/PanelRoot"]
+[node name="Margin" type="MarginContainer" parent="LoadPage/PanelRoot" unique_id=719786162]
 layout_mode = 2
 theme_override_constants/margin_left = 12
 theme_override_constants/margin_top = 12
 theme_override_constants/margin_right = 12
 theme_override_constants/margin_bottom = 12
 
-[node name="SlotList" type="VBoxContainer" parent="LoadPage/PanelRoot/Margin"]
+[node name="SlotList" type="VBoxContainer" parent="LoadPage/PanelRoot/Margin" unique_id=1796875034]
 layout_mode = 2
 theme_override_constants/separation = 10
 
 [node name="FadeOverlay" type="ColorRect" parent="." unique_id=1504408604]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0

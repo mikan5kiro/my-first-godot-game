@@ -123,6 +123,7 @@ message = "琴架。上面放着两把吉他。"
 required_facing = "up"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="qinjia" unique_id=1152338570]
+visible = false
 position = Vector2(58, 0)
 shape = SubResource("RectangleShape2D_w653m")
 
