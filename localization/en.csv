@@ -25,7 +25,7 @@ narrative.food.arrival.01,@The groceries are here. Go pick them up at the door.
 narrative.kitchen.afternoon.01,@Still have some time. What should I do...
 narrative.kitchen.afternoon.02,"@Anyway, I'd better head back to the workshop."
 narrative.photo.memory.01,The photo frame is lifted. Inside is a photo of two people.
-narrative.photo.memory.02,"It looks like it was taken on a cable car at a theme park—one person laughing freely, the other smiling a little awkwardly."
+narrative.photo.memory.02,"It looks like it was taken on a cable car at a theme park—one person smiling brightly, the other smiling a little awkwardly."
 narrative.photo.memory.03,@...I never thought they'd keep this photo. Wish I'd taken it more carefully back then.
 narrative.photo.memory.04,@...Yeah.
 narrative.photo.memory.05,@All those memories back then are still kept safe.
@@ -124,7 +124,7 @@ scene.bedroom.bed,A big bed.
 scene.bedroom.nightstand,Nightstand.
 scene.bedroom.bay_window,There's a bay window here. The balcony is visible to the left.
 scene.kitchen.fridge,Refrigerator. Inside are ingredients and all kinds of seasonings.
-scene.kitchen.cabinet,Cabinets. Inside are cookware and tableware for two.
+scene.kitchen.cabinet,Cabinets. Inside are tableware for two and assorted kitchenware.
 scene.kitchen.sink,Sink.
 scene.room.boxes,Several half-empty cardboard boxes stacked up. They hold some odds and ends.
 scene.room.desk.intro.01,An empty desk. Still exactly as left behind.

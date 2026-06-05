@@ -113,7 +113,7 @@ scene.dining_table.label,餐桌。
 scene.living.room_door.blocked.01,这个房间的门紧闭着。
 scene.living.room_door.blocked.02,以前的我一直不敢面对这个房间。
 scene.living.room_door.blocked_repeat,这个房间的门紧闭着。
-scene.living.tv,电视机。
+scene.living.tv,电视。
 scene.living.mirror,镜子。
 scene.living.coat_rack,衣架。
 scene.living.shoe_cabinet,鞋柜。
@@ -135,7 +135,7 @@ scene.room.chair,椅子。
 scene.workshop.bookshelf,放着各种各样的书。
 scene.workshop.window,窗户。外面什么都看不见。
 scene.workshop.desk,一张大办公桌。不管是学习还是娱乐都很合适。
-scene.workshop.wardrobe,放着各种各样的裙子。
+scene.workshop.wardrobe,放着各种各样的衣服。
 scene.workshop.chair,椅子。
 scene.workshop.guitar_stand,琴架。上面放着两把吉他。
 scene.veranda.door_blocked,这个门无法打开。
