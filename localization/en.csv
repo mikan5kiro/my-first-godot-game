@@ -6,3 +6,163 @@ ui.title.language.current_zh,Language: 中文
 ui.title.language.current_en,Language: English
 ui.save.slot_short,Slot %d
 ui.common.player_name_default,Protagonist
+narrative.workshop.hunger.01,@I'm getting hungry. Maybe I'll order delivery.
+narrative.workshop.hunger.02,@I've gotten tired of every place nearby. Not that there are many.
+narrative.workshop.hunger.03,"@Not the healthiest option, but I still need to eat."
+narrative.workshop.hunger.04,@Eat on time... take care of myself.
+narrative.workshop.hunger.05,@...
+narrative.workshop.hunger.06,#If they were here...
+narrative.workshop.hunger.07,You can now use your phone to order delivery.
+narrative.delivery.arrival.01,@Delivery's here. Better go get it at the door.
+narrative.delivery.cooking.01,@...
+narrative.delivery.cooking.02,@Not great.
+narrative.delivery.cooking.03,@Maybe I should buy ingredients and cook for myself...
+narrative.delivery.cooking.04,@We used to go buy them together.
+narrative.delivery.cooking.05,@The one who'd always grab a bunch of snacks on the way.
+narrative.delivery.cooking.06,@I'm not going outside. I'll just buy them on my phone.
+narrative.delivery.cooking.07,You can now use your phone to buy ingredients. The kitchen is unlocked.
+narrative.food.arrival.01,@The groceries are here. Go pick them up at the door.
+narrative.kitchen.afternoon.01,@Still have some time. What should I do...
+narrative.kitchen.afternoon.02,"@Anyway, I'd better head back to the workshop."
+narrative.photo.memory.01,Pick up the photo frame. Inside is a photo of two people.
+narrative.photo.memory.02,"It looks like it was taken on a cable car at a theme park—one person laughing freely, the other smiling a little awkwardly."
+narrative.photo.memory.03,@...I never thought they'd keep this photo. Wish I'd taken it more carefully back then.
+narrative.photo.memory.04,@...Yeah.
+narrative.photo.memory.05,@All those memories are still kept safe.
+narrative.photo.memory.06,"@The me who once ran from goodbyes, afraid to face being alone."
+narrative.photo.memory.07,@Must have been hard.
+narrative.photo.memory.08,@But it's okay now.
+common.not_meal_time,It's not mealtime.
+room.door.unlock_prompt,Open the door now?
+photo.frame.choice_prompt,Look at the photo frame?
+phone.prompt,What do you want to do on your phone?
+phone.choice.delivery,Order delivery (-%d)
+phone.choice.buy_ingredients,Buy ingredients (-%d)
+phone.delivery.ordered,Delivery ordered. Just wait until it arrives.
+phone.food.ordered,Ingredients ordered. Just wait until they arrive.
+phone.delivery.at_door,Delivery is already at the door.
+phone.delivery.in_transit,Delivery is on the way.
+phone.delivery.unfinished,You haven't finished the last delivery yet.
+phone.delivery.no_money,Not enough money for delivery.
+phone.food.at_door,Ingredients are already at the door.
+phone.food.in_transit,Ingredients are on the way.
+phone.food.already_bought,Already bought ingredients today.
+phone.food.no_money,Not enough money for ingredients.
+delivery.pickup.obtained,Got the delivery.
+food.pickup.obtained,Received ingredients. You now have %d meals' worth.
+meal.eaten,Finished eating.
+meal.cooked,Made a home-cooked meal.
+food.supply.empty,No ingredients left.
+food.supply.count,Still %d meals' worth of ingredients inside.
+dining_table.prompt,Dining table. Want to eat?
+choice.yes,Yes
+choice.no,No
+stove.label,Stove.
+stove.cook_prompt,Stove. Want to cook?
+stove.off_meal_time,"@I have ingredients, but it's not mealtime yet."
+stove.wait_until,Come back around %s.
+meal.use.need_table,You need to be at the dining table to eat.
+ending.door.prompt,Leave this place?
+ending.door.ready_prompt,Ready to say goodbye to these memories?
+ending.choice.yes,Yes
+ending.choice.no,No
+ending.display_text,the end
+intro.awake.01,Eyes open in the old rental room.
+intro.awake.02,Already moved out—yet no surprise, only quiet familiarity.
+intro.controls.01,Controls: WASD move | E investigate/open | ESC menu/cancel | F sit/stand | F11 fullscreen/windowed.
+time.period.morning,morning
+time.period.noon,noon
+time.period.afternoon,afternoon
+time.period.evening,evening
+time.period.night,night
+time.label.format,Day %d / %s
+time.next_meal.tomorrow,tomorrow %s
+stat.hunger.full,Not hungry
+stat.hunger.hungry,Hungry
+stat.hunger.very_hungry,Very hungry
+stat.sanity.optimistic,Hopeful
+stat.sanity.normal,Okay
+stat.sanity.gloomy,Low
+stat.hidden,???
+food.meals.plenty,Plenty
+food.meals.low,Running low
+food.meals.almost_gone,Almost gone
+food.meals.none,None left
+ui.panel.items,Items
+ui.panel.save,Save
+ui.panel.title_menu,Main Menu
+ui.panel.return_title,Return to Title
+ui.panel.return_title_detail,Return to title screen (unsaved progress will be lost)
+ui.panel.pick_save_slot,Choose a save slot
+ui.panel.save_slot,Slot %d
+ui.panel.save_slot_named,Save %d
+ui.panel.empty_slot,Empty slot
+ui.panel.confirm_overwrite,Overwrite this save?
+ui.panel.unknown_item,Unknown item
+ui.stat.time,Time
+ui.stat.hunger,Hunger
+ui.stat.sanity,Status
+ui.stat.money,Money
+common.unnamed_item,Unnamed item
+common.inspect_suffix,%s.
+common.investigate.default,Nothing in particular here.
+common.item_obtained,Obtained %s.
+common.sofa.default,Sofa.
+common.unknown_recipe,Unknown recipe
+scene.dining_table.label,Dining table.
+scene.living.room_door.blocked.01,The door to this room is shut tight.
+scene.living.room_door.blocked.02,I've always avoided facing this room.
+scene.living.room_door.blocked_repeat,The door to this room is shut tight.
+scene.living.tv,Television.
+scene.living.mirror,Mirror.
+scene.living.coat_rack,Coat rack.
+scene.living.shoe_cabinet,Shoe cabinet.
+scene.living.sofa,A sofa just big enough for two.
+scene.living.chair,Chair.
+scene.bedroom.cabinet,The cabinet holds some bedding.
+scene.bedroom.bed,A big bed.
+scene.bedroom.nightstand,Nightstand.
+scene.bedroom.bay_window,There's a bay window here. The balcony is visible to the left.
+scene.kitchen.fridge,Refrigerator. Inside are ingredients and all kinds of seasonings.
+scene.kitchen.cabinet,Cabinets. Inside are cookware and tableware for two.
+scene.kitchen.sink,Sink.
+scene.room.boxes,Several half-empty cardboard boxes stacked up. They hold some odds and ends.
+scene.room.desk.intro.01,An empty desk. Still exactly as it was when they moved out.
+scene.room.desk.intro.02,A photo frame sits on the desk. A thin layer of dust covers it.
+scene.room.desk.repeat,An empty desk.
+scene.room.balcony_door,Door to the balcony.
+scene.room.chair,Chair.
+scene.workshop.bookshelf,All kinds of books are on the shelf.
+scene.workshop.window,Window. Nothing visible outside.
+scene.workshop.desk,A large desk. Good for studying or entertainment alike.
+scene.workshop.wardrobe,All kinds of dresses hanging inside.
+scene.workshop.chair,Chair.
+scene.workshop.guitar_stand,Guitar stand. Two guitars rest on it.
+scene.veranda.door_blocked,This door won't open.
+scene.veranda.washer,Washing machine.
+scene.veranda.lounge_chair,Lounge chair.
+scene.veranda.dryflower.01,Two floral paper bags. The flowers wilted long ago.
+scene.veranda.dryflower.02,@We made these together. I never had the heart to throw them away.
+scene.veranda.dryflower.03,...?
+scene.veranda.dryflower.04,Look closer—something glinting is buried in the floral foam of one bag.
+scene.veranda.dryflower.repeat,Two floral paper bags. The flowers wilted long ago.
+scene.veranda.window1.01,The building across the way is visible outside.
+scene.veranda.window1.02,In the distance a lake stretches out; above it a lone office tower stands out starkly.
+scene.veranda.window1.repeat,The building across the way is visible outside.
+scene.veranda.window2.01,The building across the way is visible outside.
+scene.veranda.window2.02,Empty land surrounds the area; a few scattered buildings in the distance; misty mountains beyond.
+scene.veranda.window2.repeat,The building across the way is visible outside.
+item.phone.name,Phone
+item.phone.inspect,A phone.
+item.delivery.name,Delivery
+item.delivery.inspect,Takeout you're tired of. (Use at dining table)
+item.meal.name,Home-cooked meal
+item.meal.inspect,Home-cooked meal. Balanced nutrition. (Use at dining table)
+item.shiny_thing.name,Something glinting
+item.shiny_thing.inspect,Something glinting.
+item.beef.name,Beef
+item.beef.inspect,Beef.
+item.tomato_egg.name,Tomato and egg stir-fry
+item.tomato_egg.inspect,Tomato and egg stir-fry.
+item.beef_pasta.name,Beef pasta
+item.beef_pasta.inspect,Beef pasta.

@@ -85,7 +85,7 @@ script = ExtResource("4_j01km")
 target_scene = ""
 spawn_marker_name = ""
 unlock_flag = "lastroom_unlocked"
-blocked_message = "这个门无法打开。"
+blocked_message = "scene.veranda.door_blocked"
 required_facing = "up"
 metadata/_custom_type_script = "uid://cj22ggupilu5w"
 
@@ -95,7 +95,7 @@ shape = SubResource("RectangleShape2D_j01km")
 
 [node name="Washer" type="Area2D" parent="." unique_id=1692315127]
 script = ExtResource("5_avwop")
-message = "洗衣机。"
+message = "scene.veranda.washer"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Washer" unique_id=1742313232]
@@ -104,7 +104,7 @@ shape = SubResource("RectangleShape2D_81bjk")
 
 [node name="sofa" type="Area2D" parent="." unique_id=143999433]
 script = ExtResource("8_sofa")
-message = "躺椅。"
+message = "scene.veranda.lounge_chair"
 move_player_to_interaction_point = true
 player_interaction_point_path = NodePath("SitPoint")
 player_pose_animation = "sit"
@@ -119,14 +119,14 @@ shape = SubResource("RectangleShape2D_81bjk")
 
 [node name="dryflower" type="Area2D" parent="." unique_id=570706455]
 script = ExtResource("5_avwop")
-message = "两个花艺纸袋。花已经枯萎很久了。
+message = "scene.veranda.dryflower.01
 [pause 1.0]
-@以前和那个人一起做的。一直没舍得扔。
-……？
-仔细一看，其中一个纸袋的花泥里有一个闪闪发光的东西。
-获得闪闪发光的东西。"
+scene.veranda.dryflower.02
+scene.veranda.dryflower.03
+scene.veranda.dryflower.04
+common.reward.obtain_line"
 once_flag = "veranda_dryflower_investigated"
-repeat_message = "两个花艺纸袋。花已经枯萎很久了。"
+repeat_message = "scene.veranda.dryflower.repeat"
 reward_items = Array[ExtResource("7_0nb68")]([ExtResource("7_shiny_thing")])
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
@@ -139,10 +139,10 @@ tile_set = SubResource("TileSet_81bjk")
 
 [node name="InvestigateItem" type="Area2D" parent="." unique_id=479321460]
 script = ExtResource("5_avwop")
-message = "窗外能看到对面的楼房。
-视线的远处有一片湖，湖的上方突兀地伫立着一座办公楼。"
+message = "scene.veranda.window1.01
+scene.veranda.window1.02"
 once_flag = "window1_investigated"
-repeat_message = "窗外能看到对面的楼房。"
+repeat_message = "scene.veranda.window1.repeat"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InvestigateItem" unique_id=203585391]
@@ -151,10 +151,10 @@ shape = SubResource("RectangleShape2D_0nb68")
 
 [node name="InvestigateItem2" type="Area2D" parent="." unique_id=2001306696]
 script = ExtResource("5_avwop")
-message = "窗外能看到对面的楼房。
-周围是一片荒地，远处是零星的几栋楼，再远处是雾蒙蒙的群山。"
+message = "scene.veranda.window2.01
+scene.veranda.window2.02"
 once_flag = "window2_investigated"
-repeat_message = "窗外能看到对面的楼房。"
+repeat_message = "scene.veranda.window2.repeat"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="InvestigateItem2" unique_id=1116851284]

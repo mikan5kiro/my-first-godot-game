@@ -27,13 +27,19 @@ func get_use_blocked_message() -> String:
 
 func get_display_name() -> String:
 	if not display_name.is_empty():
-		return display_name
+		return _localize_text(display_name)
 	if not id.is_empty():
 		return id
-	return "未命名物品"
+	return _localize_text("common.unnamed_item")
 
 
 func get_inspect_text() -> String:
 	if not inspect_text.is_empty():
-		return inspect_text
-	return get_display_name() + "。"
+		return _localize_text(inspect_text)
+	return _localize_text("common.inspect_suffix") % get_display_name()
+
+
+static func _localize_text(text: String) -> String:
+	if LanguageSwitch != null:
+		return LanguageSwitch.localize_text(text)
+	return TranslationServer.translate(text)

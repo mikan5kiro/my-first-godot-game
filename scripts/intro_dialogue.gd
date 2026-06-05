@@ -1,12 +1,28 @@
 extends RefCounted
 class_name IntroDialogue
 
-const INTRO_AWAKE_LINES = [
-	"睁开眼，发现自己回到了以前住的出租屋。",
-	"虽然已经搬走，却一点也不意外，只觉得很熟悉。",
-	
+const _INTRO_AWAKE_LINE_KEYS: PackedStringArray = [
+	"intro.awake.01",
+	"intro.awake.02",
 ]
 
-const INTRO_CONTROLS_LINES = [
-	"操作方法：WASD 移动，E 调查/开门，ESC 菜单/取消，F 坐下/起身，F11 切换全屏/窗口。",
+const _INTRO_CONTROLS_LINE_KEYS: PackedStringArray = [
+	"intro.controls.01",
 ]
+
+
+static var INTRO_AWAKE_LINES: PackedStringArray:
+	get:
+		return _lines_from_keys(_INTRO_AWAKE_LINE_KEYS)
+
+
+static var INTRO_CONTROLS_LINES: PackedStringArray:
+	get:
+		return _lines_from_keys(_INTRO_CONTROLS_LINE_KEYS)
+
+
+static func _lines_from_keys(keys: PackedStringArray) -> PackedStringArray:
+	var lines := PackedStringArray()
+	for key in keys:
+		lines.append(TranslationServer.translate(key))
+	return lines

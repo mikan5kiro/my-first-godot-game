@@ -35,11 +35,11 @@ const PERIOD_NAMES := {
 }
 
 const PERIOD_DISPLAY_NAMES := {
-	TimePeriod.MORNING: "早晨",
-	TimePeriod.NOON: "中午",
-	TimePeriod.AFTERNOON: "下午",
-	TimePeriod.EVENING: "傍晚",
-	TimePeriod.NIGHT: "夜晚",
+	TimePeriod.MORNING: "time.period.morning",
+	TimePeriod.NOON: "time.period.noon",
+	TimePeriod.AFTERNOON: "time.period.afternoon",
+	TimePeriod.EVENING: "time.period.evening",
+	TimePeriod.NIGHT: "time.period.night",
 }
 
 const FLAG_BEDROOM_INTRO := "bedroom_intro_played"
@@ -126,7 +126,8 @@ static func period_to_name(value: TimePeriod) -> String:
 
 
 static func period_to_display_name(value: TimePeriod) -> String:
-	return PERIOD_DISPLAY_NAMES.get(value, "早晨")
+	var key: String = PERIOD_DISPLAY_NAMES.get(value, "time.period.morning")
+	return TranslationServer.translate(key)
 
 
 func is_meal_time() -> bool:
@@ -140,7 +141,7 @@ func get_next_meal_time_display_name() -> String:
 		TimePeriod.AFTERNOON:
 			return period_to_display_name(TimePeriod.EVENING)
 		TimePeriod.NIGHT:
-			return "明天%s" % period_to_display_name(TimePeriod.NOON)
+			return TranslationServer.translate("time.next_meal.tomorrow") % period_to_display_name(TimePeriod.NOON)
 		_:
 			return period_to_display_name(TimePeriod.NOON)
 
@@ -159,28 +160,28 @@ func get_money_label() -> String:
 
 func hunger_label_for(value: int) -> String:
 	if value >= hunger_not_hungry_threshold:
-		return "不饿"
+		return TranslationServer.translate("stat.hunger.full")
 	if value >= hunger_very_hungry_threshold:
-		return "饿了"
-	return "很饿"
+		return TranslationServer.translate("stat.hunger.hungry")
+	return TranslationServer.translate("stat.hunger.very_hungry")
 
 
 func sanity_label_for(value: int) -> String:
 	if value >= 80:
-		return "乐观"
+		return TranslationServer.translate("stat.sanity.optimistic")
 	if value >= 50:
-		return "普通"
+		return TranslationServer.translate("stat.sanity.normal")
 	if value >= 20:
-		return "忧郁"
-	return "？？？"
+		return TranslationServer.translate("stat.sanity.gloomy")
+	return TranslationServer.translate("stat.hidden")
 
 
 func money_label_for(value: int) -> String:
-	return "%d米" % value
+	return TranslationServer.translate("money.format") % value
 
 
 func get_time_label_for(day_value: int, period_value: TimePeriod) -> String:
-	return "第 %d 天 / %s" % [day_value, period_to_display_name(period_value)]
+	return TranslationServer.translate("time.label.format") % [day_value, period_to_display_name(period_value)]
 
 
 static func period_from_name(name: String) -> TimePeriod:
@@ -237,10 +238,10 @@ func apply_save_data(data: Dictionary) -> void:
 	tasks_changed.emit()
 
 
-func get_status_labels_from_data(data: Dictionary, player_name: String = "主人公") -> Dictionary:
+func get_status_labels_from_data(data: Dictionary, player_name: String = "ui.common.player_name_default") -> Dictionary:
 	if data.is_empty():
 		return {
-			"player_name": "空档案",
+			"player_name": TranslationServer.translate("ui.panel.empty_slot"),
 			"time": "--",
 			"hunger": "--",
 			"sanity": "--",
@@ -259,22 +260,22 @@ func get_status_labels_from_data(data: Dictionary, player_name: String = "主人
 
 func get_money_description() -> String:
 	if money >= 500:
-		return "宽裕"
+		return TranslationServer.translate("money.desc.plenty")
 	if money >= 100:
-		return "够用"
+		return TranslationServer.translate("money.desc.enough")
 	if money >= 30:
-		return "紧张"
-	return "见底"
+		return TranslationServer.translate("money.desc.tight")
+	return TranslationServer.translate("money.desc.empty")
 
 
 func get_food_meals_label() -> String:
 	if food_meals >= 7:
-		return "够用"
+		return TranslationServer.translate("food.meals.plenty")
 	if food_meals >= 3:
-		return "不多了"
+		return TranslationServer.translate("food.meals.low")
 	if food_meals >= 1:
-		return "快没了"
-	return "没有了"
+		return TranslationServer.translate("food.meals.almost_gone")
+	return TranslationServer.translate("food.meals.none")
 
 
 func get_food_supply_text() -> String:

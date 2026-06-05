@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item_data")
 id = "beef"
-display_name = "牛肉"
-inspect_text = "牛肉。"
+display_name = "item.beef.name"
+inspect_text = "item.beef.inspect"
 is_fridge_storable = true
 fridge_content_name = "牛肉"

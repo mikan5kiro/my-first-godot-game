@@ -67,7 +67,7 @@ shape = SubResource("RectangleShape2D_return_door")
 
 [node name="箱子1" type="Area2D" parent="." unique_id=201708108]
 script = ExtResource("5_w0eea")
-message = "堆着几个半空的纸箱子。里面放着一些杂物。"
+message = "scene.room.boxes"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="箱子1" unique_id=1730893719]
@@ -78,7 +78,7 @@ shape = SubResource("RectangleShape2D_kw4ey")
 [node name="箱子2" type="Area2D" parent="." unique_id=1757764052]
 visible = false
 script = ExtResource("5_w0eea")
-message = "堆着几个半空的纸箱子。里面放着一些杂物。"
+message = "scene.room.boxes"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="箱子2" unique_id=661053541]
@@ -87,9 +87,9 @@ shape = SubResource("RectangleShape2D_l6hh6")
 
 [node name="桌子" type="Area2D" parent="." unique_id=2053265970]
 script = ExtResource("6_photo_frame")
-intro_message = "一张空荡荡的桌子。还维持着那个人搬走时的样子。
-桌子上摆着一个相框。上面有一层薄薄的灰尘。"
-repeat_message = "一张空荡荡的桌子。"
+intro_message = "scene.room.desk.intro.01
+scene.room.desk.intro.02"
+repeat_message = "scene.room.desk.repeat"
 memory_relief_sfx_volume_db = -2.0
 memory_hold_duration = 1.2
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
@@ -101,7 +101,7 @@ shape = SubResource("RectangleShape2D_w0eea")
 
 [node name="阳台门" type="Area2D" parent="." unique_id=1732596457]
 script = ExtResource("5_w0eea")
-message = "通往阳台的门。"
+message = "scene.room.balcony_door"
 required_facing = "left"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
@@ -114,7 +114,7 @@ shape = SubResource("RectangleShape2D_f16eq")
 script = ExtResource("7_f16eq")
 allow_select_when_facing_mismatch = false
 interaction_priority_override = -5
-message = "椅子。"
+message = "scene.room.chair"
 move_player_to_interaction_point = true
 player_interaction_point_path = NodePath("SitPoint")
 player_pose_animation = "sitback"

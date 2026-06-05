@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1_item_data")
 id = "phone"
-display_name = "手机"
-inspect_text = "手机。"
+display_name = "item.phone.name"
+inspect_text = "item.phone.inspect"
 is_phone = true

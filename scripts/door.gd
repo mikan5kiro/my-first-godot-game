@@ -14,12 +14,11 @@ class_name InteractableDoor
 @export_multiline var blocked_repeat_message: String = ""
 
 var _is_activating: bool = false
-var _blocked_dialog_lines: Array[DialogLine] = []
-var _blocked_repeat_dialog_lines: Array[DialogLine] = []
 
 
 func _ready() -> void:
-	_reload_blocked_dialog_lines()
+	if LanguageSwitch != null:
+		LanguageSwitch.language_changed.connect(_on_language_changed)
 
 
 func get_interaction_priority() -> int:
@@ -29,9 +28,8 @@ func get_interaction_priority() -> int:
 func get_interaction_dialog_lines() -> Array[DialogLine]:
 	if _is_unlocked():
 		return []
-	if _uses_blocked_repeat_dialog():
-		return _blocked_repeat_dialog_lines
-	return _blocked_dialog_lines
+	var source := blocked_repeat_message if _uses_blocked_repeat_dialog() else blocked_message
+	return DialogTextLoader.lines_from_strings(_localized_line_array(source))
 
 
 func can_interact(interactor: Node) -> bool:
@@ -96,11 +94,17 @@ func _uses_blocked_repeat_dialog() -> bool:
 	return GameState.has_flag(blocked_once_flag)
 
 
-func _reload_blocked_dialog_lines() -> void:
-	_blocked_dialog_lines = DialogTextLoader.lines_from_strings(_message_as_line_array(blocked_message))
-	_blocked_repeat_dialog_lines = DialogTextLoader.lines_from_strings(
-		_message_as_line_array(blocked_repeat_message)
-	)
+func get_blocked_dialog_lines(use_repeat: bool) -> Array[DialogLine]:
+	var source := blocked_repeat_message if use_repeat else blocked_message
+	return DialogTextLoader.lines_from_strings(_localized_line_array(source))
+
+
+func _localized_line_array(source_message: String) -> PackedStringArray:
+	if source_message.strip_edges().is_empty():
+		return PackedStringArray()
+	if LanguageSwitch != null:
+		return LanguageSwitch.translate_multiline(source_message)
+	return _message_as_line_array(source_message)
 
 
 func _message_as_line_array(source_message: String) -> PackedStringArray:
@@ -111,3 +115,7 @@ func _message_as_line_array(source_message: String) -> PackedStringArray:
 			continue
 		lines.append(stripped)
 	return lines
+
+
+func _on_language_changed(_locale: String) -> void:
+	pass

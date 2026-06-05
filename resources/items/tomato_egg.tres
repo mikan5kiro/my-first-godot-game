@@ -5,7 +5,7 @@
 [resource]
 script = ExtResource("1_item_data")
 id = "tomato_egg"
-display_name = "番茄炒蛋"
-inspect_text = "番茄炒蛋。"
+display_name = "item.tomato_egg.name"
+inspect_text = "item.tomato_egg.inspect"
 is_food = true
 hunger_restore = 30

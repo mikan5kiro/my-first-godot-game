@@ -5,17 +5,17 @@ const CHOICE_YES := "yes"
 const CHOICE_NO := "no"
 const MEMORY_RELIEF_SFX: AudioStream = preload("res://audios/鍵を開ける1.mp3")
 const MEMORY_SCENE_PATH_DEFAULT := "res://scenes/房间差分.tscn"
-const MEMORY_TRIGGER_TEXT := "那个曾经逃避离别，害怕面对孤身一人的我。"
+const MEMORY_TRIGGER_TEXT_KEY := "narrative.photo.memory.06"
 
 @export_multiline var intro_message: String = ""
 @export_multiline var detail_message: String = ""
-@export var choice_prompt: String = GameText.PHOTO_FRAME_CHOICE_PROMPT
+@export var choice_prompt: String = ""
 @export var once_flag: String = GameState.FLAG_PHOTO_INVESTIGATED
 @export_multiline var repeat_message: String = ""
 @export var memory_relief_sfx: AudioStream = MEMORY_RELIEF_SFX
 @export_range(-40.0, 12.0, 0.5) var memory_relief_sfx_volume_db: float = 0.0
 @export_file("*.tscn") var memory_scene_path: String = MEMORY_SCENE_PATH_DEFAULT
-@export var memory_trigger_text: String = MEMORY_TRIGGER_TEXT
+@export var memory_trigger_text: String = ""
 @export_range(0.0, 3.0, 0.05) var memory_hold_duration: float = 1.6
 @export_range(0.05, 1.5, 0.05) var memory_fade_duration: float = 0.5
 @export var memory_overlay_tint: Color = Color(0.96, 0.84, 0.62, 0.82)
@@ -31,6 +31,10 @@ var _memory_overlay_scene: Node = null
 func _ready() -> void:
 	if detail_message.is_empty():
 		detail_message = "\n".join(GameText.PHOTO_FRAME_MEMORY_LINES)
+	if choice_prompt.is_empty():
+		choice_prompt = GameText.PHOTO_FRAME_CHOICE_PROMPT
+	if memory_trigger_text.is_empty():
+		memory_trigger_text = _resolved_memory_trigger_text()
 
 
 func get_interaction_dialog_lines() -> Array[DialogLine]:
@@ -125,7 +129,16 @@ func _mark_investigated() -> void:
 
 
 func _dialog_lines_from_message(source_message: String) -> Array[DialogLine]:
+	if LanguageSwitch != null:
+		return DialogTextLoader.lines_from_strings(LanguageSwitch.translate_multiline(source_message))
 	return DialogTextLoader.lines_from_strings(_message_as_line_array(source_message))
+
+
+func _resolved_memory_trigger_text() -> String:
+	var raw := TranslationServer.translate(MEMORY_TRIGGER_TEXT_KEY)
+	if raw.begins_with("@"):
+		return raw.substr(1).strip_edges()
+	return raw
 
 
 func _message_as_line_array(source_message: String) -> PackedStringArray:

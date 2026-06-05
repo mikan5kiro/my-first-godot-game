@@ -46,7 +46,7 @@ tile_set = ExtResource("2_78ydu")
 
 [node name="BookshelfArea" type="Area2D" parent="." unique_id=1157638977]
 script = ExtResource("6_item")
-message = "放着各种各样的书。"
+message = "scene.workshop.bookshelf"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="BookshelfArea" unique_id=982472033]
 position = Vector2(160, 1)
@@ -54,7 +54,7 @@ shape = SubResource("RectangleShape2D_4kvkx")
 
 [node name="WindowArea" type="Area2D" parent="." unique_id=2143757426]
 script = ExtResource("6_item")
-message = "窗户。外面什么都看不见。"
+message = "scene.workshop.window"
 required_facing = "up"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="WindowArea" unique_id=476279681]
@@ -63,7 +63,7 @@ shape = SubResource("RectangleShape2D_w653m")
 
 [node name="DeskArea" type="Area2D" parent="." unique_id=605630984]
 script = ExtResource("6_item")
-message = "一张大办公桌。不管是学习还是娱乐都很合适。"
+message = "scene.workshop.desk"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DeskArea" unique_id=1258320522]
 position = Vector2(112, -1)
@@ -79,7 +79,7 @@ tile_set = ExtResource("2_78ydu")
 
 [node name="ShelfArea" type="Area2D" parent="." unique_id=270691263]
 script = ExtResource("6_item")
-message = "放着各种各样的裙子。"
+message = "scene.workshop.wardrobe"
 required_facing = "down"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ShelfArea" unique_id=546017104]
@@ -94,7 +94,7 @@ tile_set = ExtResource("2_78ydu")
 script = ExtResource("10_seat")
 allow_select_when_facing_mismatch = false
 interaction_priority_override = -5
-message = "椅子。"
+message = "scene.workshop.chair"
 move_player_to_interaction_point = true
 player_interaction_point_path = NodePath("SitPoint")
 player_pose_animation = "sitback"
@@ -119,7 +119,7 @@ tile_set = ExtResource("2_78ydu")
 
 [node name="qinjia" type="Area2D" parent="." unique_id=414531457]
 script = ExtResource("6_item")
-message = "琴架。上面放着两把吉他。"
+message = "scene.workshop.guitar_stand"
 required_facing = "up"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="qinjia" unique_id=1152338570]

@@ -9,6 +9,8 @@ const LOCALE_EN := "en"
 const SETTINGS_PATH := "user://settings.cfg"
 const SETTINGS_SECTION := "localization"
 const SETTINGS_KEY_LOCALE := "locale"
+const LEGACY_SETTINGS_SECTION := "locale"
+const LEGACY_SETTINGS_KEY := "language"
 const SUPPORTED_LOCALES := [LOCALE_ZH_CN, LOCALE_EN]
 const TRANSLATION_CSV_SOURCES := [
 	"res://localization/zh_CN.csv",
@@ -30,6 +32,53 @@ func translate_text(key: String) -> String:
 	return TranslationServer.translate(key)
 
 
+func is_translation_key(text: String) -> bool:
+	var content := text.strip_edges()
+	if content.is_empty() or not content.contains("."):
+		return false
+	if content.begins_with("[") and content.ends_with("]"):
+		return false
+	for i in content.length():
+		var code := content.unicode_at(i)
+		if (code >= 0x4E00 and code <= 0x9FFF) or (code >= 0x3400 and code <= 0x4DBF):
+			return false
+	return true
+
+
+func translate_line(line: String) -> String:
+	var stripped := line.strip_edges()
+	if stripped.is_empty():
+		return line
+	if stripped.begins_with("[") and stripped.ends_with("]"):
+		return stripped
+
+	var prefix := ""
+	var content := stripped
+	if stripped.begins_with("@") or stripped.begins_with("#"):
+		prefix = stripped.substr(0, 1)
+		content = stripped.substr(1).strip_edges()
+
+	if is_translation_key(content):
+		return prefix + translate_text(content)
+	return line
+
+
+func translate_multiline(source: String) -> PackedStringArray:
+	var lines := PackedStringArray()
+	for raw in source.split("\n", false):
+		var stripped := raw.strip_edges()
+		if stripped.is_empty():
+			continue
+		lines.append(translate_line(stripped))
+	return lines
+
+
+func localize_text(text: String) -> String:
+	if is_translation_key(text):
+		return translate_text(text)
+	return text
+
+
 func _ensure_translations_loaded() -> void:
 	if _translations_ready:
 		return
@@ -43,6 +92,14 @@ func _ensure_translations_loaded() -> void:
 	_translations_ready = true
 	if TranslationServer.translate("ui.title.start") == "ui.title.start":
 		push_error("LanguageSwitch: translations failed to load; buttons will show raw keys.")
+
+
+func _csv_value_from_row(row: PackedStringArray) -> String:
+	if row.size() <= 1:
+		return ""
+	if row.size() == 2:
+		return row[1]
+	return ",".join(PackedStringArray(row.slice(1)))
 
 
 func _add_translation_from_csv(path: String) -> void:
@@ -67,7 +124,7 @@ func _add_translation_from_csv(path: String) -> void:
 		var key := row[0].strip_edges()
 		if key.is_empty():
 			continue
-		var value := row[1] if row.size() > 1 else ""
+		var value := _csv_value_from_row(row)
 		translation.add_message(key, value)
 
 	TranslationServer.add_translation(translation)
@@ -75,7 +132,7 @@ func _add_translation_from_csv(path: String) -> void:
 
 func apply_saved_or_default() -> void:
 	var saved := _read_saved_locale()
-	apply_locale(saved if _is_supported_locale(saved) else LOCALE_ZH_CN)
+	_set_locale(saved if _is_supported_locale(saved) else LOCALE_ZH_CN)
 
 
 func toggle_locale() -> String:
@@ -89,9 +146,15 @@ func toggle_locale() -> String:
 func apply_locale(locale: String) -> void:
 	var normalized := _normalize_locale(locale)
 	var target := normalized if _is_supported_locale(normalized) else LOCALE_ZH_CN
-	TranslationServer.set_locale(target)
+	_set_locale(target)
 	_save_locale(target)
-	language_changed.emit(target)
+
+
+func _set_locale(locale: String) -> void:
+	var previous := _normalize_locale(TranslationServer.get_locale())
+	TranslationServer.set_locale(locale)
+	if previous != locale:
+		language_changed.emit(locale)
 
 
 func get_current_locale() -> String:
@@ -129,7 +192,12 @@ func _read_saved_locale() -> String:
 	var error := cfg.load(SETTINGS_PATH)
 	if error != OK:
 		return ""
-	return str(cfg.get_value(SETTINGS_SECTION, SETTINGS_KEY_LOCALE, ""))
+
+	var saved := str(cfg.get_value(SETTINGS_SECTION, SETTINGS_KEY_LOCALE, ""))
+	if not saved.is_empty():
+		return _normalize_locale(saved)
+
+	return _normalize_locale(str(cfg.get_value(LEGACY_SETTINGS_SECTION, LEGACY_SETTINGS_KEY, "")))
 
 
 func _save_locale(locale: String) -> void:

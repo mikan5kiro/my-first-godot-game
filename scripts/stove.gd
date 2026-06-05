@@ -4,7 +4,6 @@ class_name StoveInteractable
 const CHOICE_YES := "yes"
 const CHOICE_NO := "no"
 
-const MSG_STOVE := GameText.STOVE_LABEL
 const STOVE_IGNITION_SFX: AudioStream = preload("res://audios/ガスコンロ点火.mp3")
 const COOKING_SFX: AudioStream = preload("res://audios/餃子を揚げる.mp3")
 const STOVE_TURN_OFF_SFX: AudioStream = preload("res://audios/ガスコンロの火を止める.mp3")
@@ -27,7 +26,7 @@ func get_interaction_dialog_lines() -> Array[DialogLine]:
 	var next_meal := GameState.get_next_meal_time_display_name()
 	return DialogTextLoader.lines_from_strings(
 		PackedStringArray([
-			MSG_STOVE,
+			GameText.STOVE_LABEL,
 			GameText.STOVE_OFF_MEAL_TIME,
 			GameText.stove_wait_until(next_meal),
 		]),
@@ -44,11 +43,11 @@ func interact(interactor: Node) -> String:
 		return ""
 
 	if GameState == null or not GameState.can_cook() or not GameState.is_meal_time():
-		return MSG_STOVE
+		return GameText.STOVE_LABEL
 
 	var player_interactor := _get_player_interactor(interactor)
 	if player_interactor == null:
-		return MSG_STOVE
+		return GameText.STOVE_LABEL
 
 	player_interactor.show_choice(
 		GameText.STOVE_COOK_PROMPT,

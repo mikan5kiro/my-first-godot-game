@@ -25,7 +25,7 @@ func can_interact(interactor: Node) -> bool:
 			return false
 	if _is_unlocked():
 		return not target_scene.is_empty()
-	return not _get_locked_dialog_lines().is_empty() or _has_shiny_thing()
+	return not get_blocked_dialog_lines(_uses_blocked_repeat_dialog()).is_empty() or _has_shiny_thing()
 
 
 func interact(interactor: Node) -> String:
@@ -43,7 +43,7 @@ func _run_locked_door_flow(interactor: Node) -> void:
 		return
 
 	var use_repeat_dialog := _uses_blocked_repeat_dialog()
-	var blocked_lines := _blocked_repeat_dialog_lines if use_repeat_dialog else _blocked_dialog_lines
+	var blocked_lines := get_blocked_dialog_lines(use_repeat_dialog)
 	if not blocked_lines.is_empty():
 		await player_interactor.play_monologue_lines(blocked_lines)
 	if not use_repeat_dialog:
@@ -120,9 +120,3 @@ func _get_player_interactor(interactor: Node) -> PlayerInteractor:
 	if interactor == null:
 		return null
 	return interactor.get_node_or_null("Area2D") as PlayerInteractor
-
-
-func _get_locked_dialog_lines() -> Array[DialogLine]:
-	if _uses_blocked_repeat_dialog():
-		return _blocked_repeat_dialog_lines
-	return _blocked_dialog_lines

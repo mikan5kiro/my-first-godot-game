@@ -132,7 +132,7 @@ func _build_load_slot_rows() -> void:
 
 func _create_load_slot_row(slot: int) -> StatusPanelView:
 	var row := status_panel_scene.instantiate() as StatusPanelView
-	row.player_display_name = _translate(player_display_name)
+	row.player_display_name = player_display_name
 	row.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	row.custom_minimum_size = Vector2(RpgUiStyle.BOTTOM_PANEL_WIDTH, RpgUiStyle.BOTTOM_PANEL_HEIGHT)
 	row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -143,7 +143,7 @@ func _create_load_slot_row(slot: int) -> StatusPanelView:
 
 
 func _apply_slot_data(row: StatusPanelView, slot: int) -> void:
-	row.player_display_name = _translate(player_display_name)
+	row.player_display_name = player_display_name
 	row.set_slot_title(_translate("ui.save.slot_short") % (slot + 1))
 	if SaveManager.has_save(slot):
 		row.apply_from_save_data(SaveManager.read_save_data(slot))

@@ -4,7 +4,7 @@ class_name DiningTableInteractable
 const CHOICE_YES := "yes"
 const CHOICE_NO := "no"
 
-@export_multiline var message: String = "餐桌。"
+@export_multiline var message: String = "scene.dining_table.label"
 
 
 func _ready() -> void:
@@ -16,14 +16,14 @@ func interact(interactor: Node) -> String:
 		return ""
 
 	if GameState == null or GameState.get_prepared_meal() == null:
-		return message
+		return _localized_message()
 
 	if not GameState.is_meal_time():
 		return GameText.NOT_MEAL_TIME
 
 	var player_interactor := _get_player_interactor(interactor)
 	if player_interactor == null:
-		return message
+		return _localized_message()
 
 	player_interactor.show_choice(
 		GameText.DINING_TABLE_PROMPT,
@@ -57,3 +57,9 @@ func _get_player_interactor(interactor: Node) -> PlayerInteractor:
 	if interactor == null:
 		return null
 	return interactor.get_node_or_null("Area2D") as PlayerInteractor
+
+
+func _localized_message() -> String:
+	if LanguageSwitch != null:
+		return LanguageSwitch.localize_text(message)
+	return TranslationServer.translate(message)

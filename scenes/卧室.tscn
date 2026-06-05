@@ -53,7 +53,7 @@ position = Vector2(57, 95)
 
 [node name="Area2D" type="Area2D" parent="." unique_id=240888828]
 script = ExtResource("5_kggxr")
-message = "柜子里放着一些床上用品。"
+message = "scene.bedroom.cabinet"
 required_facing = "up"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D" unique_id=559944024]
@@ -62,7 +62,7 @@ shape = SubResource("RectangleShape2D_jq7jo")
 
 [node name="Area2D2" type="Area2D" parent="." unique_id=1066381967]
 script = ExtResource("8_bed")
-message = "一张大床。"
+message = "scene.bedroom.bed"
 move_player_to_interaction_point = true
 player_interaction_point_path = NodePath("SitPoint")
 player_pose_animation = "sitright"
@@ -79,7 +79,7 @@ shape = SubResource("RectangleShape2D_b7esm")
 
 [node name="Area2D3" type="Area2D" parent="." unique_id=1355152532]
 script = ExtResource("5_kggxr")
-message = "床头柜。"
+message = "scene.bedroom.nightstand"
 required_facing = "up"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D3" unique_id=1142798750]
@@ -89,7 +89,7 @@ shape = SubResource("RectangleShape2D_kggxr")
 [node name="Area2D4" type="Area2D" parent="." unique_id=797888171]
 script = ExtResource("7_priority")
 interaction_priority_override = 1
-message = "这里有一个飘窗。向左看可以看到阳台。"
+message = "scene.bedroom.bay_window"
 required_facing = "left"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D4" unique_id=315956271]

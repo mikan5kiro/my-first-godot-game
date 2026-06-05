@@ -5,5 +5,5 @@
 [resource]
 script = ExtResource("1_item_data")
 id = "shiny_thing"
-display_name = "闪闪发光的东西"
-inspect_text = "闪闪发光的东西。"
+display_name = "item.shiny_thing.name"
+inspect_text = "item.shiny_thing.inspect"

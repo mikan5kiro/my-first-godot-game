@@ -66,7 +66,7 @@ shape = SubResource("WorldBoundaryShape2D_2b6py")
 
 [node name="Fridge" type="Area2D" parent="." unique_id=920980610]
 script = ExtResource("7_investigate")
-message = "冰箱。里面放着一些食材和各种各样的调料。"
+message = "scene.kitchen.fridge"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Fridge" unique_id=150541740]
@@ -75,7 +75,7 @@ shape = SubResource("RectangleShape2D_g3o0j")
 
 [node name="Cabinet" type="Area2D" parent="." unique_id=1884563501]
 script = ExtResource("7_investigate")
-message = "柜子。里面放着两人份的餐具和各种厨具。"
+message = "scene.kitchen.cabinet"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Cabinet" unique_id=1884563502]
 position = Vector2(34, 114)
@@ -94,7 +94,7 @@ shape = SubResource("RectangleShape2D_g3o0j")
 
 [node name="water" type="Area2D" parent="." unique_id=2001776772]
 script = ExtResource("7_investigate")
-message = "水池。"
+message = "scene.kitchen.sink"
 required_facing = "up"
 metadata/_custom_type_script = "uid://bvuy1puvytkd4"
 

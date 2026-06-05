@@ -1,7 +1,7 @@
 extends Interactable
 class_name InvestigateItem
 
-@export_multiline var message: String = "这里有一些值得调查的内容。"
+@export_multiline var message: String = "common.investigate.default"
 @export_group("Once Only")
 @export var once_flag: String = ""
 @export_multiline var repeat_message: String = ""
@@ -14,18 +14,16 @@ class_name InvestigateItem
 @export var player_pose_animation: String = ""
 @export_enum("none", "up", "down", "left", "right") var player_pose_facing: String = "none"
 
-var _dialog_lines: Array[DialogLine] = []
-var _repeat_dialog_lines: Array[DialogLine] = []
-
 
 func _ready() -> void:
-	_reload_dialog_lines()
+	if LanguageSwitch != null:
+		LanguageSwitch.language_changed.connect(_on_language_changed)
 
 
 func get_interaction_dialog_lines() -> Array[DialogLine]:
 	if _uses_repeat_dialog():
-		return _repeat_dialog_lines
-	return _dialog_lines
+		return _dialog_lines_from_message(repeat_message)
+	return _dialog_lines_from_message(message)
 
 
 func interact(interactor: Node) -> String:
@@ -47,14 +45,43 @@ func _uses_repeat_dialog() -> bool:
 	return GameState.has_flag(once_flag)
 
 
-func _reload_dialog_lines() -> void:
-	_dialog_lines = _dialog_lines_from_message(message)
-	_mark_reward_obtain_lines(_dialog_lines)
-	_repeat_dialog_lines = _dialog_lines_from_message(repeat_message)
+func _on_language_changed(_locale: String) -> void:
+	pass
 
 
 func _dialog_lines_from_message(source_message: String) -> Array[DialogLine]:
-	return DialogTextLoader.lines_from_strings(_message_as_line_array(source_message))
+	var lines := _localized_line_array(source_message)
+	var dialog_lines := DialogTextLoader.lines_from_strings(lines)
+	_mark_reward_obtain_lines(dialog_lines)
+	return dialog_lines
+
+
+func _localized_line_array(source_message: String) -> PackedStringArray:
+	if source_message.strip_edges().is_empty():
+		return PackedStringArray()
+	var lines := PackedStringArray()
+	for raw in source_message.split("\n", false):
+		var stripped := raw.strip_edges()
+		if stripped.is_empty():
+			continue
+		if stripped == "common.reward.obtain_line":
+			lines.append_array(_reward_obtain_lines())
+			continue
+		if LanguageSwitch != null:
+			lines.append(LanguageSwitch.translate_line(stripped))
+		else:
+			lines.append(stripped)
+	return lines
+
+
+func _reward_obtain_lines() -> PackedStringArray:
+	var lines := PackedStringArray()
+	var template := _item_obtained_template()
+	for item in reward_items:
+		if item == null:
+			continue
+		lines.append(template % item.get_display_name())
+	return lines
 
 
 func _message_as_line_array(source_message: String) -> PackedStringArray:
@@ -95,11 +122,18 @@ func _mark_reward_obtain_lines(lines: Array[DialogLine]) -> void:
 
 func _get_reward_obtain_messages() -> PackedStringArray:
 	var messages := PackedStringArray()
+	var template := _item_obtained_template()
 	for item in reward_items:
 		if item == null:
 			continue
-		messages.append("获得%s。" % item.get_display_name())
+		messages.append(template % item.get_display_name())
 	return messages
+
+
+func _item_obtained_template() -> String:
+	if LanguageSwitch != null:
+		return LanguageSwitch.translate_text("common.item_obtained")
+	return TranslationServer.translate("common.item_obtained")
 
 
 func _apply_player_pose(interactor: Node) -> void:

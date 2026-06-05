@@ -3,9 +3,7 @@ class_name StatusPanelView
 
 ## 与 ESC 人物面板一致的状态展示区，可绑定 GameState 或存档数据。
 
-const HIDDEN_STAT_LABEL := "？？？"
-
-@export var player_display_name: String = "主人公"
+@export var player_display_name: String = "ui.common.player_name_default"
 
 @onready var player_name_label: Label = $Margin/StatusContent/StatusBody/InfoColumn/PlayerName
 @onready var time_value: Label = $Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow/Value
@@ -30,11 +28,11 @@ func apply_from_game_state() -> void:
 		return
 
 	apply_labels({
-		"player_name": player_display_name,
-		"time": HIDDEN_STAT_LABEL,
-		"hunger": HIDDEN_STAT_LABEL,
-		"sanity": HIDDEN_STAT_LABEL,
-		"money": HIDDEN_STAT_LABEL,
+		"player_name": _tr(player_display_name),
+		"time": _hidden_stat_label(),
+		"hunger": _hidden_stat_label(),
+		"sanity": _hidden_stat_label(),
+		"money": _hidden_stat_label(),
 	})
 
 
@@ -42,17 +40,18 @@ func apply_from_save_data(data: Dictionary) -> void:
 	if GameState == null:
 		apply_empty_slot()
 		return
-	var labels := GameState.get_status_labels_from_data(data, player_display_name)
-	labels["time"] = HIDDEN_STAT_LABEL
-	labels["hunger"] = HIDDEN_STAT_LABEL
-	labels["sanity"] = HIDDEN_STAT_LABEL
-	labels["money"] = HIDDEN_STAT_LABEL
+	var labels := GameState.get_status_labels_from_data(data, _tr(player_display_name))
+	var hidden := _hidden_stat_label()
+	labels["time"] = hidden
+	labels["hunger"] = hidden
+	labels["sanity"] = hidden
+	labels["money"] = hidden
 	apply_labels(labels)
 
 
 func apply_empty_slot() -> void:
 	apply_labels({
-		"player_name": "空档案",
+		"player_name": _tr("ui.panel.empty_slot"),
 		"time": "--",
 		"hunger": "--",
 		"sanity": "--",
@@ -104,3 +103,13 @@ func _apply_avatar_size() -> void:
 		max_side = 88.0
 	max_side = clampf(max_side - 2.0, 48.0, 88.0)
 	avatar_slot.custom_minimum_size = Vector2(max_side, max_side)
+
+
+func _hidden_stat_label() -> String:
+	return _tr("stat.hidden")
+
+
+func _tr(key: String) -> String:
+	if LanguageSwitch != null:
+		return LanguageSwitch.translate_text(key)
+	return TranslationServer.translate(key)

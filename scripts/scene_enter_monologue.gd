@@ -52,6 +52,10 @@ func _wait_until_scene_ready() -> void:
 
 
 func _lines_as_array() -> PackedStringArray:
+	if lines.strip_edges().is_empty():
+		return PackedStringArray()
+	if LanguageSwitch != null:
+		return LanguageSwitch.translate_multiline(lines)
 	var result := PackedStringArray()
 	for raw in lines.split("\n", false):
 		var stripped := raw.strip_edges()

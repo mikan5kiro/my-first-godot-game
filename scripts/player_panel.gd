@@ -8,7 +8,7 @@ enum Tab {
 
 @export_file("*.tscn") var title_scene_path: String = "res://scenes/title_screen.tscn"
 @export var panel_toggle_action: StringName = &"ui_cancel"
-@export var player_display_name: String = "主人公"
+@export var player_display_name: String = "ui.common.player_name_default"
 @export_range(0.4, 4.0, 0.05) var menu_breath_cycle_duration := 1.2
 @export var main_menu_width := RpgUiStyle.BOTTOM_PANEL_WIDTH
 @export var item_menu_columns := 2
@@ -20,13 +20,18 @@ enum Tab {
 @export var close_detail_sfx: AudioStream
 
 const MENU_ROW_HEIGHT := 34.0
-const HIDDEN_STAT_LABEL := "？？？"
-
 @onready var main_menu_root: Control = $MainMenuRoot
 @onready var detail_menu_root: Control = $MainMenuRoot/StatusPanel/Margin/StatusContent/DetailMenuRoot
 @onready var items_row: PanelContainer = $MainMenuRoot/MenuPanel/Margin/MenuList/ItemsRow
+@onready var items_row_label: Label = $MainMenuRoot/MenuPanel/Margin/MenuList/ItemsRow/Label
 @onready var title_row: PanelContainer = $MainMenuRoot/MenuPanel/Margin/MenuList/ReadRow
+@onready var title_row_label: Label = $MainMenuRoot/MenuPanel/Margin/MenuList/ReadRow/Label
 @onready var save_row: PanelContainer = $MainMenuRoot/MenuPanel/Margin/MenuList/SaveRow
+@onready var save_row_label: Label = $MainMenuRoot/MenuPanel/Margin/MenuList/SaveRow/Label
+@onready var time_row_label: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow/Label
+@onready var hunger_row_label: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/HungerRow/Label
+@onready var sanity_row_label: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/SanityRow/Label
+@onready var money_row_label: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/MoneyRow/Label
 @onready var player_name_label: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/PlayerName
 @onready var time_value: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow/Value
 @onready var hunger_value: Label = $MainMenuRoot/StatusPanel/Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/HungerRow/Value
@@ -70,7 +75,10 @@ func _ready() -> void:
 		GameState.inventory_changed.connect(_on_inventory_changed)
 		GameState.tasks_changed.connect(_on_tasks_changed)
 
-	player_name_label.text = player_display_name
+	if LanguageSwitch != null:
+		LanguageSwitch.language_changed.connect(_on_language_changed)
+
+	call_deferred("_apply_localized_texts")
 	status_content.resized.connect(_apply_avatar_size)
 	_refresh_all()
 	_set_active_tab(Tab.ITEMS)
@@ -104,7 +112,7 @@ func _apply_detail_binding(tab: Tab) -> void:
 			_detail_list_panel.columns = 1
 			_detail_list_panel.slot_min_width = 0.0
 			_detail_list_panel.show_count_suffix = false
-			_detail_list_panel.empty_detail_text = "返回主菜单"
+			_detail_list_panel.empty_detail_text = _tr("ui.panel.return_title")
 			_detail_list_panel.bind(
 				_get_title_menu_entries,
 				_get_title_menu_title,
@@ -119,7 +127,7 @@ func _apply_detail_binding(tab: Tab) -> void:
 			_detail_list_panel.columns = 2
 			_detail_list_panel.slot_min_width = item_slot_min_width
 			_detail_list_panel.show_count_suffix = false
-			_detail_list_panel.empty_detail_text = "选择一个档案槽"
+			_detail_list_panel.empty_detail_text = _tr("ui.panel.pick_save_slot")
 			_detail_list_panel.bind(
 				_get_save_slot_entries,
 				_get_save_slot_title,
@@ -164,7 +172,7 @@ func _get_item_title(index: int) -> String:
 		return ""
 	var item: ItemData = entry.get("item")
 	if item == null:
-		return "未知物品"
+		return _tr("ui.panel.unknown_item")
 	return item.get_display_name()
 
 
@@ -218,17 +226,17 @@ func _get_save_slot_entries() -> Array:
 func _get_save_slot_title(index: int) -> String:
 	if index < 0 or index >= SaveManager.SLOT_COUNT:
 		return ""
-	return "档案 %d" % (index + 1)
+	return _tr("ui.panel.save_slot") % (index + 1)
 
 
 func _get_save_slot_detail(index: int) -> String:
 	if index < 0 or index >= SaveManager.SLOT_COUNT:
 		return ""
 	if not SaveManager.has_save(index):
-		return "空档案"
+		return _tr("ui.panel.empty_slot")
 	if _pending_save_overwrite_slot == index:
-		return "确定要覆盖该存档吗？"
-	return "存档 %d" % (index + 1)
+		return _tr("ui.panel.confirm_overwrite")
+	return _tr("ui.panel.save_slot_named") % (index + 1)
 
 
 func _get_save_slot_stable_id(index: int) -> String:
@@ -242,11 +250,11 @@ func _get_title_menu_entries() -> Array:
 
 
 func _get_title_menu_title(_index: int) -> String:
-	return "返回主菜单"
+	return _tr("ui.panel.return_title")
 
 
 func _get_title_menu_detail(_index: int) -> String:
-	return "返回主菜单（当前未保存进度将丢失）"
+	return _tr("ui.panel.return_title_detail")
 
 
 func _get_title_menu_stable_id(_index: int) -> String:
@@ -579,7 +587,7 @@ func _try_use_selected_item(item: ItemData) -> void:
 
 func _try_save_selected_slot() -> void:
 	if not SaveManager.can_save():
-		_detail_list_panel.set_detail_text("当前状态无法存档。")
+		_detail_list_panel.set_detail_text(_tr("ui.panel.save_blocked"))
 		return
 	var index := _detail_list_panel.get_selected_index()
 	if index < 0 or index >= SaveManager.SLOT_COUNT:
@@ -589,11 +597,11 @@ func _try_save_selected_slot() -> void:
 		_detail_list_panel.refresh()
 		return
 	_pending_save_overwrite_slot = -1
-	if SaveManager.save_game(index, player_display_name):
+	if SaveManager.save_game(index, _tr(player_display_name)):
 		_detail_list_panel.refresh()
-		_detail_list_panel.set_detail_text("已存入档案 %d。" % (index + 1))
+		_detail_list_panel.set_detail_text(_tr("ui.panel.save_ok") % (index + 1))
 	else:
-		_detail_list_panel.set_detail_text("存档失败。")
+		_detail_list_panel.set_detail_text(_tr("ui.panel.save_failed"))
 
 
 func _try_return_title() -> void:
@@ -628,10 +636,40 @@ func _on_tasks_changed() -> void:
 func _refresh_status() -> void:
 	if GameState == null:
 		return
-	time_value.text = HIDDEN_STAT_LABEL
-	hunger_value.text = HIDDEN_STAT_LABEL
-	sanity_value.text = HIDDEN_STAT_LABEL
-	money_value.text = HIDDEN_STAT_LABEL
+	var hidden := _tr("stat.hidden")
+	time_value.text = hidden
+	hunger_value.text = hidden
+	sanity_value.text = hidden
+	money_value.text = hidden
+
+
+func _on_language_changed(_locale: String) -> void:
+	_apply_localized_texts()
+	_refresh_all()
+
+
+func _apply_localized_texts() -> void:
+	player_name_label.text = _tr(player_display_name)
+	if items_row_label != null:
+		items_row_label.text = _tr("ui.panel.items")
+	if save_row_label != null:
+		save_row_label.text = _tr("ui.panel.save")
+	if title_row_label != null:
+		title_row_label.text = _tr("ui.panel.title_menu")
+	if time_row_label != null:
+		time_row_label.text = _tr("ui.stat.time")
+	if hunger_row_label != null:
+		hunger_row_label.text = _tr("ui.stat.hunger")
+	if sanity_row_label != null:
+		sanity_row_label.text = _tr("ui.stat.sanity")
+	if money_row_label != null:
+		money_row_label.text = _tr("ui.stat.money")
+
+
+func _tr(key: String) -> String:
+	if LanguageSwitch != null:
+		return LanguageSwitch.translate_text(key)
+	return TranslationServer.translate(key)
 
 
 func _on_time_changed(_day: int, _period: int) -> void:

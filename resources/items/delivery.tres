@@ -5,6 +5,6 @@
 [resource]
 script = ExtResource("1_item_data")
 id = "delivery"
-display_name = "外卖"
-inspect_text = "已经吃腻了的外卖。（在餐桌使用）"
+display_name = "item.delivery.name"
+inspect_text = "item.delivery.inspect"
 is_meal = true

@@ -13,4 +13,6 @@ func get_result_name() -> String:
 		return result_item.get_display_name()
 	if not id.is_empty():
 		return id
-	return "未知料理"
+	if LanguageSwitch != null:
+		return LanguageSwitch.translate_text("common.unknown_recipe")
+	return TranslationServer.translate("common.unknown_recipe")

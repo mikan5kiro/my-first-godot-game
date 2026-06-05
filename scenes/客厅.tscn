@@ -294,10 +294,10 @@ target_scene = "res://scenes/房间.tscn"
 spawn_marker_name = "Spawn_Living2Room"
 transition_delay_after_sfx = 0.35
 unlock_flag = "room_area_unlocked"
-blocked_message = "这个房间的门紧闭着。
-@以前的我一直不敢面对这个房间。"
+blocked_message = "scene.living.room_door.blocked.01
+@scene.living.room_door.blocked.02"
 blocked_once_flag = "doorflag"
-blocked_repeat_message = "这个房间的门紧闭着。"
+blocked_repeat_message = "scene.living.room_door.blocked_repeat"
 required_facing = "down"
 metadata/_custom_type_script = "uid://cj22ggupilu5w"
 
@@ -324,7 +324,7 @@ shape = SubResource("RectangleShape2D_iy33j")
 
 [node name="tv" type="Area2D" parent="." unique_id=1845037733]
 script = ExtResource("6_iy33j")
-message = "电视。"
+message = "scene.living.tv"
 required_facing = "right"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="tv" unique_id=1606397395]
@@ -333,7 +333,7 @@ shape = SubResource("RectangleShape2D_2ah0h")
 
 [node name="mirror" type="Area2D" parent="." unique_id=2062601606]
 script = ExtResource("6_iy33j")
-message = "镜子。"
+message = "scene.living.mirror"
 required_facing = "right"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="mirror" unique_id=2134912556]
@@ -342,7 +342,7 @@ shape = SubResource("RectangleShape2D_srddp")
 
 [node name="yijia" type="Area2D" parent="." unique_id=1897119444]
 script = ExtResource("6_iy33j")
-message = "衣架。"
+message = "scene.living.coat_rack"
 required_facing = "right"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="yijia" unique_id=199145744]
@@ -351,7 +351,7 @@ shape = SubResource("RectangleShape2D_srddp")
 
 [node name="鞋柜" type="Area2D" parent="." unique_id=634082287]
 script = ExtResource("6_iy33j")
-message = "鞋柜。"
+message = "scene.living.shoe_cabinet"
 required_facing = "right"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="鞋柜" unique_id=929117167]
@@ -360,7 +360,7 @@ shape = SubResource("RectangleShape2D_srddp")
 
 [node name="沙发" type="Area2D" parent="." unique_id=2068407967]
 script = ExtResource("14_sofa")
-message = "刚好够两个人坐的沙发。"
+message = "scene.living.sofa"
 move_player_to_interaction_point = true
 player_interaction_point_path = NodePath("SitPoint")
 player_pose_animation = "sitright"
@@ -377,7 +377,7 @@ position = Vector2(222, 135)
 script = ExtResource("14_sofa")
 allow_select_when_facing_mismatch = false
 interaction_priority_override = -5
-message = "椅子。"
+message = "scene.living.chair"
 move_player_to_interaction_point = true
 player_interaction_point_path = NodePath("../SitPoint")
 player_pose_animation = "sitback"

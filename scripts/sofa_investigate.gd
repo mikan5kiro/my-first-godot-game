@@ -86,5 +86,9 @@ func _position_meta_key() -> StringName:
 
 func _get_blocked_direction_text() -> String:
 	if not message.is_empty():
+		if LanguageSwitch != null:
+			return LanguageSwitch.localize_text(message)
 		return message
-	return "这里有个可以坐的地方。"
+	if LanguageSwitch != null:
+		return LanguageSwitch.translate_text("common.sofa.default")
+	return TranslationServer.translate("common.sofa.default")
