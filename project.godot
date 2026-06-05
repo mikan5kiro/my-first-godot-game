@@ -17,18 +17,19 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-LanguageSwitch="*res://scripts/language_switch.gd"
 GameState="*res://scripts/game_state.gd"
 SaveManager="*res://scripts/save_manager.gd"
 PlayerPanel="*res://scenes/player_panel.tscn"
 SceneTransition="*res://scenes/scene_transition.tscn"
 DevScreenshot="*res://scripts/dev_screenshot.gd"
 DisplayModeManager="*res://scripts/display_mode_manager.gd"
+LanguageSwitch="*res://scripts/language_switch.gd"
 
 [display]
 
 window/size/viewport_width=960
 window/size/viewport_height=540
+window/size/mode=4
 window/stretch/mode="canvas_items"
 window/stretch/scale_mode="integer"
 
