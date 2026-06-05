@@ -67,7 +67,7 @@ ending.door.ready_prompt,Ready to say goodbye to these memories?
 ending.choice.yes,Yes
 ending.choice.no,No
 ending.display_text,the end
-intro.awake.01,Eyes open in the old rental room.
+intro.awake.01,Eyes open in the old rental house.
 intro.awake.02,Already moved out—yet no surprise, only quiet familiarity.
 intro.controls.01,Controls: WASD move | E investigate/open | ESC menu/cancel | F sit/stand | F11 fullscreen/windowed.
 time.period.morning,morning
