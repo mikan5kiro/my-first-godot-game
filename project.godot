@@ -23,6 +23,7 @@ PlayerPanel="*res://scenes/player_panel.tscn"
 SceneTransition="*res://scenes/scene_transition.tscn"
 DevScreenshot="*res://scripts/dev_screenshot.gd"
 DisplayModeManager="*res://scripts/display_mode_manager.gd"
+LanguageSwitch="*res://scripts/language_switch.gd"
 
 [display]
 
@@ -67,6 +68,12 @@ sit_toggle={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":70,"key_label":0,"unicode":102,"location":0,"echo":false,"script":null)
 ]
 }
+
+[internationalization]
+
+locale/translations=PackedStringArray("res://localization/zh_CN.zh_CN.translation", "res://localization/en.en.translation")
+locale/fallback="zh_CN"
+locale="zh_CN"
 
 [physics]
 

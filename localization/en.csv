@@ -1,0 +1,8 @@
+keys,en
+ui.title.start,Start Game
+ui.title.load,Continue
+ui.title.quit,Quit
+ui.title.language.current_zh,Language: 中文
+ui.title.language.current_en,Language: English
+ui.save.slot_short,Slot %d
+ui.common.player_name_default,Protagonist

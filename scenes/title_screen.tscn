@@ -6,6 +6,7 @@
 [ext_resource type="AudioStream" uid="uid://dprlmotl5mhxf" path="res://audios/決定ボタンを押す38.mp3" id="3_dc4i4"]
 [ext_resource type="AudioStream" uid="uid://dx0wq8836v46p" path="res://audios/maou_bgm_piano40.mp3" id="4_bgm"]
 [ext_resource type="Texture2D" uid="uid://be37o8yh26ejr" path="res://images/Sprite-startmenu1.png" id="6_3yumr"]
+[ext_resource type="Texture2D" uid="uid://cqrmo52qtym0i" path="res://images/buttonen.png" id="7_btnen"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_normal"]
 bg_color = Color(0.05, 0.05, 0.08, 0.72)
@@ -111,7 +112,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_hover")
-text = "开始游戏"
+text = "ui.title.start"
 
 [node name="LoadButton" type="Button" parent="Menu" unique_id=547594510]
 custom_minimum_size = Vector2(220, 54)
@@ -124,7 +125,7 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_hover")
-text = "继续游戏"
+text = "ui.title.load"
 
 [node name="QuitButton" type="Button" parent="Menu" unique_id=628868322]
 custom_minimum_size = Vector2(220, 54)
@@ -137,7 +138,24 @@ theme_override_styles/normal = SubResource("StyleBoxFlat_normal")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_hover")
-text = "退出游戏"
+text = "ui.title.quit"
+
+[node name="LanguageButton" type="TextureButton" parent="." unique_id=628868323]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -76.0
+offset_top = -76.0
+offset_right = -12.0
+offset_bottom = -12.0
+grow_horizontal = 0
+grow_vertical = 0
+texture_normal = ExtResource("7_btnen")
+ignore_texture_size = true
+stretch_mode = 4
 
 [node name="LoadPage" type="Control" parent="." unique_id=1721370514]
 visible = false

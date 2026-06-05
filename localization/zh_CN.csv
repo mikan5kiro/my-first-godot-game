@@ -1,0 +1,8 @@
+keys,zh_CN
+ui.title.start,开始游戏
+ui.title.load,继续游戏
+ui.title.quit,退出游戏
+ui.title.language.current_zh,Language: 中文
+ui.title.language.current_en,Language: English
+ui.save.slot_short,存档%d
+ui.common.player_name_default,主人公
