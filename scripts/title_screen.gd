@@ -51,13 +51,14 @@ var _hover_sfx_player: AudioStreamPlayer
 var _confirm_sfx_player: AudioStreamPlayer
 var _button_breath := BorderBreathAnimator.new()
 var _breath_button: Button
-var _title_text_base_position := Vector2.ZERO
+var _title_text_base_offset_top := 0.0
+var _title_text_base_offset_bottom := 0.0
 var _title_float_time := 0.0
 var _language_breath_tween: Tween
 
 
 func _ready() -> void:
-	_title_text_base_position = title_text.position
+	call_deferred("_refresh_title_text_float_base")
 	fade_overlay.color = Color(0, 0, 0, 1)
 	_setup_audio_players()
 	_play_title_bgm()
@@ -76,14 +77,28 @@ func _ready() -> void:
 	_play_fade_in()
 
 
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_RESIZED:
+		_refresh_title_text_float_base()
+
+
 func _process(delta: float) -> void:
 	if title_text == null or title_float_amplitude <= 0.0 or title_float_speed <= 0.0:
 		return
 	_title_float_time += delta
-	title_text.position = _title_text_base_position + Vector2(
-		0.0,
-		sin(_title_float_time * TAU * title_float_speed) * title_float_amplitude
-	)
+	var float_y := sin(_title_float_time * TAU * title_float_speed) * title_float_amplitude
+	title_text.offset_top = _title_text_base_offset_top + float_y
+	title_text.offset_bottom = _title_text_base_offset_bottom + float_y
+
+
+func _refresh_title_text_float_base() -> void:
+	if title_text == null:
+		return
+	var float_y := 0.0
+	if title_float_amplitude > 0.0 and title_float_speed > 0.0:
+		float_y = sin(_title_float_time * TAU * title_float_speed) * title_float_amplitude
+	_title_text_base_offset_top = title_text.offset_top - float_y
+	_title_text_base_offset_bottom = title_text.offset_bottom - float_y
 
 
 func _bind_button_actions() -> void:

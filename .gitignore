@@ -5,5 +5,8 @@
 # Export builds
 build/
 
+# Project docs (local notes)
+docs/
+
 # Generated read-only localization export
 localization/en_read.txt

@@ -11,7 +11,10 @@ var _last_windowed_size: Vector2i = Vector2i.ZERO
 func _ready() -> void:
 	_ensure_toggle_action()
 	_apply_clarity_defaults()
-	_apply_default_windowed_1x()
+	if OS.has_feature("web"):
+		_setup_web_viewport()
+	else:
+		_apply_default_windowed_1x()
 	set_process_input(true)
 
 
@@ -54,6 +57,28 @@ func _apply_clarity_defaults() -> void:
 	# 运行时兜底，防止工程设置被改动后出现模糊缩放。
 	ProjectSettings.set_setting("display/window/dpi/allow_hidpi", true)
 	ProjectSettings.set_setting("display/window/stretch/scale_mode", "integer")
+	ProjectSettings.set_setting("display/window/stretch/aspect", "keep")
+
+
+func _setup_web_viewport() -> void:
+	var window := get_window()
+	if window == null:
+		return
+	if not window.size_changed.is_connected(_on_web_window_size_changed):
+		window.size_changed.connect(_on_web_window_size_changed)
+	call_deferred("_sync_web_viewport_stretch")
+
+
+func _on_web_window_size_changed() -> void:
+	call_deferred("_sync_web_viewport_stretch")
+
+
+func _sync_web_viewport_stretch() -> void:
+	var window := get_window()
+	if window == null:
+		return
+	# Web 嵌入 canvas 尺寸常在首帧后才稳定；刷新 content scale 触发 stretch 重算。
+	window.content_scale_size = _base_viewport_size()
 
 
 func _apply_default_windowed_1x() -> void:
