@@ -28,7 +28,7 @@ narrative.photo.memory.01,The photo frame is lifted. Inside is a photo of two pe
 narrative.photo.memory.02,"It looks like it was taken on a cable car at a theme park—one person smiling brightly, the other smiling a little awkwardly."
 narrative.photo.memory.03,@...I never thought they'd keep this photo. Wish I'd taken it more carefully back then.
 narrative.photo.memory.04,@...Yeah.
-narrative.photo.memory.05,@All those memories back then are still kept safe.
+narrative.photo.memory.05,@All those memories are still kept safe.
 narrative.photo.memory.06,"@Past me, who once ran from goodbyes, afraid of being alone."
 narrative.photo.memory.07,@Must have been hard.
 narrative.photo.memory.08,@But it's okay now.
@@ -68,7 +68,7 @@ ending.choice.yes,Yes
 ending.choice.no,No
 ending.display_text,the end
 intro.awake.01,Eyes open in the former rental house.
-intro.awake.02,Already moved out—yet no surprise, only quiet familiarity.
+intro.awake.02,"Already moved out—yet no surprise, only quiet familiarity."
 intro.controls.01,Controls: WASD move | E investigate/open | ESC menu/cancel | F sit/stand | F11 fullscreen/windowed.
 time.period.morning,morning
 time.period.noon,noon
@@ -84,6 +84,11 @@ stat.sanity.optimistic,Hopeful
 stat.sanity.normal,Okay
 stat.sanity.gloomy,Low
 stat.hidden,???
+money.format,%d
+money.desc.plenty,Plenty
+money.desc.enough,Enough
+money.desc.tight,Running low
+money.desc.empty,Nearly broke
 food.meals.plenty,Plenty
 food.meals.low,Running low
 food.meals.almost_gone,Almost gone
@@ -98,6 +103,9 @@ ui.panel.save_slot,Slot %d
 ui.panel.save_slot_named,Save %d
 ui.panel.empty_slot,Empty slot
 ui.panel.confirm_overwrite,Overwrite this save?
+ui.panel.save_ok,Saved to Slot %d
+ui.panel.save_failed,Save failed.
+ui.panel.save_blocked,Cannot save right now.
 ui.panel.unknown_item,Unknown item
 ui.stat.time,Time
 ui.stat.hunger,Hunger
@@ -134,7 +142,7 @@ scene.room.balcony_door,Door to the balcony.
 scene.room.chair,Chair.
 scene.workshop.bookshelf,All kinds of books are on the shelf.
 scene.workshop.window,Window. Nothing visible outside.
-scene.workshop.desk,A large desk. Good for studying or entertainment alike.
+scene.workshop.desk,A large desk. Good for studying and leisure.
 scene.workshop.wardrobe,Assorted clothes hang inside.
 scene.workshop.chair,Chair.
 scene.workshop.guitar_stand,Guitar stand. Two guitars rest on it.

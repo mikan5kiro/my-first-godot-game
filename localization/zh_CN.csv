@@ -84,6 +84,11 @@ stat.sanity.optimistic,乐观
 stat.sanity.normal,普通
 stat.sanity.gloomy,忧郁
 stat.hidden,？？？
+money.format,%d
+money.desc.plenty,很宽裕
+money.desc.enough,够用
+money.desc.tight,有点紧
+money.desc.empty,快没了
 food.meals.plenty,够用
 food.meals.low,不多了
 food.meals.almost_gone,快没了
@@ -98,6 +103,9 @@ ui.panel.save_slot,档案 %d
 ui.panel.save_slot_named,存档 %d
 ui.panel.empty_slot,空档案
 ui.panel.confirm_overwrite,确定要覆盖该存档吗？
+ui.panel.save_ok,已保存到存档 %d
+ui.panel.save_failed,存档失败。
+ui.panel.save_blocked,现在无法存档。
 ui.panel.unknown_item,未知物品
 ui.stat.time,时间
 ui.stat.hunger,饥饿度
@@ -145,7 +153,7 @@ scene.veranda.dryflower.01,两个花艺纸袋。花已经枯萎很久了。
 scene.veranda.dryflower.02,@以前和那个人一起做的。一直没舍得扔。
 scene.veranda.dryflower.03,……？
 scene.veranda.dryflower.04,仔细一看，其中一个纸袋的花泥里有一个闪闪发光的东西。
-scene.veranda.dryflower.repeat,两个花艺纸袋。花已经枯萎很久了。
+scene.veranda.dryflower.repeat,两个插花纸袋。花已经枯萎很久了。
 scene.veranda.window1.01,窗外能看到对面的楼房。
 scene.veranda.window1.02,视线的远处有一片湖，湖的上方突兀地伫立着一座办公楼。
 scene.veranda.window1.repeat,窗外能看到对面的楼房。

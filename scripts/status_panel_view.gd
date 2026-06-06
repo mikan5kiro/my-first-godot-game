@@ -6,9 +6,13 @@ class_name StatusPanelView
 @export var player_display_name: String = "ui.common.player_name_default"
 
 @onready var player_name_label: Label = $Margin/StatusContent/StatusBody/InfoColumn/PlayerName
+@onready var time_row_label: Label = $Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow/Label
 @onready var time_value: Label = $Margin/StatusContent/StatusBody/InfoColumn/StatGrid/TimeRow/Value
+@onready var hunger_row_label: Label = $Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/HungerRow/Label
 @onready var hunger_value: Label = $Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/HungerRow/Value
+@onready var sanity_row_label: Label = $Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/SanityRow/Label
 @onready var sanity_value: Label = $Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/SanityRow/Value
+@onready var money_row_label: Label = $Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/MoneyRow/Label
 @onready var money_value: Label = $Margin/StatusContent/StatusBody/InfoColumn/StatGrid/StatsRow/MoneyRow/Value
 @onready var status_content: VBoxContainer = $Margin/StatusContent
 @onready var slot_title_label: Label = $Margin/StatusContent/SlotTitle
@@ -19,6 +23,9 @@ class_name StatusPanelView
 func _ready() -> void:
 	_apply_panel_styles()
 	status_content.resized.connect(_apply_avatar_size)
+	if LanguageSwitch != null:
+		LanguageSwitch.language_changed.connect(_on_language_changed)
+	call_deferred("_apply_localized_texts")
 	call_deferred("_apply_avatar_size")
 
 
@@ -107,6 +114,21 @@ func _apply_avatar_size() -> void:
 
 func _hidden_stat_label() -> String:
 	return _tr("stat.hidden")
+
+
+func _on_language_changed(_locale: String) -> void:
+	_apply_localized_texts()
+
+
+func _apply_localized_texts() -> void:
+	if time_row_label != null:
+		time_row_label.text = _tr("ui.stat.time")
+	if hunger_row_label != null:
+		hunger_row_label.text = _tr("ui.stat.hunger")
+	if sanity_row_label != null:
+		sanity_row_label.text = _tr("ui.stat.sanity")
+	if money_row_label != null:
+		money_row_label.text = _tr("ui.stat.money")
 
 
 func _tr(key: String) -> String:

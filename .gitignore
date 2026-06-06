@@ -2,5 +2,8 @@
 .godot/
 /android/
 
+# Export builds
+build/
+
 # Generated read-only localization export
 localization/en_read.txt

@@ -6,9 +6,11 @@ extends Node
 
 const LOCALE_ZH_CN := "zh_CN"
 const LOCALE_EN := "en"
+const DEFAULT_LOCALE := LOCALE_EN
 const SETTINGS_PATH := "user://settings.cfg"
 const SETTINGS_SECTION := "localization"
 const SETTINGS_KEY_LOCALE := "locale"
+const SETTINGS_KEY_LOCALE_USER_CHOSEN := "locale_user_chosen"
 const LEGACY_SETTINGS_SECTION := "locale"
 const LEGACY_SETTINGS_KEY := "language"
 const SUPPORTED_LOCALES := [LOCALE_ZH_CN, LOCALE_EN]
@@ -16,10 +18,19 @@ const TRANSLATION_CSV_SOURCES := [
 	"res://localization/zh_CN.csv",
 	"res://localization/en.csv",
 ]
+const TRANSLATION_RESOURCE_SOURCES := [
+	"res://localization/zh_CN.zh_CN.translation",
+	"res://localization/en.en.translation",
+]
 
 signal language_changed(language: String)
 
 var _translations_ready := false
+
+
+func _init() -> void:
+	# Override engine/browser locale before any scene or autoload _ready runs.
+	TranslationServer.set_locale(DEFAULT_LOCALE)
 
 
 func _ready() -> void:
@@ -83,11 +94,16 @@ func _ensure_translations_loaded() -> void:
 	if _translations_ready:
 		return
 
-	for existing in TranslationServer.get_translations():
-		TranslationServer.remove_translation(existing)
-
-	for path in TRANSLATION_CSV_SOURCES:
-		_add_translation_from_csv(path)
+	if OS.has_feature("editor"):
+		# Editor: reload from CSV so translation edits apply without reimport.
+		for existing in TranslationServer.get_translations():
+			TranslationServer.remove_translation(existing)
+		for path in TRANSLATION_CSV_SOURCES:
+			_add_translation_from_csv(path)
+	elif TranslationServer.get_translations().is_empty():
+		# Export: CSV sources are not packaged; use bundled .translation resources.
+		for path in TRANSLATION_RESOURCE_SOURCES:
+			_add_translation_resource(path)
 
 	_translations_ready = true
 	if TranslationServer.translate("ui.title.start") == "ui.title.start":
@@ -100,6 +116,14 @@ func _csv_value_from_row(row: PackedStringArray) -> String:
 	if row.size() == 2:
 		return row[1]
 	return ",".join(PackedStringArray(row.slice(1)))
+
+
+func _add_translation_resource(path: String) -> void:
+	var translation := load(path) as Translation
+	if translation == null:
+		push_warning("LanguageSwitch: cannot load translation resource '%s'" % path)
+		return
+	TranslationServer.add_translation(translation)
 
 
 func _add_translation_from_csv(path: String) -> void:
@@ -131,8 +155,14 @@ func _add_translation_from_csv(path: String) -> void:
 
 
 func apply_saved_or_default() -> void:
-	var saved := _read_saved_locale()
-	_set_locale(saved if _is_supported_locale(saved) else LOCALE_ZH_CN)
+	var cfg := ConfigFile.new()
+	if cfg.load(SETTINGS_PATH) == OK \
+			and bool(cfg.get_value(SETTINGS_SECTION, SETTINGS_KEY_LOCALE_USER_CHOSEN, false)):
+		var saved := _read_saved_locale_from_cfg(cfg)
+		if _is_supported_locale(saved):
+			_set_locale(saved)
+			return
+	_set_locale(DEFAULT_LOCALE)
 
 
 func toggle_locale() -> String:
@@ -145,7 +175,7 @@ func toggle_locale() -> String:
 
 func apply_locale(locale: String) -> void:
 	var normalized := _normalize_locale(locale)
-	var target := normalized if _is_supported_locale(normalized) else LOCALE_ZH_CN
+	var target := normalized if _is_supported_locale(normalized) else DEFAULT_LOCALE
 	_set_locale(target)
 	_save_locale(target)
 
@@ -159,7 +189,7 @@ func _set_locale(locale: String) -> void:
 
 func get_current_locale() -> String:
 	var current := _normalize_locale(TranslationServer.get_locale())
-	return current if _is_supported_locale(current) else LOCALE_ZH_CN
+	return current if _is_supported_locale(current) else DEFAULT_LOCALE
 
 
 func get_language_button_text() -> String:
@@ -187,16 +217,10 @@ func _is_supported_locale(locale: String) -> bool:
 	return SUPPORTED_LOCALES.has(locale)
 
 
-func _read_saved_locale() -> String:
-	var cfg := ConfigFile.new()
-	var error := cfg.load(SETTINGS_PATH)
-	if error != OK:
-		return ""
-
+func _read_saved_locale_from_cfg(cfg: ConfigFile) -> String:
 	var saved := str(cfg.get_value(SETTINGS_SECTION, SETTINGS_KEY_LOCALE, ""))
 	if not saved.is_empty():
 		return _normalize_locale(saved)
-
 	return _normalize_locale(str(cfg.get_value(LEGACY_SETTINGS_SECTION, LEGACY_SETTINGS_KEY, "")))
 
 
@@ -204,6 +228,7 @@ func _save_locale(locale: String) -> void:
 	var cfg := ConfigFile.new()
 	var _load_error := cfg.load(SETTINGS_PATH)
 	cfg.set_value(SETTINGS_SECTION, SETTINGS_KEY_LOCALE, locale)
+	cfg.set_value(SETTINGS_SECTION, SETTINGS_KEY_LOCALE_USER_CHOSEN, true)
 	var save_error := cfg.save(SETTINGS_PATH)
 	if save_error != OK:
 		push_warning("LanguageSwitch: failed saving locale '%s'" % locale)

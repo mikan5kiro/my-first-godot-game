@@ -568,6 +568,10 @@ func _load_slot(slot: int) -> void:
 
 
 func _on_quit_pressed() -> void:
+	if OS.has_feature("web"):
+		# Web builds cannot exit like a desktop app; quit() leaves a frozen canvas.
+		JavaScriptBridge.eval("location.reload()", true)
+		return
 	get_tree().quit()
 
 
